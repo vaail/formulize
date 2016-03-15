@@ -4,6 +4,12 @@
 	position: relative;
 }
 
+.formula-drag {
+	display: inline-block;
+	vertical-align: middle;
+	background-color: rgba(0, 80, 255, .2);
+}
+
 .formula-cursor {
 	display: inline-block;
 	vertical-align: middle;

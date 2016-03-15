@@ -28,34 +28,143 @@
 				if(keyCode >= 96 && keyCode <= 105) {
 					keyCode -= 48;
 				} else if(keyCode == 8) {
-					if(_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-						_this.cursor.prev().remove();
+					var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+					if($drag.length > 0) {
+						_this.cursor.insertBefore($drag);
+						$drag.remove();
+					} else {
+						if(_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
+							_this.cursor.prev().remove();
+						}
 					}
 					return false;					
 				} else if(keyCode == 46) {
-					if(_this.cursor.length > 0 && _this.cursor.next().length > 0) {
-						_this.cursor.next().remove();
+					var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+					if($drag.length > 0) {
+						_this.cursor.insertAfter($drag);
+						$drag.remove();
+					} else {
+						if(_this.cursor.length > 0 && _this.cursor.next().length > 0) {
+							_this.cursor.next().remove();
+						}
 					}
 					return false;
 				} else if(keyCode >= 37 && keyCode <= 40) {
 					if(keyCode == 37) {
-						if(_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-							_this.cursor.insertBefore(_this.cursor.prev());
+						if(_this.cursor.length > 0 && _this.cursor.prev(':not(".' + _this.opt.id + '-alert")').length > 0) {
+							if(event.shiftKey) {
+								var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+								if($drag.length < 1) {
+									$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+									$drag.insertAfter(_this.cursor);
+								} else {
+									if($drag.data('active') == false) {
+										_this.destroyDrag();
+										$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+										$drag.insertAfter(_this.cursor);
+									}
+								}
+								$drag.data('active', true);
+								
+								var $prev = _this.cursor.prev();
+								if($prev.hasClass(_this.opt.id + '-drag')) {
+									var $dragItem = $drag.children('*');
+									if($dragItem.length < 1) {
+										$drag.remove();
+									} else {
+										$dragItem.last().insertAfter($drag);
+										_this.cursor.insertAfter($drag);
+									}
+								} else {
+									_this.cursor.prev().prependTo($drag);
+								}
+							} else {
+								_this.destroyDrag();
+								_this.cursor.insertBefore(_this.cursor.prev());
+							}
+						} else {
 						}
 					} else if(keyCode == 39) {
-						if(_this.cursor.length > 0 && _this.cursor.next().length > 0) {
-							_this.cursor.insertAfter(_this.cursor.next());
+						if(_this.cursor.length > 0 && _this.cursor.next(':not(".' + _this.opt.id + '-alert")').length > 0) {
+							if(event.shiftKey) {
+								var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+								if($drag.length < 1) {
+									$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+									$drag.insertBefore(_this.cursor);
+								} else {
+									if($drag.data('active') == false) {
+										_this.destroyDrag();
+										$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+										$drag.insertBefore(_this.cursor);
+									}
+								}
+								$drag.data('active', true);
+								
+								var $next = _this.cursor.next();
+								if($next.hasClass(_this.opt.id + '-drag')) {
+									var $dragItem = $drag.children('*');
+									if($dragItem.length < 1) {
+										$drag.remove();
+									} else {
+										$dragItem.first().insertBefore($drag);
+										_this.cursor.insertBefore($drag);
+									}
+								} else {
+									_this.cursor.next().appendTo($drag);
+								}
+							} else {
+								_this.destroyDrag();
+								_this.cursor.insertAfter(_this.cursor.next());
+							}
+						} else {
 						}
 					}
 					return false;
 				} else if(keyCode == 35 || keyCode == 36) {
 					if (keyCode == 35) {
 						if(_this.cursor.length > 0 && _this.container.children(':last').length > 0) {
-							_this.cursor.insertAfter(_this.container.children(':last'));
+							if(event.shiftKey) {
+								var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+								if($drag.length < 1) {
+									$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+									$drag.insertBefore(_this.cursor);
+								} else {
+									if($drag.data('active') == false) {
+										_this.destroyDrag();
+										$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+										$drag.insertBefore(_this.cursor);
+									}
+								}
+								$drag.data('active', true);
+								_this.cursor.nextAll(':not(".' + _this.opt.id + '-alert")').appendTo($drag);
+							} else {
+								_this.destroyDrag();
+								_this.cursor.insertAfter(_this.container.children(':not(".' + _this.opt.id + '-alert"):last'));
+							}
 						}
 					} else if(keyCode == 36) {
 						if(_this.cursor.length > 0 && _this.container.children(':first').length > 0) {
-							_this.cursor.insertBefore(_this.container.children(':first'));
+							if(event.shiftKey) {
+								var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+								if($drag.length < 1) {
+									$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+									$drag.insertAfter(_this.cursor);
+								} else {
+									if($drag.data('active') == false) {
+										_this.destroyDrag();
+										$drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+										$drag.insertAfter(_this.cursor);
+									}
+								}
+								$drag.data('active', true);
+								_this.cursor.prevAll(':not(".' + _this.opt.id + '-alert")').each(function() {
+									var $this = $(this);
+									$this.prependTo($drag);
+								});
+							} else {
+								_this.destroyDrag();
+								_this.cursor.insertBefore(_this.container.children(':not(".' + _this.opt.id + '-alert"):first'));
+							}
 						}
 					}
 				}
@@ -67,6 +176,16 @@
 			x: 0,
 			y: 0
 		});
+	};
+
+	Plugin.prototype.destroyDrag = function() {
+		var _this = this;
+		var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+		$drag.children('*').each(function() {
+			var $this = $(this);
+			$this.insertBefore($drag);
+		});
+		$drag.remove();
 	};
 
 	Plugin.prototype.click = function(pos) {
@@ -135,6 +254,8 @@
 			}, _this.opt.cursorDelayTime);
 		};
 		loop();
+
+		_this.destroyDrag();
 	};
 
 	Plugin.prototype.keydown = function(key, shift) {
