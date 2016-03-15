@@ -1,6 +1,7 @@
 (function($) {
 	var Plugin = function(_opt) {
 		this.alert = null;
+		this.text = null;
 		this.container = null;
 		this.cursor = null;
 		this.opt = _opt;
@@ -10,11 +11,15 @@
 	Plugin.prototype.init = function(e) {
 		var _this = this;
 		this.container = e.addClass(this.opt.id + '-container');
+		this.container.wrap('<div class="' + this.opt.id + '-wrapper"></div>');
 
-		_this.alert = $alert = $('<div class="' + this.opt.id + '-alert"></div>');
-		$alert.appendTo(_this.container);
+		this.alert = $('<div class="' + this.opt.id + '-alert"></div>');
+		this.alert.insertBefore(_this.container);
 
-		e.unbind('click.' + this.opt.id + 'Handler').bind('click.' + this.opt.id + 'Handler', function(event) {
+		this.text = $('<textarea class="' + this.opt.id + '-text"></textarea>');
+		this.text.insertAfter(this.container).focus();
+
+		this.text.unbind('click.' + this.opt.id + 'Handler').bind('click.' + this.opt.id + 'Handler', function(event) {
 			event.preventDefault();
 			_this.click({
 				x: event.offsetX,
@@ -22,10 +27,13 @@
 			})
 		});
 
-		$(document).unbind('keydown.' + this.opt.id + 'Handler').bind('keydown.' + this.opt.id + 'Handler', function(event) {
+		_this.text.unbind('keydown.' + this.opt.id + 'Handler').bind('keydown.' + this.opt.id + 'Handler', function(event) {
+			event.preventDefault();
 			if(_this.cursor.length > 0) {
 				var keyCode = event.which;
-				if(keyCode >= 96 && keyCode <= 105) {
+				if(keyCode == 116 || (keyCode == 82 && event.ctrlKey)) {
+					location.reload();
+				} else if(keyCode >= 96 && keyCode <= 105) {
 					keyCode -= 48;
 				} else if(keyCode == 8) {
 					var $drag = _this.container.find('.' + _this.opt.id + '-drag');
@@ -34,7 +42,13 @@
 						$drag.remove();
 					} else {
 						if(_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-							_this.cursor.prev().remove();
+							var $prev = _this.cursor.prev();
+							if($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
+								var text = $prev.text();
+								_this.setDecimal($prev, text.substring(0, text.length - 1).toDecimal());
+							} else {
+								$prev.remove();
+							}
 						}
 					}
 					_this.syntaxCheck();
@@ -46,14 +60,20 @@
 						$drag.remove();
 					} else {
 						if(_this.cursor.length > 0 && _this.cursor.next().length > 0) {
-							_this.cursor.next().remove();
+							var $next = _this.cursor.next();
+							if($next.hasClass(_this.opt.id + '-unit') && $next.text().length > 1) {
+								var text = $next.text();
+								_this.setDecimal($next, text.substring(1, text.length).toDecimal());
+							} else {
+								$next.remove();
+							}
 						}
 					}
 					_this.syntaxCheck();
 					return false;
 				} else if(keyCode >= 37 && keyCode <= 40) {
 					if(keyCode == 37) {
-						if(_this.cursor.length > 0 && _this.cursor.prev(':not(".' + _this.opt.id + '-alert")').length > 0) {
+						if(_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
 							if(event.shiftKey) {
 								var $drag = _this.container.find('.' + _this.opt.id + '-drag');
 								if($drag.length < 1) {
@@ -87,7 +107,7 @@
 						} else {
 						}
 					} else if(keyCode == 39) {
-						if(_this.cursor.length > 0 && _this.cursor.next(':not(".' + _this.opt.id + '-alert")').length > 0) {
+						if(_this.cursor.length > 0 && _this.cursor.next().length > 0) {
 							if(event.shiftKey) {
 								var $drag = _this.container.find('.' + _this.opt.id + '-drag');
 								if($drag.length < 1) {
@@ -121,7 +141,6 @@
 						} else {
 						}
 					}
-					_this.syntaxCheck();
 					return false;
 				} else if(keyCode == 35 || keyCode == 36) {
 					if (keyCode == 35) {
@@ -139,10 +158,10 @@
 									}
 								}
 								$drag.data('active', true);
-								_this.cursor.nextAll(':not(".' + _this.opt.id + '-alert")').appendTo($drag);
+								_this.cursor.nextAll().appendTo($drag);
 							} else {
 								_this.destroyDrag();
-								_this.cursor.insertAfter(_this.container.children(':not(".' + _this.opt.id + '-alert"):last'));
+								_this.cursor.insertAfter(_this.container.children(':last'));
 							}
 						}
 					} else if(keyCode == 36) {
@@ -160,13 +179,13 @@
 									}
 								}
 								$drag.data('active', true);
-								_this.cursor.prevAll(':not(".' + _this.opt.id + '-alert")').each(function() {
+								_this.cursor.prevAll().each(function() {
 									var $this = $(this);
 									$this.prependTo($drag);
 								});
 							} else {
 								_this.destroyDrag();
-								_this.cursor.insertBefore(_this.container.children(':not(".' + _this.opt.id + '-alert"):first'));
+								_this.cursor.insertBefore(_this.container.children(':first'));
 							}
 						}
 					}
@@ -187,9 +206,9 @@
 		var formula = _this.getFormula();
 		try {
 			eval(formula);
-			_this.alert.text('Working good.').addClass('formula-alert-good').removeClass('formula-alert-error');
+			_this.alert.text('Working good.').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
 		} catch(e) {
-			_this.alert.text('Syntax error.').removeClass('formula-alert-good').addClass('formula-alert-error');
+			_this.alert.text('Syntax error.').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
 		}
 	};
 
@@ -286,7 +305,7 @@
 			7: '&',
 			8: '*',
 			9: '('
-		};
+		};		
 
 		if(shift && (key >= 0 && key <= 9)) {
 			key = convert[key];
@@ -296,40 +315,42 @@
 
 			if((key >= 0 && key <= 9) || key == '.') {
 				var $unit = $('<div class="formula-unit">' + key + '</div>');
-				var $prev, $next, $item;
+				var $item = null;
 				var decimal = '', merge = false;
 				this.cursor.before($unit);
 
 				if($unit.prev().length > 0 && $unit.prev().hasClass('formula-unit')) {
 					merge = true;
-					$item = $prev = $unit.prev();
-					$prev.append($unit[0].innerHTML);
-					decimal = $prev.text().toDecimal();
+					$item = $unit.prev();
 				} else if($unit.next().length > 0 && $unit.next().hasClass('formula-unit')) {
 					merge = true;
-					$item = $next = $unit.next();
-					$next.append($unit[0].innerHTML);
-					decimal = $next.text().toDecimal();
+					$item = $unit.next();
 				}
 
 				if(merge === true) {
-					if(decimal != '') {
-						$item.empty();
-						console.log(decimal);
-						var split = decimal.split('.');
-						var $prefix = $('<span class="' + _this.opt.id + '-prefix ' + _this.opt.id + '-decimal-highlight">' + split[0] + '</span>');
-						$prefix.appendTo($item);
-						if(typeof split[1] !== 'undefined') {
-							var $surfix = $('<span class="' + _this.opt.id + '-surfix ' + _this.opt.id + '-decimal-highlight">.' + split[1] + '</span>');
-							$surfix.appendTo($item);
-						}
-					}
+					$item.append($unit[0].innerHTML);
+					decimal = $item.text().toDecimal();
+					_this.setDecimal($item, decimal);
 					$unit.remove();
 				}
 
-			} else if(key != '') {
+			} else if($.trim(key) != '') {
 				var $operator = $('<div class="formula-operator">' + key + '</div>');
 				this.cursor.before($operator);
+			}
+		}
+	};
+
+	Plugin.prototype.setDecimal = function(e, decimal) {
+		var _this = this;
+		if(decimal != '') {
+			e.empty();
+			var split = decimal.split('.');
+			var $prefix = $('<span class="' + _this.opt.id + '-prefix ' + _this.opt.id + '-decimal-highlight">' + split[0] + '</span>');
+			$prefix.appendTo(e);
+			if(typeof split[1] !== 'undefined') {
+				var $surfix = $('<span class="' + _this.opt.id + '-surfix ' + _this.opt.id + '-decimal-highlight">.' + split[1] + '</span>');
+				$surfix.appendTo(e);
 			}
 		}
 	};
@@ -351,9 +372,12 @@
 
 	String.prototype.toFormulaString = function(shift) {
 		var keyCode = this;
-		if((keyCode == 187 && shift == true) || keyCode == 107) {
+		console.log(keyCode.toString());
+		if(keyCode == 106) {
+			return '*';
+		} else if(((keyCode == 187 || keyCode == 61) && shift == true) || keyCode == 107) {
 			return '+';
-		} else if(keyCode == 189 || keyCode == 109) {
+		} else if(keyCode == 189 || keyCode == 173 || keyCode == 109) {
 			return '-';
 		} else if(keyCode == 190 || keyCode == 110) {
 			return '.';
