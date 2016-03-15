@@ -37,6 +37,7 @@
 							_this.cursor.prev().remove();
 						}
 					}
+					_this.syntaxCheck();
 					return false;					
 				} else if(keyCode == 46) {
 					var $drag = _this.container.find('.' + _this.opt.id + '-drag');
@@ -48,6 +49,7 @@
 							_this.cursor.next().remove();
 						}
 					}
+					_this.syntaxCheck();
 					return false;
 				} else if(keyCode >= 37 && keyCode <= 40) {
 					if(keyCode == 37) {
@@ -119,6 +121,7 @@
 						} else {
 						}
 					}
+					_this.syntaxCheck();
 					return false;
 				} else if(keyCode == 35 || keyCode == 36) {
 					if (keyCode == 35) {
@@ -169,6 +172,7 @@
 					}
 				}
 				_this.keydown(keyCode.toString().toFormulaString(event.shiftKey), event.shiftKey);
+				_this.syntaxCheck();
 			}
 		});
 
@@ -176,6 +180,17 @@
 			x: 0,
 			y: 0
 		});
+	};
+
+	Plugin.prototype.syntaxCheck = function() {
+		var _this = this;
+		var formula = _this.getFormula();
+		try {
+			eval(formula);
+			_this.alert.text('Working good.').addClass('formula-alert-good').removeClass('formula-alert-error');
+		} catch(e) {
+			_this.alert.text('Syntax error.').removeClass('formula-alert-good').addClass('formula-alert-error');
+		}
 	};
 
 	Plugin.prototype.destroyDrag = function() {
@@ -281,30 +296,40 @@
 
 			if((key >= 0 && key <= 9) || key == '.') {
 				var $unit = $('<div class="formula-unit">' + key + '</div>');
+				var $prev, $next, $item;
+				var decimal = '', merge = false;
 				this.cursor.before($unit);
+
 				if($unit.prev().length > 0 && $unit.prev().hasClass('formula-unit')) {
-					var $prev = $unit.prev();
+					merge = true;
+					$item = $prev = $unit.prev();
 					$prev.append($unit[0].innerHTML);
-					$prev.text($prev[0].innerHTML.toDecimal());
-					$unit.remove();
+					decimal = $prev.text().toDecimal();
 				} else if($unit.next().length > 0 && $unit.next().hasClass('formula-unit')) {
-					var $next = $unit.next();
+					merge = true;
+					$item = $next = $unit.next();
 					$next.append($unit[0].innerHTML);
-					$next.text($next[0].innerHTML.toDecimal());
+					decimal = $next.text().toDecimal();
+				}
+
+				if(merge === true) {
+					if(decimal != '') {
+						$item.empty();
+						console.log(decimal);
+						var split = decimal.split('.');
+						var $prefix = $('<span class="' + _this.opt.id + '-prefix ' + _this.opt.id + '-decimal-highlight">' + split[0] + '</span>');
+						$prefix.appendTo($item);
+						if(typeof split[1] !== 'undefined') {
+							var $surfix = $('<span class="' + _this.opt.id + '-surfix ' + _this.opt.id + '-decimal-highlight">.' + split[1] + '</span>');
+							$surfix.appendTo($item);
+						}
+					}
 					$unit.remove();
 				}
+
 			} else if(key != '') {
 				var $operator = $('<div class="formula-operator">' + key + '</div>');
 				this.cursor.before($operator);
-			}
-
-			var formula = _this.getFormula();
-			console.log(formula);
-			try {
-				eval(formula);
-				_this.alert.text('Working good.').addClass('formula-alert-good').removeClass('formula-alert-error');
-			} catch(e) {
-				_this.alert.text('Syntax error.').removeClass('formula-alert-good').addClass('formula-alert-error');
 			}
 		}
 	};

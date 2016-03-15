@@ -64,3 +64,11 @@
 	color: #ff9090;
 	border-top-color: #ff9090;
 }
+
+.formula-prefix {
+	color: #4880dc;
+}
+
+.formula-surfix {
+	color: #ff7464;
+}
