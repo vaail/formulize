@@ -5,9 +5,9 @@ Javscript WYSWYG formula builder.
 
 ### Getting start
 
-This plugin help you can make formula.
+This plugin help you can make formulas.
 
-It's stable version for IE8 higher and any most browsers.
+It's a stable version for IE8 higher and any most browsers.
 
 [Check demo page](http://www.pigno.se/barn/PIGNOSE-Formula)
 
