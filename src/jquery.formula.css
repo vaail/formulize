@@ -24,7 +24,8 @@
 }
 
 .formula-drag {
-	display: inline-block;
+	display: inline;
+	padding: .8em 0;
 	vertical-align: middle;
 	background-color: rgba(0, 80, 255, .2);
 }
@@ -53,9 +54,15 @@
 }
 
 .formula-operator {
-	color: #12aab7;
+	font-weight: 600;
+	color: #12c2b7;
 	border-radius: 1px;
 	line-height: 2em;
+}
+
+.formula-bracket {
+	background-color: transparent;
+	border: 0;	
 }
 
 .formula-alert {

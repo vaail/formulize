@@ -106,6 +106,24 @@
 							}
 						} else {
 						}
+					} else if(keyCode == 38) {
+						if(_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
+							var parentPadding = {
+								x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
+								y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
+							}
+
+							var $item = _this.cursor.prev();
+							if($item.length < 0) {
+								$item = _this.cursor.next();
+							}
+							_this.click({
+								x: _this.cursor.position().left + $item.outerWidth(),
+								y: _this.cursor.position().top - $item.outerHeight() / 2
+							});
+						} else {
+
+						}
 					} else if(keyCode == 39) {
 						if(_this.cursor.length > 0 && _this.cursor.next().length > 0) {
 							if(event.shiftKey) {
@@ -139,6 +157,24 @@
 								_this.cursor.insertAfter(_this.cursor.next());
 							}
 						} else {
+						}
+					} else if(keyCode == 40) {
+						if(_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
+							var parentPadding = {
+								x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
+								y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
+							}
+
+							var $item = _this.cursor.prev();
+							if($item.length < 0) {
+								$item = _this.cursor.next();
+							}
+							_this.click({
+								x: _this.cursor.position().left + $item.outerWidth(),
+								y: _this.cursor.position().top + $item.outerHeight() * 1.5
+							});
+						} else {
+
 						}
 					}
 					return false;
@@ -233,39 +269,59 @@
 			x: _this.container.offset().left,
 			y: _this.container.offset().top
 		}
+
+		var parentPadding = {
+			x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
+			y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
+		}
+
+		console.log(parentPadding.x, 'px');
+
 		var checkArea = [];
 
-		_this.container.children('*:not(".' + _this.opt.id + '-cursor, .' + _this.opt.id + '-alert")').each(function() {
+		_this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function() {
 			var $this = $(this);
-			var condY = $this.offset().top - parentPos.y + $this.outerHeight();
-			if(condY >= pos.y) {
-				checkArea.push({
-					x: $this.offset().left - parentPos.x,
-					y: $this.offset().top - parentPos.y,
-					e: $this
-				});
-			}
+			checkArea.push({
+				x: $this.offset().left - parentPos.x + parentPadding.x,
+				y: $this.offset().top - parentPos.y,
+				e: $this
+			});
 		});
 
+		
+		var $pointer = null
 		var maxY = 0, maxDiff = 10000;
-		var $pointer = null;
 		for(var idx in checkArea) {
 			var check = checkArea[idx];
-			if(check.y >= maxY && check.x < pos.x) {
-				maxY = check.y;
-				if(pos.x - check.x < maxDiff) {
-					maxDiff = pos.x - check.x;
-					$pointer = check.e;
+			if(check.y <= pos.y) {
+				if(check.y >= maxY && check.x <= pos.x) {
+					maxY = check.y;
+					if(pos.x - check.x <= maxDiff) {
+						maxDiff = pos.x - check.x;
+						$pointer = check.e;
+					}
 				}
-			} else {
-				break;
 			}
 		}
 
-		if($pointer != null) {
+		if($pointer == null) {
+			maxY = 0, maxDiff = 10000;
+			for(var idx in checkArea) {
+				var check = checkArea[idx];
+				if(check.y >= maxY && check.x <= pos.x) {
+					maxY = check.y;
+					if(pos.x - check.x < maxDiff) {
+						maxDiff = pos.x - check.x;
+						$pointer = check.e;
+					}
+				}
+			}
+		}
+
+		if(checkArea.length > 0 && $pointer != null && maxY + checkArea[0].e.outerHeight() >= pos.y) {
 			_this.cursor.insertAfter($pointer);
 		} else {
-			if(maxY < pos.y) {
+			if(checkArea.length > 0 && pos.x > checkArea[0].x) {
 				_this.cursor.appendTo(_this.container);
 			} else {
 				_this.cursor.prependTo(_this.container);
@@ -310,6 +366,7 @@
 		if(shift && (key >= 0 && key <= 9)) {
 			key = convert[key];
 		}
+		key = $.trim(key);
 
 		if((key >= 0 && key <= 9) || $.inArray(key, _this.permitedKey) != -1) {
 
@@ -334,9 +391,12 @@
 					$unit.remove();
 				}
 
-			} else if($.trim(key) != '') {
-				var $operator = $('<div class="formula-operator">' + key + '</div>');
-				this.cursor.before($operator);
+			} else if(key != '') {
+				var $operator = $('<div class="' + _this.opt.id + '-operator">' + key + '</div>');
+				this.cursor.before($operator);	
+				if(key == '(' || key == ')') {
+					$operator.addClass(_this.opt.id + '-bracket');
+				}
 			}
 		}
 	};
