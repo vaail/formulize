@@ -1,0 +1,60 @@
+.formula-container {
+	padding: 1em;
+	cursor: text;
+	position: relative;
+}
+
+.formula-cursor {
+	display: inline-block;
+	vertical-align: middle;
+	height: 1em;
+	width: 1px;
+	background-color: rgba(0, 0, 0, .6);
+}
+
+.formula-unit,
+.formula-operator {
+	display: inline-block;
+	vertical-align: middle;
+	color: #555555;
+	padding: 0 .8em;
+	height: 2em;
+	line-height: 2em;
+	margin: .4em;
+	border-radius: 1em;
+	background-color: #ffffff;
+	border: 1px solid #d2d2d2;
+}
+
+.formula-operator {
+	color: #1268ff;
+	border-radius: 1px;
+	line-height: 2em;
+}
+
+.formula-alert {
+	position: absolute;
+	width: 12em;
+	height: 4em;
+	line-height: 3.8em;
+	box-sizing: border-box;
+	-o-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	border: 1px solid #d8d8d8;
+	background-color: #fafafa;
+	border-top: 3px solid #ababab;
+	text-align: center;
+	top: 0;
+	right: 0;
+}
+
+.formula-alert.formula-alert-good {
+	color: #88ccab;
+	border-top-color: #88ccab;
+}
+
+.formula-alert.formula-alert-error {
+	color: #ff9090;
+	border-top-color: #ff9090;
+}

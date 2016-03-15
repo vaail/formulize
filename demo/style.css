@@ -1,0 +1,10 @@
+html, body {
+	height: 100%;
+	position: relative;
+	font-size: 13px;
+}
+
+#formula {
+	height: 480px;
+	background-color: #f2f2f2;
+}
