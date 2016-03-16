@@ -94,8 +94,6 @@
 							$drag.insertAfter(_this.cursor);
 						}
 
-						console.log(start, end);
-
 						if(start == end) {
 							return false;
 						}
