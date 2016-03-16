@@ -28,7 +28,7 @@
 	line-height: 2.8;
 }
 
-.formula-drag {
+.formula-container .formula-drag {
 	display: inline;
 	padding: 1em .2em;
 	border-radius: 3px;
@@ -36,7 +36,7 @@
 	background-color: rgba(26, 94, 255, .15);
 }
 
-.formula-cursor {
+.formula-container .formula-cursor {
 	display: inline-block;
 	vertical-align: middle;
 	height: 1.6em;
@@ -45,8 +45,9 @@
 	background-color: rgba(0, 0, 0, .6);
 }
 
-.formula-unit,
-.formula-operator {
+.formula-container .formula-unit,
+.formula-container .formula-operator,
+.formula-container .formula-item {
 	display: inline;
 	vertical-align: middle;
 	color: #1280ff;
@@ -59,7 +60,7 @@
 	border: 1px solid #1280ff;
 }
 
-.formula-operator {
+.formula-container .formula-operator {
 	display: inline-block;
 	margin-top: 0;
 	margin-bottom: 0;
@@ -73,7 +74,7 @@
 	border-color: #f6474e;
 }
 
-.formula-bracket {
+.formula-container .formula-bracket {
 	background-color: transparent;
 	border: 0;
 	color: #12c2b7;

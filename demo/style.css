@@ -13,8 +13,51 @@ h1 {
 	border-bottom: 1px solid #efefef;
 }
 
+h2 {
+	margin: 1.4em 0 .8em;
+	padding-bottom: .6em;
+	font-size: 160%;
+	border-bottom: 1px solid #efefef;
+}
+
 #formula {
 	height: 360px;
 	background-color: #f2f2f2;
 	border: 1px solid #d8d8d8;
+}
+
+#formula .formula-item {
+	background-color: #555555;
+	display: inline-block;
+	text-decoration: none;
+	border: none;
+	color: #ffffff;
+}
+
+#formula.formula-active {
+	border: 1px solid #88ccab;
+}
+
+#drop {
+	height: 200px;
+	padding: 20px;
+	border: 1px solid #efefef;
+	overflow: hidden;
+}
+
+#drop a {
+	float: left;
+	width: 18%;
+	height: 5em;
+	line-height: 5em;
+	background-color: #fafafa;
+	text-decoration: none;
+	color: #555555;
+	border: 1px solid #e2e2e2;
+	margin-right: 2%;
+	text-align: center;
+}
+
+#drop a:last-child {
+	margin-right: 0;
 }

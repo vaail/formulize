@@ -40,7 +40,7 @@
                 this.alert = $('<div class="' + this.opt.id + '-alert">Formula</div>');
                 this.alert.insertBefore(_this.container);
 
-                this.text = $('<textarea class="' + this.opt.id + '-text"></textarea>');
+                this.text = $('<textarea id="' + this.opt.id + '-text" name="' + this.opt.id + '-text" class="' + this.opt.id + '-text"></textarea>');
                 this.text.insertAfter(this.container).focus();
 
                 this.text.unbind('dblclick.' + this.opt.id + 'Handler').bind('dblclick.' + this.opt.id + 'Handler', function (event) {
@@ -65,9 +65,8 @@
 
                 var startIndex;
                 this.text.unbind('mousemove.' + this.opt.id + 'Handler').bind('mousemove.' + this.opt.id + 'Handler', function (event) {
-                    event.preventDefault();
                     if (drag !== true) {
-                        return false;
+                        return true;
                     }
 
                     move = true;
@@ -93,7 +92,7 @@
                         }
 
                         if (start == end) {
-                            return false;
+                            return true;
                         }
 
                         _this.container.children(':not(".' + _this.opt.id + '-cursor")').filter(':gt("' + start + '")').filter(':lt("' + (end - start) + '")')
@@ -167,7 +166,6 @@
                             _this.syntaxCheck();
                             return false;
                         } else if (keyCode >= 37 && keyCode <= 40) {
-                            _this.destroyDrag();
                             if (keyCode == 37) {
                                 if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
                                     if (event.shiftKey) {
@@ -197,9 +195,11 @@
                                             _this.cursor.prev().prependTo($drag);
                                         }
                                     } else {
+                                    	_this.destroyDrag();
                                         _this.cursor.insertBefore(_this.cursor.prev());
                                     }
                                 } else {
+                                    _this.destroyDrag();
                                 }
                             } else if (keyCode == 38) {
                                 if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
@@ -221,7 +221,6 @@
                                 }
                             } else if (keyCode == 39) {
                                 if (_this.cursor.length > 0 && _this.cursor.next().length > 0) {
-                                    _this.destroyDrag();
                                     if (event.shiftKey) {
                                         var $drag = _this.container.find('.' + _this.opt.id + '-drag');
                                         if ($drag.length < 1) {
@@ -249,9 +248,11 @@
                                             _this.cursor.next().appendTo($drag);
                                         }
                                     } else {
+                                   		_this.destroyDrag();
                                         _this.cursor.insertAfter(_this.cursor.next());
                                     }
                                 } else {
+                                    _this.destroyDrag();
                                 }
                             } else if (keyCode == 40) {
                                 if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
@@ -472,7 +473,8 @@
                 };
 
                 if (shift && (key >= 0 && key <= 9)) {
-                    key = convert[key];
+                    key = convert[key]
+
                 }
                 key = $.trim(key);
 
@@ -533,11 +535,22 @@
                         value = value.toDecimal();
                     } else if ($this.hasClass('formula-operator') && value == 'x') {
                         value = '*';
+                    } else if($this.hasClass('formula-item')) {
+                    	value = 0;
                     }
                     formula += value;
                 });
                 return formula;
             };
+
+            this.insert = function(e) {
+            	var _this = this;
+            	if(typeof e === 'string') {
+            		e = $(e);
+            	}
+            	e.insertBefore(_this.cursor);
+            	_this.syntaxCheck();
+            }
 
             if (_args.length < 1 || typeof _args[0] === 'object') {
                 this.alert = null;

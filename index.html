@@ -2,13 +2,27 @@
 <html lang="ko">
 	<head>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.12.1.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.0-beta.1/jquery-ui.js" integrity="sha256-VtM6C/Wx3Hel6RN5y/a6rRAHGWi+FdmGUEOK5SW1wvA=" crossorigin="anonymous"></script>
 		<script type="text/javascript" src="src/jquery.formula.js"></script>
 		<link rel="stylesheet" type="text/css" href="demo/import.css" />
 		<link rel="stylesheet" type="text/css" href="src/jquery.formula.css" />
 		<script type="text/javascript">
 		//<![CDATA[
 		$(function() {
+			$('#drop a').draggable({
+				revert: 'invalid',
+				helper: 'clone',
+				cancel: ''
+			});
 			$('#formula').formula();
+
+			$('#formula').droppable({
+				hoverClass: "formula-active",
+				drop: function( event, ui ) {
+					var $e = ui.draggable.clone();
+					$('#formula').formula('insert', $e);
+				}
+			});
 		});
 		//]]>
 		</script>
@@ -16,6 +30,11 @@
 	<body>
 		<h1>jQuery formula builder plugin</h1>
 		<div id="formula">
+		</div>
+
+		<h2>Drag And Drop</h2>
+		<div id="drop">
+			<a href="#" class="formula-item">DropItem</a>
 		</div>
 	</body>
 </html>
