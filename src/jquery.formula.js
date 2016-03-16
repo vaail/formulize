@@ -167,6 +167,7 @@
                             _this.syntaxCheck();
                             return false;
                         } else if (keyCode >= 37 && keyCode <= 40) {
+                            _this.destroyDrag();
                             if (keyCode == 37) {
                                 if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
                                     if (event.shiftKey) {
@@ -196,7 +197,6 @@
                                             _this.cursor.prev().prependTo($drag);
                                         }
                                     } else {
-                                        _this.destroyDrag();
                                         _this.cursor.insertBefore(_this.cursor.prev());
                                     }
                                 } else {
@@ -221,6 +221,7 @@
                                 }
                             } else if (keyCode == 39) {
                                 if (_this.cursor.length > 0 && _this.cursor.next().length > 0) {
+                                    _this.destroyDrag();
                                     if (event.shiftKey) {
                                         var $drag = _this.container.find('.' + _this.opt.id + '-drag');
                                         if ($drag.length < 1) {
@@ -248,7 +249,6 @@
                                             _this.cursor.next().appendTo($drag);
                                         }
                                     } else {
-                                        _this.destroyDrag();
                                         _this.cursor.insertAfter(_this.cursor.next());
                                     }
                                 } else {
