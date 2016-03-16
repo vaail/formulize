@@ -48,12 +48,10 @@
 				});
 
 				this.text.unbind('mousedown.' + this.opt.id + 'Handler').bind('mousedown.' + this.opt.id + 'Handler', function(event) {
-					event.preventDefault();
 					drag = true;
 				});
 
 				this.text.unbind('mouseup.' + this.opt.id + 'Handler').bind('mouseup.' + this.opt.id + 'Handler', function(event) {
-					event.preventDefault();
 					drag = false;
 					if(move === true ) {
 						move = false;
