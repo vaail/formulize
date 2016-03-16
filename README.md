@@ -15,7 +15,7 @@ It's a stable version for IE8 higher and any most browsers.
 
 ### How, Where to use it
 
-This plugin is made to meet the purpose of below exhibit.
+This plugin is made to meet the purpose of below exhibition.
 
 1. The textarea can be included HTML markup text which rendered.
 2. It have to be supported the validation check about formula express.
