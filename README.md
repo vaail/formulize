@@ -13,7 +13,7 @@ It's a stable version for IE8 higher and any most browsers.
 
 ![Sample](http://www.nhpcw.com/upload/%25EB%258B%25A4%25EC%259A%25B4%25EB%25A1%259C%25EB%2593%259C_031616120724.png)
 
-### How, Where to use it and
+### How, Where to use it
 
 This plugin is made to meet the purpose of below exhibit.
 
