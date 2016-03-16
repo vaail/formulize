@@ -15,19 +15,25 @@
 	height: 100%;
 	text-indent: -10000px;
 	z-index: 20;
+	-o-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .formula-container {
 	padding: 2.8em;
 	cursor: text;
 	position: relative;
+	line-height: 2.8;
 }
 
 .formula-drag {
 	display: inline;
-	padding: .8em 0;
+	padding: 1em .2em;
+	border-radius: 3px;
 	vertical-align: middle;
-	background-color: rgba(0, 80, 255, .2);
+	background-color: rgba(26, 94, 255, .15);
 }
 
 .formula-cursor {
@@ -41,28 +47,36 @@
 
 .formula-unit,
 .formula-operator {
-	display: inline-block;
+	display: inline;
 	vertical-align: middle;
-	color: #555555;
-	padding: 0 .8em;
-	height: 2em;
-	line-height: 2.2em;
+	color: #12c2b7;
+	padding: .6em .8em .35em;
+	word-break: break-all;
 	margin: .4em;
+	line-height: 1.4;
 	border-radius: 1em;
 	background-color: #ffffff;
-	border: 1px solid #d2d2d2;
+	border: 1px solid #1280ff;
 }
 
 .formula-operator {
-	font-weight: 600;
-	color: #12c2b7;
-	border-radius: 1px;
+	display: inline-block;
+	margin-top: 0;
+	margin-bottom: 0;
+	width: 2em;
+	height: 2em;
 	line-height: 2em;
+	padding: 0;
+	text-align: center;
+	font-weight: 600;
+	color: #f6474e;
+	border-color: #f6474e;
 }
 
 .formula-bracket {
 	background-color: transparent;
-	border: 0;	
+	border: 0;
+	color: #12c2b7;
 }
 
 .formula-alert {
@@ -97,7 +111,7 @@
 }
 
 .formula-prefix {
-	color: #4880dc;
+	color: #1280ff;
 }
 
 .formula-surfix {
