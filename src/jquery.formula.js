@@ -65,6 +65,13 @@
 
                 var startIndex;
                 this.text.unbind('mousemove.' + this.opt.id + 'Handler').bind('mousemove.' + this.opt.id + 'Handler', function (event) {
+                	if(_this.container.hasClass('formula-active')) {
+                		_this.click({
+                			x: event.offsetX,
+                			y: event.offsetY
+                		});
+                	}
+
                     if (drag !== true) {
                         return true;
                     }

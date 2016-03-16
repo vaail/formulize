@@ -61,3 +61,7 @@ h2 {
 #drop a:last-child {
 	margin-right: 0;
 }
+
+.ui-draggable-dragging {
+	opacity: .5;
+}
