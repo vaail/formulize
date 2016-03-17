@@ -26,7 +26,15 @@
         var _opt = {
             id: 'formula',
             cursorAnimTime: 160,
-            cursorDelayTime: 500
+            cursorDelayTime: 500,
+            extract: {
+                filter: function (data) {
+                    return data;
+                },
+                item: function ($e) {
+                    return $e.text();
+                }
+            }
         };
         var _args = arguments;
         $.extend(_opt, opt);
@@ -344,16 +352,20 @@
             this.syntaxCheck = function (callback) {
                 var _this = this;
                 var formula = _this.getFormula();
-                try {
-                    eval(formula);
-                    _this.alert.text('Working good.').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
-                    if (typeof callback === 'function') {
-                        callback(true);
+                if (typeof formula !== 'undefined') {
+                    console.log(formula);
+                    var result = new formulaComposer(formula);
+                    if (result.result) {
+                        _this.alert.text('Working good.').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
+                        if (typeof callback === 'function') {
+                            callback(true);
+                        }
                     }
-                } catch (e) {
-                    _this.alert.text('Syntax error.').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
-                    if (typeof callback === 'function') {
-                        callback(false);
+                    else {
+                        _this.alert.text('Syntax error.').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
+                        if (typeof callback === 'function') {
+                            callback(false);
+                        }
                     }
                 }
             };
@@ -539,7 +551,7 @@
                 }
             };
 
-            this.getFormula = function () {
+            this.getFormula = function (callback) {
                 var _this = this;
                 if (typeof _this.opt.extract.filter === 'function') {
                     var data = [];
@@ -547,13 +559,13 @@
                         var $this = $(this);
                         var item = {};
                         item.value = ($this.data('value') ? $this.data('value') : $this.text());
-                        if ($this.hasClass('formula-unit')) {
+                        if ($this.hasClass(_this.opt.id + '-unit')) {
                             item.type = 'unit';
                             item.value = item.value.toDecimal();
-                        } else if ($this.hasClass('formula-operator') && item.value == 'x') {
+                        } else if ($this.hasClass(_this.opt.id + '-operator') && item.value == 'x') {
                             item.type = 'operator';
                             item.value = '*';
-                        } else if ($this.hasClass('formula-item')) {
+                        } else if ($this.hasClass(_this.opt.id + '-item')) {
                             item.type = 'item';
                             if (typeof _this.opt.extract !== 'undefined' && typeof _this.opt.extract.item === 'function') {
                                 try {
@@ -566,24 +578,23 @@
                             }
                         }
 
-                        if ($this.hasClass('formula-operator')) {
+                        if ($this.hasClass(_this.opt.id + '-operator')) {
                             item = item.value;
                         }
                         data.push(item);
                     });
-                    console.log(data);
-                    var parsedData = new formulaComposer(data);
+                    var parsedData = new formulaComposer(data.join(',').split(','));
                     _this.opt.extract.filter.call(_this, parsedData.result ? parsedData.data : parsedData.msg);
                 } else {
-                    var formula = '';
+                    var data = '';
                     _this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function () {
                         var $this = $(this);
                         var value = ($this.data('value') ? $this.data('value') : $this.text());
-                        if ($this.hasClass('formula-unit')) {
+                        if ($this.hasClass(_this.opt.id + '-unit')) {
                             value = value.toDecimal();
-                        } else if ($this.hasClass('formula-operator') && value == 'x') {
+                        } else if ($this.hasClass(_this.opt.id + '-operator') && value == 'x') {
                             value = '*';
-                        } else if ($this.hasClass('formula-item')) {
+                        } else if ($this.hasClass(_this.opt.id + '-item')) {
                             if (typeof _this.opt.extract !== 'undefined' && typeof _this.opt.extract.item === 'function') {
                                 try {
                                     value = _this.opt.extract.call(_this, $this);
@@ -594,10 +605,14 @@
                                 value = '0 ';
                             }
                         }
-                        formula += value;
+                        data += value;
                     });
-                    return formula;
                 }
+
+                if (typeof callback === 'function') {
+                    callback.call(this, parsedData? parsedData:data);
+                }
+                return data;
             };
 
             this.insert = function (e) {
