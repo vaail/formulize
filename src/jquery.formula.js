@@ -762,7 +762,6 @@ formulaComposer.prototype.layerParser = function(data, depth) {
 
 formulaComposer.prototype.syntaxParser = function(data, depth, priority, lastDepth) {
 	if((data.length < 3 && lastDepth <= 1) || (lastDepth == 1 && data.length < 1)) {
-		console.log(lastDepth, data.length);
 		return {
 			result: false,
 			col: 0,
@@ -773,7 +772,7 @@ formulaComposer.prototype.syntaxParser = function(data, depth, priority, lastDep
 
 	if(typeof data.length !== 'undefined') {
 		if(data.length > 1) {
-			for(var idx = 1; idx < data.length; idx++) {
+			for(var idx = 0; idx < data.length; idx++) {
 				var item = data[idx];
 				if(this.inArray(item, this.permittedOperators) == -1 && !this.isOperand(item)) {
 					return {
@@ -809,7 +808,28 @@ formulaComposer.prototype.syntaxParser = function(data, depth, priority, lastDep
 					};
 					data.splice(idx - 1, 3, o);
 					idx--;
-				} else {
+				} else if(this.isOperand(data[idx])) {
+					if(idx - 1 > 0) {
+						if(this.inArray(data[idx - 1], this.permittedOperators) == -1) {
+							return {
+								result: false,
+								col: idx - 1,
+								stack: 'syntaxParser',
+								msg: 'Left side operator is not valid.'
+							};
+						}
+					}
+
+					if(idx + 1 < data.length) {
+						if(this.inArray(data[idx + 1], this.permittedOperators) == -1) {
+							return {
+								result: false,
+								col: idx + 1,
+								stack: 'syntaxParser',
+								msg: 'Right side operator is not valid.'
+							};
+						}
+					}
 				}
 			}
 		} else {
@@ -824,7 +844,7 @@ formulaComposer.prototype.syntaxParser = function(data, depth, priority, lastDep
 			}
 		}
 	}
-	
+
 	if(data.length == 1 && typeof data[0] === 'object') {
 		data = data[0];
 	}
