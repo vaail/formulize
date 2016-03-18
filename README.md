@@ -20,3 +20,7 @@ This plugin is made to meet the purpose of below exhibition.
 1. The textarea can be included HTML markup text which rendered.
 2. It have to be supported the validation check about formula express.
 3. The numbers or other operators in formula, it's ui must be cool and easy.
+
+### Library
+
+This project be related with https://github.com/KennethanCeyer/FormulaParser (built-in)
