@@ -1,0 +1,35 @@
+{
+  "name": "jquery-formula",
+  "version": "1.0.0",
+  "description": "\u001b[2~\u001b[2~\u001b[2~Javscript WYSWYG formula builder.",
+  "main": "index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt-contrib-csslint": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KennethanCeyer/Formula.git"
+  },
+  "keywords": [
+    "plugin",
+    "formula",
+    "equasion",
+    "math",
+    "generator",
+    "builder",
+    "wyswyg",
+    "jquery",
+    "pignose"
+  ],
+  "author": "PIGNOSE",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KennethanCeyer/Formula/issues"
+  },
+  "homepage": "https://github.com/KennethanCeyer/Formula#readme"
+}

@@ -1,0 +1,11 @@
+language: javascript
+
+before_install:
+ - "export DISPLAY=:99.0"
+ - "sh -e /etc/init.d/xvfb start"
+
+before_script:
+ - 'npm install -g grunt-cli'
+ - 'npm install --save-dev'
+
+script: grunt test

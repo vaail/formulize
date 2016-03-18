@@ -1,3 +1,13 @@
+/************************************************************************************************************
+ *
+ * @ Version 1.0.0
+ * @ Formula Generator
+ * @ Date 03. 17. 2016
+ * @ Author PIGNOSE
+ * @ Licensed under MIT.
+ *
+ ***********************************************************************************************************/
+
 (function ($) {
     String.prototype.toDecimal = function () {
         var split = this.split('.');
@@ -5,16 +15,16 @@
     };
 
     String.prototype.toFormulaString = function (shift) {
-        var keyCode = this;
+        var keyCode = parseInt(this);
         if (keyCode == 106) {
             return 'x';
-        } else if (((keyCode == 187 || keyCode == 61) && shift == true) || keyCode == 107) {
+        } else if (((keyCode === 187 || keyCode === 61) && shift === true) || keyCode === 107) {
             return '+';
-        } else if (keyCode == 189 || keyCode == 173 || keyCode == 109) {
+        } else if (keyCode === 189 || keyCode === 173 || keyCode === 109) {
             return '-';
-        } else if (keyCode == 190 || keyCode == 110) {
+        } else if (keyCode === 190 || keyCode === 110) {
             return '.';
-        } else if (keyCode == 191 || keyCode == 111) {
+        } else if (keyCode === 191 || keyCode === 111) {
             return '/';
         } else {
             return String.fromCharCode(keyCode);
@@ -113,8 +123,8 @@
 
                         _this.container.children(':not(".' + _this.opt.id + '-cursor")').filter(':gt("' + start + '")').filter(':lt("' + (end - start) + '")')
 						.add(_this.container.children(':not(".' + _this.opt.id + '-cursor")').eq(start)).each(function () {
-						    var $this = $(this);
-						    $this.appendTo($drag);
+							var $this = $(this);
+							$this.appendTo($drag);
 						});
 
                         if (startIndex > endIndex) {
@@ -137,6 +147,8 @@
 
                 _this.text.unbind('keydown.' + this.opt.id + 'Handler').bind('keydown.' + this.opt.id + 'Handler', function (event) {
                     event.preventDefault();
+                    var $drag, $prev, $next, $item, $dragItem, text, parentPadding;
+
                     if (_this.cursor.length > 0) {
                         var keyCode = event.which;
                         if (keyCode == 116 || (keyCode == 82 && event.ctrlKey)) {
@@ -146,15 +158,15 @@
                         } else if (keyCode >= 96 && keyCode <= 105) {
                             keyCode -= 48;
                         } else if (keyCode == 8) {
-                            var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                            $drag = _this.container.find('.' + _this.opt.id + '-drag');
                             if ($drag.length > 0) {
                                 _this.cursor.insertBefore($drag);
                                 $drag.remove();
                             } else {
                                 if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-                                    var $prev = _this.cursor.prev();
+                                    $prev = _this.cursor.prev();
                                     if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
-                                        var text = $prev.text();
+                                        text = $prev.text();
                                         _this.setDecimal($prev, text.substring(0, text.length - 1).toDecimal());
                                     } else {
                                         $prev.remove();
@@ -164,15 +176,15 @@
                             _this.syntaxCheck();
                             return false;
                         } else if (keyCode == 46) {
-                            var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                            $drag = _this.container.find('.' + _this.opt.id + '-drag');
                             if ($drag.length > 0) {
                                 _this.cursor.insertAfter($drag);
                                 $drag.remove();
                             } else {
                                 if (_this.cursor.length > 0 && _this.cursor.next().length > 0) {
-                                    var $next = _this.cursor.next();
+                                    $next = _this.cursor.next();
                                     if ($next.hasClass(_this.opt.id + '-unit') && $next.text().length > 1) {
-                                        var text = $next.text();
+                                        text = $next.text();
                                         _this.setDecimal($next, text.substring(1, text.length).toDecimal());
                                     } else {
                                         $next.remove();
@@ -185,12 +197,12 @@
                             if (keyCode == 37) {
                                 if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
                                     if (event.shiftKey) {
-                                        var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
                                         if ($drag.length < 1) {
                                             $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                             $drag.insertAfter(_this.cursor);
                                         } else {
-                                            if ($drag.data('active') == false) {
+                                            if ($drag.data('active') === false) {
                                                 _this.destroyDrag();
                                                 $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                                 $drag.insertAfter(_this.cursor);
@@ -198,9 +210,9 @@
                                         }
                                         $drag.data('active', true);
 
-                                        var $prev = _this.cursor.prev();
+                                        $prev = _this.cursor.prev();
                                         if ($prev.hasClass(_this.opt.id + '-drag')) {
-                                            var $dragItem = $drag.children('*');
+                                            $dragItem = $drag.children('*');
                                             if ($dragItem.length < 1) {
                                                 $drag.remove();
                                             } else {
@@ -219,12 +231,12 @@
                                 }
                             } else if (keyCode == 38) {
                                 if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
-                                    var parentPadding = {
+                                    parentPadding = {
                                         x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
                                         y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
-                                    }
+                                    };
 
-                                    var $item = _this.cursor.prev();
+                                    $item = _this.cursor.prev();
                                     if ($item.length < 0) {
                                         $item = _this.cursor.next();
                                     }
@@ -235,15 +247,15 @@
                                 } else {
 
                                 }
-                            } else if (keyCode == 39) {
+                            } else if (keyCode === 39) {
                                 if (_this.cursor.length > 0 && _this.cursor.next().length > 0) {
                                     if (event.shiftKey) {
-                                        var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
                                         if ($drag.length < 1) {
                                             $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                             $drag.insertBefore(_this.cursor);
                                         } else {
-                                            if ($drag.data('active') == false) {
+                                            if ($drag.data('active') === false) {
                                                 _this.destroyDrag();
                                                 $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                                 $drag.insertBefore(_this.cursor);
@@ -251,9 +263,9 @@
                                         }
                                         $drag.data('active', true);
 
-                                        var $next = _this.cursor.next();
+                                        $next = _this.cursor.next();
                                         if ($next.hasClass(_this.opt.id + '-drag')) {
-                                            var $dragItem = $drag.children('*');
+                                            $dragItem = $drag.children('*');
                                             if ($dragItem.length < 1) {
                                                 $drag.remove();
                                             } else {
@@ -272,12 +284,12 @@
                                 }
                             } else if (keyCode == 40) {
                                 if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
-                                    var parentPadding = {
+                                    parentPadding = {
                                         x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
                                         y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
-                                    }
+                                    };
 
-                                    var $item = _this.cursor.prev();
+                                    $item = _this.cursor.prev();
                                     if ($item.length < 0) {
                                         $item = _this.cursor.next();
                                     }
@@ -294,12 +306,12 @@
                             if (keyCode == 35) {
                                 if (_this.cursor.length > 0 && _this.container.children(':last').length > 0) {
                                     if (event.shiftKey) {
-                                        var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
                                         if ($drag.length < 1) {
                                             $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                             $drag.insertBefore(_this.cursor);
                                         } else {
-                                            if ($drag.data('active') == false) {
+                                            if ($drag.data('active') === false) {
                                                 _this.destroyDrag();
                                                 $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                                 $drag.insertBefore(_this.cursor);
@@ -315,12 +327,12 @@
                             } else if (keyCode == 36) {
                                 if (_this.cursor.length > 0 && _this.container.children(':first').length > 0) {
                                     if (event.shiftKey) {
-                                        var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
                                         if ($drag.length < 1) {
                                             $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                             $drag.insertAfter(_this.cursor);
                                         } else {
-                                            if ($drag.data('active') == false) {
+                                            if ($drag.data('active') === false) {
                                                 _this.destroyDrag();
                                                 $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
                                                 $drag.insertAfter(_this.cursor);
@@ -353,7 +365,6 @@
                 var _this = this;
                 var formula = _this.getFormula();
                 if (typeof formula !== 'undefined') {
-                    console.log(formula);
                     var result = new formulaComposer(formula);
                     if (result.result) {
                         _this.alert.text('Working good.').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
@@ -394,6 +405,8 @@
             this.click = function (pos) {
                 var _this = this;
                 var $cursor = $('<div class="' + this.opt.id + '-cursor"></div>');
+                var check = null, idx = null;
+
                 this.container.find('.' + this.opt.id + '-cursor').remove();
                 $cursor.appendTo(this.container);
                 this.cursor = $cursor;
@@ -401,12 +414,12 @@
                 var parentPos = {
                     x: _this.container.offset().left,
                     y: _this.container.offset().top
-                }
+                };
 
                 var parentPadding = {
                     x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
                     y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
-                }
+                };
 
                 var checkArea = [];
 
@@ -420,10 +433,10 @@
                 });
 
 
-                var $pointer = null
+                var $pointer = null;
                 var maxY = 0, maxDiff = 10000;
-                for (var idx in checkArea) {
-                    var check = checkArea[idx];
+                for (idx in checkArea) {
+                    check = checkArea[idx];
                     if (check.y <= pos.y) {
                         if (check.y >= maxY * 0.5 && check.x <= pos.x) {
                             if (check.y >= maxY) {
@@ -437,10 +450,11 @@
                     }
                 }
 
-                if ($pointer == null) {
-                    maxY = 0, maxDiff = 10000;
-                    for (var idx in checkArea) {
-                        var check = checkArea[idx];
+                if ($pointer === null) {
+                    maxY = 0;
+                    maxDiff = 10000;
+                    for (idx in checkArea) {
+                        check = checkArea[idx];
                         if (check.y >= maxY * 0.5 && check.x <= pos.x) {
                             if (check.y >= maxY) {
                                 maxY = check.y;
@@ -453,7 +467,7 @@
                     }
                 }
 
-                if (checkArea.length > 0 && $pointer != null && maxY + checkArea[0].e.outerHeight() >= pos.y) {
+                if (checkArea.length > 0 && $pointer !== null && maxY + checkArea[0].e.outerHeight() >= pos.y) {
                     _this.cursor.insertAfter($pointer);
                 } else {
                     if (checkArea.length > 0 && pos.x > checkArea[0].x) {
@@ -499,7 +513,7 @@
                 };
 
                 if (shift && (key >= 0 && key <= 9)) {
-                    key = convert[key]
+                    key = convert[key];
 
                 }
                 key = $.trim(key);
@@ -527,7 +541,7 @@
                             $unit.remove();
                         }
 
-                    } else if (key != '') {
+                    } else if (key !== '') {
                         var $operator = $('<div class="' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
                         this.cursor.before($operator);
                         if (key == '(' || key == ')') {
@@ -539,7 +553,7 @@
 
             this.setDecimal = function (e, decimal) {
                 var _this = this;
-                if (decimal != '') {
+                if (decimal !== '') {
                     e.empty();
                     var split = decimal.split('.');
                     var $prefix = $('<span class="' + _this.opt.id + '-prefix ' + _this.opt.id + '-decimal-highlight">' + split[0] + '</span>');
@@ -553,8 +567,11 @@
 
             this.getFormula = function (callback) {
                 var _this = this;
+                var data = null;
+                var parsedData = null;
+
                 if (typeof _this.opt.extract.filter === 'function') {
-                    var data = [];
+                    data = [];
                     _this.container.children('*:not(".' + _this.opt.id + '-cursor, .' + _this.opt.id + '-drag")').each(function () {
                         var $this = $(this);
                         var item = {};
@@ -583,10 +600,10 @@
                         }
                         data.push(item);
                     });
-                    var parsedData = new formulaComposer(data.join(',').split(','));
+                    parsedData = new formulaComposer(data.join(',').split(','));
                     _this.opt.extract.filter.call(_this, parsedData.result ? parsedData.data : parsedData.msg);
                 } else {
-                    var data = '';
+                    data = '';
                     _this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function () {
                         var $this = $(this);
                         var value = ($this.data('value') ? $this.data('value') : $this.text());
@@ -622,7 +639,7 @@
                 }
                 e.insertBefore(_this.cursor);
                 _this.syntaxCheck();
-            }
+            };
 
             if (_args.length < 1 || typeof _args[0] === 'object') {
                 this.alert = null;
@@ -642,190 +659,220 @@
 
 /************************************************************************************************************
  *
+ * @ Version 1.0.3
  * @ Formula Parser
  * @ Date 03. 17. 2016
  * @ Author PIGNOSE
+ * @ Licensed under MIT.
  *
  ***********************************************************************************************************/
+
 function formulaComposer(formula) {
-    this.formula = formula;
-    this.primaryPriority = ['*', 'x', '/', '%'];
-    this.secondaryPriority = ['+', '-', '&'];
-    this.permittedOperators = ['+', '-', '*', 'x', '/'];
-    this.permittedLetters = ['(', ')'].concat(this.permittedOperators);
-    return this.init();
+	this.formula = formula;
+	this.primaryPriority = ['*', 'x', '/', '%'];
+	this.secondaryPriority = ['+', '-', '&'];
+	this.permittedOperators = ['+', '-', '*', 'x', '/'];
+	this.permittedLetters = ['(', ')'].concat(this.permittedOperators);
+	return this.init();
 }
 
-formulaComposer.prototype.inArray = function (i, a) {
-    for (var idx in a) if (a[idx] == i) return idx;
-    return -1;
-}
+formulaComposer.prototype.inArray = function(i, a) {
+	for(var idx in a) if(a[idx] == i) return idx;
+	return -1;
+};
 
-formulaComposer.prototype.isOperand = function (i) {
-    return typeof i === 'object' || this.isNumeric(i);
-}
+formulaComposer.prototype.isOperand = function(i) {
+	return typeof i === 'object' || this.isNumeric(i);
+};
 
-formulaComposer.prototype.isNumeric = function (n) {
-    return /\d+(\.\d*)?|\.\d+/.test(n);
-}
+formulaComposer.prototype.isNumeric = function(n) {
+	return (/\d+(\.\d*)?|\.\d+/).test(n);
+};
 
-formulaComposer.prototype.stringToArray = function (s) {
-    var data = [];
-    var splited = s.split('');
-    for (var idx in splited) {
-        var item = splited[idx];
-        if (this.inArray(item, this.permittedLetters) == -1 && !this.isOperand(item)) {
-            continue;
-        } else {
-            if (idx > 0 && this.isOperand(item) && this.isOperand(data[data.length - 1])) {
-                data[data.length - 1] += item.toString();
-            } else {
-                data.push(item);
-            }
-        }
-    }
-    return data;
-}
+formulaComposer.prototype.stringToArray = function(s) {
+	var data = [];
+	var splited = s.split('');
+	for(var idx in splited) {
+		var item = splited[idx];
+		if(this.inArray(item, this.permittedLetters) == -1 && !this.isOperand(item)) {
+			continue;
+		} else {
+			if(idx > 0 && this.isOperand(item) && this.isOperand(data[data.length - 1])) {
+				data[data.length - 1] += item.toString();
+			} else {
+				data.push(item);
+			}
+		}
+	}
+	return data;
+};
 
-formulaComposer.prototype.layerParser = function (data, depth) {
-    for (var idx = 0; idx < data.length; idx++) {
-        var item = data[idx];
-        if (item == '(') {
-            var innerDepth = 1;
-            for (var key = idx + 1; key < data.length; key++) {
-                var sub = data[key];
-                if (sub == '(') {
-                    innerDepth++;
-                } else if (sub == ')') {
-                    innerDepth--;
-                    if (innerDepth == 0) {
-                        var _data = [];
-                        for (var j = idx + 1; j < key; j++) {
-                            _data.push(data[j]);
-                        }
-                        var result = this.search(_data, depth + 1);
-                        if (result.result == false) {
-                            return result;
-                        } else {
-                            data.splice(idx, key - idx + 1, result.data)
-                        }
-                        idx--;
-                        break;
-                    }
-                }
+formulaComposer.prototype.layerParser = function(data, depth) {
+	var lastDepth = null;
+	for(var idx = 0; idx < data.length; idx++) {
+		var item = data[idx];
+		if(item == '(') {
+			var innerDepth = 1;
+			for(var key = idx + 1; key < data.length; key++) {
+				var sub = data[key];
+				if(sub == '(') {
+					innerDepth++;
+				} else if(sub == ')') {
+					innerDepth--;
+					if(innerDepth === 0) {
+						var _data = [];
+						for(var j = idx + 1; j < key; j++) {
+							_data.push(data[j]);
+						}
+						var result = this.search(_data, depth + 1);
+						if(result.result === false) {
+							return result;
+						} else {
+							data.splice(idx, key - idx + 1, result.data);
+							lastDepth = result.depth;
+						}
+						idx--;
+						break;
+					}
+				} 
 
-                if (data.length == key + 1) {
-                    return {
-                        result: false,
-                        col: key,
-                        stack: 'layerParser',
-                        msg: "The bracket isn't closed"
-                    };
-                }
-            }
-        } else if (item == ')') {
-            return {
-                result: false,
-                col: idx,
-                stack: 'layerParser',
-                msg: "The bracket isn't opened"
-            };
-        }
-    }
-    return {
-        result: true
-    };
-}
+				if(data.length == key + 1) {
+					return {
+						result: false,
+						col: key,
+						stack: 'layerParser',
+						msg: "The bracket isn't closed"
+					};
+				}
+			}
+		} else if(item == ')') {
+			return {
+				result: false,
+				col: idx,
+				stack: 'layerParser',
+				msg: "The bracket isn't opened"
+			};
+		}
+	}
+	return {
+		result: true,
+		depth: lastDepth || depth
+	};
+};
 
-formulaComposer.prototype.syntaxParser = function (data, depth, priority) {
-    if (data.length < 3) {
-        return {
-            result: false,
-            col: 0,
-            stack: 'syntaxParser',
-            msg: 'Formula must has characters than 3 times'
-        }
-    }
-    for (var idx = 1; idx < data.length - 1; idx++) {
-        var item = data[idx];
-        if (this.inArray(item, this.permittedOperators) == -1 && !this.isOperand(item)) {
-            return {
-                result: false,
-                col: idx,
-                stack: 'syntaxParser',
-                msg: "'" + item + "' mark is not supported."
-            }
-        }
-        if (this.inArray(item, priority) != -1) {
-            if (!this.isOperand(data[idx - 1])) {
-                return {
-                    result: false,
-                    col: idx - 1,
-                    stack: 'syntaxParser'
-                };
-            }
+formulaComposer.prototype.syntaxParser = function(data, depth, priority, lastDepth) {
+	if((data.length < 3 && lastDepth <= 1) || (lastDepth == 1 && data.length < 1)) {
+		console.log(lastDepth, data.length);
+		return {
+			result: false,
+			col: 0,
+			stack: 'syntaxParser',
+			msg: 'Formula must has characters than 3 times'
+		};
+	}
 
-            if (!this.isOperand(data[idx + 1])) {
-                return {
-                    result: false,
-                    col: idx + 1,
-                    stack: 'syntaxParser'
-                };
-            }
+	if(typeof data.length !== 'undefined') {
+		if(data.length > 1) {
+			for(var idx = 1; idx < data.length; idx++) {
+				var item = data[idx];
+				if(this.inArray(item, this.permittedOperators) == -1 && !this.isOperand(item)) {
+					return {
+						result: false,
+						col: idx,
+						stack: 'syntaxParser',
+						msg: "'" + item + "' mark is not supported."
+					};
+				}
+				if(this.inArray(item, priority) != -1) {
+					if(!this.isOperand(data[idx - 1])) {
+						return {
+							result: false,
+							col: idx - 1,
+							stack: 'syntaxParser',
+							msg: 'Left side operand is not valid.'
+						};
+					}
 
-            var o = {
-                operator: item,
-                operand1: data[idx - 1],
-                operand2: data[idx + 1]
-            };
-            data.splice(idx - 1, 3, o);
-            if (data.length == 1 && typeof data[0] === 'object') {
-                data = data[0];
-            }
-            idx--;
-        } else {
-        }
-    }
-    return {
-        result: true,
-        data: data
-    };
-}
+					if(!this.isOperand(data[idx + 1])) {
+						return {
+							result: false,
+							col: idx + 1,
+							stack: 'syntaxParser',
+							msg: 'Right side operand is not valid.'
+						};
+					}
 
-formulaComposer.prototype.search = function (data, depth) {
-    if (typeof depth == 'undefined') {
-        depth = 1;
-    }
+					var o = {
+						operator: item,
+						operand1: data[idx - 1],
+						operand2: data[idx + 1]
+					};
+					data.splice(idx - 1, 3, o);
+					idx--;
+				} else {
+				}
+			}
+		} else {
+			if(lastDepth == 1) {
+				return {
+					result: true,
+					data: {
+						operator: '=',
+						operand1: data[0]
+					}
+				};
+			}
+		}
+	}
+	
+	if(data.length == 1 && typeof data[0] === 'object') {
+		data = data[0];
+	}
 
-    if (typeof data === 'string') {
-        data = this.stringToArray(data);
-    }
+	return {
+		result: true,
+		data: data
+	};
+};
 
-    var result = this.layerParser(data, depth);
-    if (result.result == false) {
-        return result;
-    }
+formulaComposer.prototype.search = function(data, depth) {
+	if(typeof depth == 'undefined') {
+		depth = 1;
+	}
 
-    var result = this.syntaxParser(data, depth, this.primaryPriority);
-    if (result.result == false) {
-        return result;
-    } else {
-        data = result.data;
-    }
+	if(typeof data === 'string') {
+		data = this.stringToArray(data);
+	}
 
-    var result = this.syntaxParser(data, depth, this.secondaryPriority);
-    if (result.result == false) {
-        return result;
-    } else {
-        data = result.data;
-    }
+	var result = null;
 
-    return {
-        result: true,
-        data: data
-    }
-}
+	result = this.layerParser(data, depth);
+	var lastDepth = result.depth;
+	if(result.result === false) {
+		return result;
+	}
 
-formulaComposer.prototype.init = function () {
-    return this.search(this.formula);
-}
+	result = this.syntaxParser(data, depth, this.primaryPriority, lastDepth);
+	if(result.result === false) {
+		return result;
+	} else {
+		data = result.data;
+	}
+
+	result = this.syntaxParser(data, depth, this.secondaryPriority, lastDepth);
+	if(result.result === false) {
+		return result;
+	} else {
+		data = result.data;
+	}
+
+	return {
+		result: true,
+		data: data,
+		depth: lastDepth
+	};
+};
+
+formulaComposer.prototype.init = function() {
+	return this.search(this.formula);
+};
