@@ -24,17 +24,17 @@ So first of all, you need to import formula css, js file (check src or dist fold
 And try this snippet in your html file.
 
 ```html
-  <head>
-    ...
-    <script type="text/javascript">
-      $(function() {
-        $('.formula').formula();
-      });
-    </script>
-  </head>
-  <body>
-    <div class="formula"></div>
-  </body>
+<head>
+...
+	<script type="text/javascript">
+		$(function() {
+			$('.formula').formula();
+		});
+	</script>
+</head>
+<body>
+	<div class="formula"></div>
+</body>
 ```
 
 
