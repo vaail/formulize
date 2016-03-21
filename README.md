@@ -25,7 +25,7 @@ And try this snippet in your html file.
 
 ```html
 <head>
-...
+	...
 	<script type="text/javascript">
 		$(function() {
 			$('.formula').formula();
@@ -49,3 +49,9 @@ This plugin is made for a purpose of the below exhibition.
 ### Library
 
 This project be related with https://github.com/KennethanCeyer/FormulaParser (built-in)
+
+### Question
+
+If you fine something problem of this plugin, or you have some question.
+
+Plese send a message on gitter. (gitter url is on the top of the menual)
