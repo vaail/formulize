@@ -1,6 +1,8 @@
 # Formula
 Javscript WYSWYG formula builder.
 
+[![npm version](https://badge.fury.io/js/jquery-formula.svg)](https://badge.fury.io/js/jquery-formula)
+
 ----
 
 ### Getting start
