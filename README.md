@@ -41,13 +41,13 @@ And try this snippet in your html file.
 
 ----
 
-### How, Where to use it
+### Notes
 
 This plugin is made for a purpose of the below exhibition.
 
 1. The textarea can be included HTML markup text which rendered.
-2. It have to be supported the validation check about formula express.
-3. The numbers or other operators in formula, it's ui must be cool and easy.
+2. It must be supported the validation check about formula expression.
+3. Numbers or other operators in a formula, its ui must be cool and easy.
 
 ----
 
