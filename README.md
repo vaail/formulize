@@ -91,7 +91,7 @@ This plugin is made for a purpose of the below exhibition.
 
 ### Library
 
-This project be related with https://github.com/KennethanCeyer/FormulaParser (built-in)
+This project is related with https://github.com/KennethanCeyer/FormulaParser (built-in)
 
 ----
 
