@@ -30,7 +30,22 @@ And try this snippet in your html file.
 	...
 	<script type="text/javascript">
 		$(function() {
-			$('.formula').formula();
+			var $formula = $('.formula').formula();
+			$formula.getFormula(); // Get formula as a string type.
+			
+			//=====================================
+			
+			var $formulaCustom = $('.formula-custom').formula({
+				filter: function(data) {
+				// filter option be called when getFormula() be called.
+				// this option make you can customize the formula data.
+				// data parameter on this function are about formula (object type).
+					return data;
+				}
+			});
+			
+			// if you are using filter option, getFormula() will return data as a object type.
+			console.log($formulaCustom.getFormula());
 		});
 	</script>
 </head>
