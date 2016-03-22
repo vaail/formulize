@@ -75,6 +75,7 @@ Check the sample below.
 </head>
 <body>
 	<div class="formula"></div>
+	<div class="formula-custom"></div>
 </body>
 ```
 
