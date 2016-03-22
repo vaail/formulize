@@ -7,7 +7,7 @@ Javscript WYSWYG formula builder.
 
 ### Getting started
 
-his plugin helps you to make formulas.
+This plugin helps you to make formulas.
 
 It's a stable version on IE8 higher and any most browsers.
 
