@@ -39,6 +39,8 @@ And try this snippet in your html file.
 </body>
 ```
 
+----
+
 #### Advanced usage
 
 If you are want a result from the formula.
