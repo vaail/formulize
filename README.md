@@ -7,7 +7,7 @@ Javscript WYSWYG formula builder.
 
 ### Getting start
 
-This plugin help you can make formulas.
+his plugin helps you to make formulas.
 
 It's a stable version on IE8 higher and any most browsers.
 
@@ -23,7 +23,7 @@ This plugin has a dependency on jQuery library.
 
 So first of all, you need to import formula css, js file (check src or dist folder in this repository) after jQuery imported.
 
-And try this snippet in your html file.
+And try to write this snippet in your html file.
 
 ```html
 <head>
@@ -43,9 +43,7 @@ And try this snippet in your html file.
 
 #### Advanced usage
 
-If you are want a result from the formula.
-
-You can call `getFormula()` method.
+If you want a result from the formula, you can call getFormula() method.
 
 Check the sample below.
 
@@ -61,14 +59,14 @@ Check the sample below.
 			
 			var $formulaCustom = $('.formula-custom').formula({
 				filter: function(data) {
-				// filter option be called when getFormula() be called.
-				// this option make you can customize the formula data.
+				// filter option is called when getFormula() method is called.
+				// this option helps you to customize the formula data.
 				// data parameter on this function are about formula (object type).
 					return data;
 				}
 			});
 			
-			// if you are using filter option, getFormula() will return data as a object type.
+			// if filter option is used, getFormula() will return data as an object type. 
 			console.log($formulaCustom.getFormula());
 		});
 	</script>
