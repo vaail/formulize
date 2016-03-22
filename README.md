@@ -81,11 +81,11 @@ Check the sample below.
 
 ### Notes
 
-This plugin is made for a purpose of the below exhibition.
+The purpose of this plugin is as follows. 
 
-1. The textarea can be included HTML markup text which rendered.
-2. It must be supported the validation check about formula expression.
-3. Numbers or other operators in a formula, its ui must be cool and easy.
+1. The textarea can be edited with HTML markup. 
+2. It must support the validation check of formula expressions.
+3. The UI of numbers or other operators in formula should be cool and easy.
 
 ----
 
