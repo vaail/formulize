@@ -5,7 +5,7 @@ Javscript WYSWYG formula builder.
 
 ----
 
-### Getting start
+### Getting started
 
 his plugin helps you to make formulas.
 
