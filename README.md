@@ -31,6 +31,28 @@ And try this snippet in your html file.
 	<script type="text/javascript">
 		$(function() {
 			var $formula = $('.formula').formula();
+		});
+	</script>
+</head>
+<body>
+	<div class="formula"></div>
+</body>
+```
+
+#### Advanced usage
+
+If you are want a result from the formula.
+
+You can call `getFormula()` method.
+
+Check the sample below.
+
+```html
+<head>
+	...
+	<script type="text/javascript">
+		$(function() {
+			var $formula = $('.formula').formula();
 			$formula.getFormula(); // Get formula as a string type.
 			
 			//=====================================
