@@ -61,4 +61,4 @@ This project be related with https://github.com/KennethanCeyer/FormulaParser (bu
 
 If you are found something problem of this plugin, or you have some question.
 
-Plese send a message on gitter. (gitter url is on the top of the menual)
+Please send a message on gitter. (gitter url is on the top of the menual)
