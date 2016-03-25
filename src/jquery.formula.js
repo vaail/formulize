@@ -1,17 +1,17 @@
 /************************************************************************************************************
  *
- * @ Version 1.0.4
+ * @ Version 1.0.6
  * @ Formula Generator
- * @ Date 03. 17. 2016
+ * @ Date 03. 25. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
  ***********************************************************************************************************/
 
 (function ($) {
-    String.prototype.toDecimal = function () {
+    String.prototype.toFormulaDecimal = function () {
         var split = this.split('.');
-        return split[0].replace(/[^\d.]+/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1] : '');
+        return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');
     };
 
     String.prototype.toFormulaString = function (shift) {
@@ -122,10 +122,10 @@
                         }
 
                         _this.container.children(':not(".' + _this.opt.id + '-cursor")').filter(':gt("' + start + '")').filter(':lt("' + (end - start) + '")')
-						.add(_this.container.children(':not(".' + _this.opt.id + '-cursor")').eq(start)).each(function () {
-							var $this = $(this);
-							$this.appendTo($drag);
-						});
+                        .add(_this.container.children(':not(".' + _this.opt.id + '-cursor")').eq(start)).each(function () {
+                            var $this = $(this);
+                            $this.appendTo($drag);
+                        });
 
                         if (startIndex > endIndex) {
                             $drag.insertAfter(_this.cursor);
@@ -167,7 +167,7 @@
                                     $prev = _this.cursor.prev();
                                     if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
                                         text = $prev.text();
-                                        _this.setDecimal($prev, text.substring(0, text.length - 1).toDecimal());
+                                        _this.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
                                     } else {
                                         $prev.remove();
                                     }
@@ -185,7 +185,7 @@
                                     $next = _this.cursor.next();
                                     if ($next.hasClass(_this.opt.id + '-unit') && $next.text().length > 1) {
                                         text = $next.text();
-                                        _this.setDecimal($next, text.substring(1, text.length).toDecimal());
+                                        _this.setDecimal($next, text.substring(1, text.length).toFormulaDecimal());
                                     } else {
                                         $next.remove();
                                     }
@@ -514,29 +514,40 @@
 
                 if (shift && (key >= 0 && key <= 9)) {
                     key = convert[key];
-
                 }
                 key = $.trim(key);
 
                 if ((key >= 0 && key <= 9) || $.inArray(key.toLowerCase(), _this.permitedKey) != -1) {
 
                     if ((key >= 0 && key <= 9) || key == '.') {
-                        var $unit = $('<div class="formula-unit">' + key + '</div>');
+                        var $unit = $('<div class="' + _this.opt.id + '-unit">' + key + '</div>');
                         var $item = null;
                         var decimal = '', merge = false;
                         this.cursor.before($unit);
 
-                        if ($unit.prev().length > 0 && $unit.prev().hasClass('formula-unit')) {
+                        var $prev = $unit.prev();
+                        var $next = $unit.next();
+
+                        if ($prev.length > 0 && $prev.hasClass(_this.opt.id + '-cursor')) {
+                            $prev = $prev.prev();
+                        }
+
+                        if ($next.length > 0 && $next.hasClass(_this.opt.id + '-cursor')) {
+                            $next = $next.next();
+                        }
+
+                        if ($prev.length > 0 && $prev.hasClass(_this.opt.id + '-unit')) {
                             merge = true;
-                            $item = $unit.prev();
-                        } else if ($unit.next().length > 0 && $unit.next().hasClass('formula-unit')) {
+                            $item = $prev;
+                            $item.append($unit[0].innerHTML);
+                        } else if ($next.length > 0 && $next.hasClass(_this.opt.id + '-unit')) {
                             merge = true;
-                            $item = $unit.next();
+                            $item = $next;
+                            $item.prepend($unit[0].innerHTML);
                         }
 
                         if (merge === true) {
-                            $item.append($unit[0].innerHTML);
-                            decimal = $item.text().toDecimal();
+                            decimal = $item.text().toFormulaDecimal();
                             _this.setDecimal($item, decimal);
                             $unit.remove();
                         }
@@ -578,7 +589,7 @@
                         item.value = ($this.data('value') ? $this.data('value') : $this.text());
                         if ($this.hasClass(_this.opt.id + '-unit')) {
                             item.type = 'unit';
-                            item.value = item.value.toDecimal();
+                            item.value = item.value.toFormulaDecimal();
                         } else if ($this.hasClass(_this.opt.id + '-operator') && item.value == 'x') {
                             item.type = 'operator';
                             item.value = '*';
@@ -608,7 +619,7 @@
                         var $this = $(this);
                         var value = ($this.data('value') ? $this.data('value') : $this.text());
                         if ($this.hasClass(_this.opt.id + '-unit')) {
-                            value = value.toDecimal();
+                            value = value.toFormulaDecimal();
                         } else if ($this.hasClass(_this.opt.id + '-operator') && value == 'x') {
                             value = '*';
                         } else if ($this.hasClass(_this.opt.id + '-item')) {
@@ -627,7 +638,7 @@
                 }
 
                 if (typeof callback === 'function') {
-                    callback.call(this, parsedData? parsedData:data);
+                    callback.call(this, parsedData ? parsedData : data);
                 }
                 return data;
             };
@@ -668,231 +679,231 @@
  ***********************************************************************************************************/
 
 function formulaComposer(formula) {
-	this.formula = formula;
-	this.primaryPriority = ['*', 'x', '/', '%'];
-	this.secondaryPriority = ['+', '-', '&'];
-	this.permittedOperators = ['+', '-', '*', 'x', '/'];
-	this.permittedLetters = ['(', ')'].concat(this.permittedOperators);
-	return this.init();
+    this.formula = formula;
+    this.primaryPriority = ['*', 'x', '/', '%'];
+    this.secondaryPriority = ['+', '-', '&'];
+    this.permittedOperators = ['+', '-', '*', 'x', '/'];
+    this.permittedLetters = ['(', ')'].concat(this.permittedOperators);
+    return this.init();
 }
 
-formulaComposer.prototype.inArray = function(i, a) {
-	for(var idx in a) if(a[idx] == i) return idx;
-	return -1;
+formulaComposer.prototype.inArray = function (i, a) {
+    for (var idx in a) if (a[idx] == i) return idx;
+    return -1;
 };
 
-formulaComposer.prototype.isOperand = function(i) {
-	return typeof i === 'object' || this.isNumeric(i);
+formulaComposer.prototype.isOperand = function (i) {
+    return typeof i === 'object' || this.isNumeric(i);
 };
 
-formulaComposer.prototype.isNumeric = function(n) {
-	return (/\d+(\.\d*)?|\.\d+/).test(n);
+formulaComposer.prototype.isNumeric = function (n) {
+    return (/\d+(\.\d*)?|\.\d+/).test(n);
 };
 
-formulaComposer.prototype.stringToArray = function(s) {
-	var data = [];
-	var splited = s.split('');
-	for(var idx in splited) {
-		var item = splited[idx];
-		if(this.inArray(item, this.permittedLetters) == -1 && !this.isOperand(item)) {
-			continue;
-		} else {
-			if(idx > 0 && this.isOperand(item) && this.isOperand(data[data.length - 1])) {
-				data[data.length - 1] += item.toString();
-			} else {
-				data.push(item);
-			}
-		}
-	}
-	return data;
+formulaComposer.prototype.stringToArray = function (s) {
+    var data = [];
+    var splited = s.split('');
+    for (var idx in splited) {
+        var item = splited[idx];
+        if (this.inArray(item, this.permittedLetters) == -1 && !this.isOperand(item)) {
+            continue;
+        } else {
+            if (idx > 0 && this.isOperand(item) && this.isOperand(data[data.length - 1])) {
+                data[data.length - 1] += item.toString();
+            } else {
+                data.push(item);
+            }
+        }
+    }
+    return data;
 };
 
-formulaComposer.prototype.layerParser = function(data, depth) {
-	var lastDepth = null;
-	for(var idx = 0; idx < data.length; idx++) {
-		var item = data[idx];
-		if(item == '(') {
-			var innerDepth = 1;
-			for(var key = idx + 1; key < data.length; key++) {
-				var sub = data[key];
-				if(sub == '(') {
-					innerDepth++;
-				} else if(sub == ')') {
-					innerDepth--;
-					if(innerDepth === 0) {
-						var _data = [];
-						for(var j = idx + 1; j < key; j++) {
-							_data.push(data[j]);
-						}
-						var result = this.search(_data, depth + 1);
-						if(result.result === false) {
-							return result;
-						} else {
-							data.splice(idx, key - idx + 1, result.data);
-							lastDepth = result.depth;
-						}
-						idx--;
-						break;
-					}
-				} 
+formulaComposer.prototype.layerParser = function (data, depth) {
+    var lastDepth = null;
+    for (var idx = 0; idx < data.length; idx++) {
+        var item = data[idx];
+        if (item == '(') {
+            var innerDepth = 1;
+            for (var key = idx + 1; key < data.length; key++) {
+                var sub = data[key];
+                if (sub == '(') {
+                    innerDepth++;
+                } else if (sub == ')') {
+                    innerDepth--;
+                    if (innerDepth === 0) {
+                        var _data = [];
+                        for (var j = idx + 1; j < key; j++) {
+                            _data.push(data[j]);
+                        }
+                        var result = this.search(_data, depth + 1);
+                        if (result.result === false) {
+                            return result;
+                        } else {
+                            data.splice(idx, key - idx + 1, result.data);
+                            lastDepth = result.depth;
+                        }
+                        idx--;
+                        break;
+                    }
+                }
 
-				if(data.length == key + 1) {
-					return {
-						result: false,
-						col: key,
-						stack: 'layerParser',
-						msg: "The bracket isn't closed"
-					};
-				}
-			}
-		} else if(item == ')') {
-			return {
-				result: false,
-				col: idx,
-				stack: 'layerParser',
-				msg: "The bracket isn't opened"
-			};
-		}
-	}
-	return {
-		result: true,
-		depth: lastDepth || depth
-	};
+                if (data.length == key + 1) {
+                    return {
+                        result: false,
+                        col: key,
+                        stack: 'layerParser',
+                        msg: "The bracket isn't closed"
+                    };
+                }
+            }
+        } else if (item == ')') {
+            return {
+                result: false,
+                col: idx,
+                stack: 'layerParser',
+                msg: "The bracket isn't opened"
+            };
+        }
+    }
+    return {
+        result: true,
+        depth: lastDepth || depth
+    };
 };
 
-formulaComposer.prototype.syntaxParser = function(data, depth, priority, lastDepth) {
-	if((data.length < 3 && lastDepth <= 1) || (lastDepth == 1 && data.length < 1)) {
-		return {
-			result: false,
-			col: 0,
-			stack: 'syntaxParser',
-			msg: 'Formula must has characters than 3 times'
-		};
-	}
+formulaComposer.prototype.syntaxParser = function (data, depth, priority, lastDepth) {
+    if ((data.length < 3 && lastDepth <= 1) || (lastDepth == 1 && data.length < 1)) {
+        return {
+            result: false,
+            col: 0,
+            stack: 'syntaxParser',
+            msg: 'Formula must has characters than 3 times'
+        };
+    }
 
-	if(typeof data.length !== 'undefined') {
-		if(data.length > 1) {
-			for(var idx = 0; idx < data.length; idx++) {
-				var item = data[idx];
-				if(this.inArray(item, this.permittedOperators) == -1 && !this.isOperand(item)) {
-					return {
-						result: false,
-						col: idx,
-						stack: 'syntaxParser',
-						msg: "'" + item + "' mark is not supported."
-					};
-				}
-				if(this.inArray(item, priority) != -1) {
-					if(!this.isOperand(data[idx - 1])) {
-						return {
-							result: false,
-							col: idx - 1,
-							stack: 'syntaxParser',
-							msg: 'Left side operand is not valid.'
-						};
-					}
+    if (typeof data.length !== 'undefined') {
+        if (data.length > 1) {
+            for (var idx = 0; idx < data.length; idx++) {
+                var item = data[idx];
+                if (this.inArray(item, this.permittedOperators) == -1 && !this.isOperand(item)) {
+                    return {
+                        result: false,
+                        col: idx,
+                        stack: 'syntaxParser',
+                        msg: "'" + item + "' mark is not supported."
+                    };
+                }
+                if (this.inArray(item, priority) != -1) {
+                    if (!this.isOperand(data[idx - 1])) {
+                        return {
+                            result: false,
+                            col: idx - 1,
+                            stack: 'syntaxParser',
+                            msg: 'Left side operand is not valid.'
+                        };
+                    }
 
-					if(!this.isOperand(data[idx + 1])) {
-						return {
-							result: false,
-							col: idx + 1,
-							stack: 'syntaxParser',
-							msg: 'Right side operand is not valid.'
-						};
-					}
+                    if (!this.isOperand(data[idx + 1])) {
+                        return {
+                            result: false,
+                            col: idx + 1,
+                            stack: 'syntaxParser',
+                            msg: 'Right side operand is not valid.'
+                        };
+                    }
 
-					var o = {
-						operator: item,
-						operand1: data[idx - 1],
-						operand2: data[idx + 1]
-					};
-					data.splice(idx - 1, 3, o);
-					idx--;
-				} else if(this.isOperand(data[idx])) {
-					if(idx - 1 > 0) {
-						if(this.inArray(data[idx - 1], this.permittedOperators) == -1) {
-							return {
-								result: false,
-								col: idx - 1,
-								stack: 'syntaxParser',
-								msg: 'Left side operator is not valid.'
-							};
-						}
-					}
+                    var o = {
+                        operator: item,
+                        operand1: data[idx - 1],
+                        operand2: data[idx + 1]
+                    };
+                    data.splice(idx - 1, 3, o);
+                    idx--;
+                } else if (this.isOperand(data[idx])) {
+                    if (idx - 1 > 0) {
+                        if (this.inArray(data[idx - 1], this.permittedOperators) == -1) {
+                            return {
+                                result: false,
+                                col: idx - 1,
+                                stack: 'syntaxParser',
+                                msg: 'Left side operator is not valid.'
+                            };
+                        }
+                    }
 
-					if(idx + 1 < data.length) {
-						if(this.inArray(data[idx + 1], this.permittedOperators) == -1) {
-							return {
-								result: false,
-								col: idx + 1,
-								stack: 'syntaxParser',
-								msg: 'Right side operator is not valid.'
-							};
-						}
-					}
-				}
-			}
-		} else {
-			if(lastDepth == 1) {
-				return {
-					result: true,
-					data: {
-						operator: '=',
-						operand1: data[0]
-					}
-				};
-			}
-		}
-	}
+                    if (idx + 1 < data.length) {
+                        if (this.inArray(data[idx + 1], this.permittedOperators) == -1) {
+                            return {
+                                result: false,
+                                col: idx + 1,
+                                stack: 'syntaxParser',
+                                msg: 'Right side operator is not valid.'
+                            };
+                        }
+                    }
+                }
+            }
+        } else {
+            if (lastDepth == 1) {
+                return {
+                    result: true,
+                    data: {
+                        operator: '=',
+                        operand1: data[0]
+                    }
+                };
+            }
+        }
+    }
 
-	if(data.length == 1 && typeof data[0] === 'object') {
-		data = data[0];
-	}
+    if (data.length == 1 && typeof data[0] === 'object') {
+        data = data[0];
+    }
 
-	return {
-		result: true,
-		data: data
-	};
+    return {
+        result: true,
+        data: data
+    };
 };
 
-formulaComposer.prototype.search = function(data, depth) {
-	if(typeof depth == 'undefined') {
-		depth = 1;
-	}
+formulaComposer.prototype.search = function (data, depth) {
+    if (typeof depth == 'undefined') {
+        depth = 1;
+    }
 
-	if(typeof data === 'string') {
-		data = this.stringToArray(data);
-	}
+    if (typeof data === 'string') {
+        data = this.stringToArray(data);
+    }
 
-	var result = null;
+    var result = null;
 
-	result = this.layerParser(data, depth);
-	var lastDepth = result.depth;
-	if(result.result === false) {
-		return result;
-	}
+    result = this.layerParser(data, depth);
+    var lastDepth = result.depth;
+    if (result.result === false) {
+        return result;
+    }
 
-	result = this.syntaxParser(data, depth, this.primaryPriority, lastDepth);
-	if(result.result === false) {
-		return result;
-	} else {
-		data = result.data;
-	}
+    result = this.syntaxParser(data, depth, this.primaryPriority, lastDepth);
+    if (result.result === false) {
+        return result;
+    } else {
+        data = result.data;
+    }
 
-	result = this.syntaxParser(data, depth, this.secondaryPriority, lastDepth);
-	if(result.result === false) {
-		return result;
-	} else {
-		data = result.data;
-	}
+    result = this.syntaxParser(data, depth, this.secondaryPriority, lastDepth);
+    if (result.result === false) {
+        return result;
+    } else {
+        data = result.data;
+    }
 
-	return {
-		result: true,
-		data: data,
-		depth: lastDepth
-	};
+    return {
+        result: true,
+        data: data,
+        depth: lastDepth
+    };
 };
 
-formulaComposer.prototype.init = function() {
-	return this.search(this.formula);
+formulaComposer.prototype.init = function () {
+    return this.search(this.formula);
 };

@@ -1,0 +1,31 @@
+{
+  "name": "jquery-formula",
+  "description": "Javscript WYSWYG formula builder.",
+  "main": "index.html",
+  "authors": [
+    "PIGNOSE"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "plugin",
+    "formula",
+    "equasion",
+    "math",
+    "generator",
+    "builder",
+    "wyswyg",
+    "jquery",
+    "pignose"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "homepage": "http://www.pigno.se/barn/PIGNOSE-Formula/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
