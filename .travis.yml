@@ -8,4 +8,7 @@ before_script:
  - 'npm install -g grunt-cli'
  - 'npm install --save-dev'
 
+after_success:
+ - bash <(curl -s https://codecov.io.bash)
+
 script: grunt test
