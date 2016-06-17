@@ -43,7 +43,7 @@ And try to write this snippet in your html file.
 
 #### Advanced usage
 
-If you want a result from the formula, you can call getFormula() method.
+If you want get javascript object from the formula, you can call getFormula() method.
 
 Check the sample below.
 
