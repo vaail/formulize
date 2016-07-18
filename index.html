@@ -9,12 +9,13 @@
 		<script type="text/javascript">
 		//<![CDATA[
 		$(function() {
+			$('#formula').formula();
+
 			$('#drop a').draggable({
 				revert: 'invalid',
 				helper: 'clone',
 				cancel: ''
 			});
-			$('#formula').formula();
 
 			$('#formula').droppable({
 				hoverClass: "formula-active",

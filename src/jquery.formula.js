@@ -1,8 +1,8 @@
 /************************************************************************************************************
  *
- * @ Version 1.0.7
+ * @ Version 1.0.9
  * @ Formula Generator
- * @ Date 03. 25. 2016
+ * @ Update 07. 18. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
@@ -37,7 +37,7 @@
             id: 'formula',
             cursorAnimTime: 160,
             cursorDelayTime: 500,
-            extract: {
+            export: {
                 filter: function (data) {
                     return data;
                 },
@@ -50,6 +50,9 @@
         $.extend(_opt, opt);
 
         return this.each(function () {
+            var $this = $(this);
+            $this.data('formula', this);
+
             this.init = function () {
                 var _this = this;
                 var drag = false, move = false;
@@ -367,13 +370,13 @@
                 if (typeof formula !== 'undefined') {
                     var result = new formulaComposer(formula);
                     if (result.result) {
-                        _this.alert.text('Working good.').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
+                        _this.alert.text('Pass').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(true);
                         }
                     }
                     else {
-                        _this.alert.text('Syntax error.').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
+                        _this.alert.text('Validating error').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(false);
                         }
@@ -600,7 +603,7 @@
                     if (decodedData.result === true) {
                         this.insertFormula.call(this, decodedData.data);
                     }
-                } catch(e) {
+                } catch (e) {
                     this.insertFormula.call(this, data);
                 }
             };
@@ -610,7 +613,7 @@
                 var data = null;
                 var parsedData = null;
 
-                if (typeof _this.opt.extract.filter === 'function') {
+                if (typeof _this.opt.export.filter === 'function') {
                     data = [];
                     _this.container.children('*:not(".' + _this.opt.id + '-cursor, .' + _this.opt.id + '-drag")').each(function () {
                         var $this = $(this);
@@ -624,9 +627,9 @@
                             item.value = '*';
                         } else if ($this.hasClass(_this.opt.id + '-item')) {
                             item.type = 'item';
-                            if (typeof _this.opt.extract !== 'undefined' && typeof _this.opt.extract.item === 'function') {
+                            if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
                                 try {
-                                    item.value = _this.opt.extract.call(_this, $this);
+                                    item.value = _this.opt.export.item.call(_this, $this);
                                 } catch (e) {
                                     item.value = '0 ';
                                 }
@@ -641,7 +644,7 @@
                         data.push(item);
                     });
                     parsedData = new formulaComposer(JSON.parse(JSON.stringify(data)));
-                    _this.opt.extract.filter.call(_this, parsedData.result ? parsedData.data : parsedData.msg);
+                    _this.opt.export.filter.call(_this, parsedData.result ? parsedData.data : parsedData.msg);
                 } else {
                     data = '';
                     _this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function () {
@@ -652,9 +655,9 @@
                         } else if ($this.hasClass(_this.opt.id + '-operator') && value == 'x') {
                             value = '*';
                         } else if ($this.hasClass(_this.opt.id + '-item')) {
-                            if (typeof _this.opt.extract !== 'undefined' && typeof _this.opt.extract.item === 'function') {
+                            if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
                                 try {
-                                    value = _this.opt.extract.call(_this, $this);
+                                    value = _this.opt.export.call(_this, $this);
                                 } catch (e) {
                                     value = '0 ';
                                 }
@@ -698,11 +701,16 @@
                                 this.insertChar.call(this, data_splited[key]);
                             }
                         } else {
-                            console.log('This part is stil develping, it is a custom item likes log of follows');
-                            console.log(item);
+                            if (typeof _this.opt.import.item === 'function') {
+                                var $e = _this.opt.import.item.call(_this, item);
+                                if (typeof $e !== 'undefined' && $e !== null) {
+                                    _this.insert($e);
+                                }
+                            }
                         }
                     }
                 }
+                _this.syntaxCheck();
             };
 
             if (_args.length < 1 || typeof _args[0] === 'object') {
@@ -723,9 +731,9 @@
 
 /************************************************************************************************************
  *
- * @ Version 1.0.6
+ * @ Version 1.0.7
  * @ Formula Parser
- * @ Date 03. 25. 2016
+ * @ Date 03. 26. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
@@ -808,7 +816,7 @@ formulaComposer.prototype.layerParser = function (data, pos, depth, map) {
                     }
                 }
 
-                if (data.length == key + 1) {
+                if (data.length == key + 1 && innerDepth > 0) {
                     return {
                         result: false,
                         col: pos + key,
