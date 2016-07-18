@@ -15,6 +15,10 @@ It's a stable version on IE8 higher and any most browsers.
 
 ![Sample](http://www.nhpcw.com/upload/%25EB%258B%25A4%25EC%259A%25B4%25EB%25A1%259C%25EB%2593%259C%2B%25284%2529_032116101121.png)
 
+You can customize UI
+
+![Designed sample](http://www.nhpcw.com/upload/%25EB%258B%25A4%25EC%259A%25B4%25EB%25A1%259C%25EB%2593%259C%2B%25282%2529_071916121936.png)
+
 ----
 
 ### Usage
