@@ -53,7 +53,7 @@ Check the sample below.
 	<script type="text/javascript">
 		$(function() {
 			var $formula = $('.formula').formula();
-			$formula.getFormula(); // Get formula as a string type.
+			$formula.data('formula').getFormula(); // Get formula as a string type.
 			
 			//=====================================
 			
@@ -67,7 +67,7 @@ Check the sample below.
 			});
 			
 			// if filter option is used, getFormula() will return data as an object type. 
-			console.log($formulaCustom.getFormula());
+			console.log($formulaCustom.data('formula').getFormula());
 		});
 	</script>
 </head>
