@@ -103,4 +103,4 @@ This project is related with https://github.com/KennethanCeyer/FormulaParser (bu
 
 If you found something problem of this plugin, or you have some question.
 
-Please send me a message on gitter. (gitter url is on the top of the menual)
+Please send me a message to use either [gitter](https://gitter.im/KennethanCeyer/PIGNOSE) or [Github issue](https://github.com/KennethanCeyer/Formula/issues). (gitter url is on the top of the menual)
