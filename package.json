@@ -1,6 +1,6 @@
 {
   "name": "jquery-formula",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "Javscript WYSWYG formula builder.",
   "main": "index.html",
   "dependencies": {},
