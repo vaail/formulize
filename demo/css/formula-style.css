@@ -1,0 +1,87 @@
+.formula {
+    min-height: 400px;
+    font-family: 'consolas', 'arial';
+}
+
+.formula-wrapper .formula {
+    background-color: #f8f8f8;
+    border: 1px solid #d8d8d8;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+}
+
+.formula-drop {
+    margin-top: 80px;
+}
+
+.formula-drop i {
+    display: block;
+    font-size: 115%;
+    margin-bottom: 1em;
+}
+
+.formula-drop .formula-drop-items {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.formula .formula-drop-item,
+.formula-drop .formula-drop-items .formula-drop-item {
+    display: inline-block;
+    line-height: 1.2em;
+    padding: .6em 1.6em;
+    font-weight: 600;
+    background-color: #f8f8f8;
+    border: 1px solid #909090;
+    margin: 0 .4em;
+    color: #ff4842;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .125);
+}
+
+.formula .formula-drop-item {
+    padding: .4em 1em;
+    font-size: 85%;
+}
+
+.formula-drop .formula-drop-items .formula-drop-item {
+    font-size: 115%;
+}
+
+.formula-get {
+    margin-top: 160px;
+}
+
+.formula-get h4 {
+    margin-bottom: 40px;
+}
+
+.formula-get .btn {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, .25);
+}
+
+.formula-get .formula-get-json {
+    margin-top: 20px;
+    margin-bottom: 160px;
+    min-height: 240px;
+    background-color: #f8f8f8;
+    font-size: 115%;
+    padding: 1.6em 2.4em;
+    border: 1px solid #d8d8d8;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .125);
+    line-height: 1.6;
+    text-align: left;
+}
+
+.formula-get .formula-get-json .formula-get-json-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 85%;
+    padding: .4em 1em;
+    background-color: #fafafa;
+    color: #505050;
+    border-bottom: 1px solid #d8d8d8;
+    border-left: 1px solid #d8d8d8;
+}

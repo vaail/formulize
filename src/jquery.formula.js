@@ -1,8 +1,8 @@
 /************************************************************************************************************
  *
- * @ Version 1.0.9
+ * @ Version 1.1.0
  * @ Formula Generator
- * @ Update 07. 18. 2016
+ * @ Update 07. 19. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
@@ -376,7 +376,7 @@
                         }
                     }
                     else {
-                        _this.alert.text('Validating error').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
+                        _this.alert.text('Validation error').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(false);
                         }
