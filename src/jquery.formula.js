@@ -1,6 +1,6 @@
 /************************************************************************************************************
  *
- * @ Version 1.1.0
+ * @ Version 1.1.1
  * @ Formula Generator
  * @ Update 07. 19. 2016
  * @ Author PIGNOSE
@@ -37,6 +37,11 @@
             id: 'formula',
             cursorAnimTime: 160,
             cursorDelayTime: 500,
+            strings: {
+                formula: 'Formula',
+                validationError: 'Validation Error',
+                validationPassed: 'Passed'
+            },
             export: {
                 filter: function (data) {
                     return data;
@@ -59,11 +64,18 @@
                 this.container = $(this).addClass(this.opt.id + '-container');
                 this.container.wrap('<div class="' + this.opt.id + '-wrapper"></div>');
 
-                this.alert = $('<div class="' + this.opt.id + '-alert">Formula</div>');
+                this.alert = $('<div class="' + this.opt.id + '-alert">' + _opt.strings.formula + '</div>');
                 this.alert.insertBefore(_this.container);
 
                 this.text = $('<textarea id="' + this.opt.id + '-text" name="' + this.opt.id + '-text" class="' + this.opt.id + '-text"></textarea>');
                 this.text.insertAfter(this.container).focus();
+                this.text.bind('blur', function() {
+                    console.log('a');
+                    if(_this.cursor !== null) {
+                        _this.cursor.remove();
+                        _this.destroyDrag();
+                    }
+                });
 
                 this.text.unbind('dblclick.' + this.opt.id + 'Handler').bind('dblclick.' + this.opt.id + 'Handler', function (event) {
                     _this.selectAll();
@@ -357,11 +369,6 @@
                         _this.syntaxCheck();
                     }
                 });
-
-                this.click({
-                    x: 0,
-                    y: 0
-                });
             };
 
             this.syntaxCheck = function (callback) {
@@ -370,13 +377,13 @@
                 if (typeof formula !== 'undefined') {
                     var result = new formulaComposer(formula);
                     if (result.result) {
-                        _this.alert.text('Pass').addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
+                        _this.alert.text(_this.opt.strings.validationPassed).addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(true);
                         }
                     }
                     else {
-                        _this.alert.text('Validation error').removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
+                        _this.alert.text(_this.opt.strings.validationError).removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(false);
                         }
@@ -530,7 +537,12 @@
                         var $unit = $('<div class="' + _this.opt.id + '-unit">' + key + '</div>');
                         var $item = null;
                         var decimal = '', merge = false;
-                        this.cursor.before($unit);
+
+                        if(this.cursor !== null && this.cursor.length > 0) {
+                            this.cursor.before($unit);
+                        } else {
+                            this.container.append($unit);
+                        }
 
                         var $prev = $unit.prev();
                         var $next = $unit.next();
@@ -558,10 +570,13 @@
                             _this.setDecimal($item, decimal);
                             $unit.remove();
                         }
-
                     } else if (key !== '') {
                         var $operator = $('<div class="' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
-                        this.cursor.before($operator);
+                        if(this.cursor !== null && this.cursor.length > 0) {
+                            this.cursor.before($operator);
+                        } else {
+                            this.container.append($operator);
+                        }
                         if (key == '(' || key == ')') {
                             $operator.addClass(_this.opt.id + '-bracket');
                         }
