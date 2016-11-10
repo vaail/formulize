@@ -83,6 +83,32 @@ Check the sample below.
 
 ----
 
+### Installation
+
+#### Zip file download
+
+[Latest zip file link](https://github.com/KennethanCeyer/Formula/archive/master.zip)
+
+#### Git
+
+```bash
+git clone git@github.com:KennethanCeyer/Formula.git
+```
+
+#### Bower
+
+```bash
+bower install jquery-formula
+```
+
+#### NPM
+
+```bash
+npm install jquery-formula
+```
+
+----
+
 ### Notes
 
 The purpose of this plugin is as follows. 
