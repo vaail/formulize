@@ -1,0 +1,3 @@
+[submodule "src/js/FormulaParser"]
+path = src/js/FormulaParser
+url = git@github.com:KennethanCeyer/FormulaParser.git
