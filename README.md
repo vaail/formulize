@@ -92,7 +92,7 @@ Check the sample below.
 #### Git
 
 ```bash
-git clone git@github.com:KennethanCeyer/Formula.git
+git clone git@github.com:KennethanCeyer/Formula.git --recursive
 ```
 
 #### Bower
