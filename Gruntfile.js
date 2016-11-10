@@ -11,13 +11,9 @@ module.exports = function (grunt) {
             ' Licensed <%= props.license %> */\n',
         // Task configuration
         concat: {
-            options: {
-                banner: '<%= banner %>',
-                stripBanners: true
-            },
             dist: {
-                src: ['lib/PIGNOSE Formula.js'],
-                dest: 'dist/PIGNOSE Formula.js'
+                src: ['src/js/pignose.formula.js', 'src/js/FormulaParser/src/formula.parser.js'],
+                dest: 'src/js/pignose.formula.build.js'
             }
         },
         uglify: {
@@ -30,7 +26,7 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'dist/formula.min.js': ['src/**.js']
+                    'dist/pignose.formula.min.js': ['src/js/pignose.formula.build.js']
                 }
             },
         },
@@ -44,12 +40,12 @@ module.exports = function (grunt) {
           },
           dist: {
             files: {
-              'dist/formula.min.css': ['src/**.css']
+              'dist/pignose.formula.min.css': ['src/css/**.css']
             }
           }
         },
         jshint: {
-          files: ['Gruntfile.js', 'src/**.js'],
+          files: ['Gruntfile.js', 'src/js/pignose.formula.js'],
           options: {
             // options here to override JSHint defaults
             globals: {
@@ -61,31 +57,33 @@ module.exports = function (grunt) {
           }
         },
         csslint: {
-          dist: ['src/**.css']
+          dist: ['src/css/**.css']
         },
         qunit: {
             files: ['test/**/*.html']
         },
         watch: {
-            gruntfile: {
-                files: '<%= jshint.gruntfile.src %>',
-                tasks: ['jshint:gruntfile']
-            },
-            lib_test: {
-                files: '<%= jshint.lib_test.src %>',
-                tasks: ['jshint:lib_test', 'qunit']
+            scripts: {
+                files: 'src/js/pignose.formula.js',
+                tasks: ['default'],
+                options: {
+                    interrupt: true
+                }
             }
         }
     });
 
     // These plugins provide necessary tasks
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-csslint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task
-    grunt.registerTask('default', ['jshint', 'csslint', 'cssmin', 'uglify']);
-    grunt.registerTask('test', ['jshint', 'csslint']);
+    grunt.registerTask('default', ['concat', 'jshint', 'csslint', 'cssmin', 'uglify']);
+    grunt.registerTask('build', ['default', 'watch']);
+    grunt.registerTask('test', ['concat', 'jshint', 'csslint']);
 };
 
