@@ -1,6 +1,6 @@
 /************************************************************************************************************
  *
- * @ Version 2.0.6
+ * @ Version 2.0.7
  * @ Formula Generator
  * @ Update 11. 11. 2016
  * @ Author PIGNOSE
@@ -9,7 +9,7 @@
  ***********************************************************************************************************/
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.6';
+    var _PLUGIN_VERSION_ = '2.0.7';
     String.prototype.toFormulaDecimal = function () {
         var split = this.split('.');
         return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');

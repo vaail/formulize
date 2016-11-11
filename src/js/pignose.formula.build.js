@@ -1,6 +1,6 @@
 /************************************************************************************************************
  *
- * @ Version 2.0.6
+ * @ Version 2.0.7
  * @ Formula Generator
  * @ Update 11. 11. 2016
  * @ Author PIGNOSE
@@ -9,7 +9,7 @@
  ***********************************************************************************************************/
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.6';
+    var _PLUGIN_VERSION_ = '2.0.7';
     String.prototype.toFormulaDecimal = function () {
         var split = this.split('.');
         return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');
@@ -790,7 +790,7 @@
 
 /************************************************************************************************************
  *
- * @ Version 2.0.5
+ * @ Version 2.0.6
  * @ FormulaParser
  * @ Date 11. 11. 2016
  * @ Author PIGNOSE
@@ -799,7 +799,7 @@
  ***********************************************************************************************************/
 
 var FormulaParser = (function () {
-    var _PLUGIN_VERSION_ = '2.0.5';
+    var _PLUGIN_VERSION_ = '2.0.6';
 
     function FormulaParser(formula) {
         var idx;
@@ -858,6 +858,7 @@ var FormulaParser = (function () {
          **********************************************/
 
         this.Parsers = [
+            'Initializer',
         	'LayerParser',
         	'SyntaxParser',
             'FilterParser',
@@ -881,6 +882,7 @@ var FormulaParser = (function () {
         this.Message[0x20] = 'Operator\'s key must be in data.';
         this.Message[0x21] = 'Left operand\'s key must be in data.';
         this.Message[0x22] = 'Right operand\'s key must be in data.';
+        this.Message[0xA0] = 'Formula expression is null or undefined.';
 
         /***********************************************
          *
@@ -1366,7 +1368,12 @@ var FormulaParser = (function () {
      * @return {Dynamic}
      */
     FormulaParser.prototype.init = function () {
-        if (typeof this.formula === 'string' || (typeof this.formula === 'object' && typeof this.formula.operator === 'undefined')) {
+        if (typeof this.formula === 'undefined' || this.formula === null) {
+            return this.log(0xA0, {
+                stack: this.Parsers.Initializer,
+                col: 0
+            });
+        } else if (typeof this.formula === 'string' || (typeof this.formula === 'object' && typeof this.formula.operator === 'undefined')) {
             return this.search(this.formula);
         } else if (typeof this.formula === 'object' && typeof this.formula.operator !== 'undefined') {
             return this.collapse(this.formula);
