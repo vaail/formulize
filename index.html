@@ -27,11 +27,14 @@
 	$(function() {
 		var $formula = $('.formula').formula();
 
+		// Plugin version confirmation.
+		$('.version strong').text('v' + $.fn.formula.getVersion());
+
 		// You want to get loadable data like below, check code line 103.
 		var data = {"operator":"+","operand1":{"operator":"+","operand1":{"value":"1","type":"unit"},"operand2":{"value":"2","type":"unit"}},"operand2":{"value":"3","type":"unit"}};
 		$formula.data('formula').setFormula(data);
 
-		$('.formula-drop .formula-drop-items .formula-drop-item').draggable({
+		$('.formula-drop .formula-drop-items .formula-custom').draggable({
 			revert: 'invalid',
 			helper: 'clone',
 			cancel: '',
@@ -52,10 +55,10 @@
 			// $('.formula-advanced').data('formula').getFormula(function(data) {
 			// 	console.log(data.data); // It may returns loadable data.
 			// });
-			$('.formula-advanced').data('formula').getFormula(function(data) {
-				console.log(JSON.stringify(data.data)); // It may returns string data.
-			});
-			$('.formula-get .formula-get-json .formula-get-json-data').text(JSON.stringify($('.formula-advanced').data('formula').getFormula()));
+			var data = $('.formula-advanced').data('formula').getFormula();
+			console.log(data);
+
+			$('.formula-get .formula-get-json .formula-get-json-data').text(JSON.stringify(data));
 		});
 
 		// This use for DEMO page tab component.
@@ -71,6 +74,7 @@
 			<h1>PIGNOSE Formula</h1>
 			<a href="https://github.com/KennethanCeyer/Formula" target="_blank" class="ui button primary">View project on Github</a>
 			<a href="https://github.com/KennethanCeyer/Formula/archive/master.zip" target="_blank" class="ui button teal">Download zip</a>
+			<h4 class="version">Latest version <strong></strong></h4>
 		</div>
 		<div class="article">
 			<h3>
@@ -89,9 +93,9 @@
 				<h4>You can drag and drop each of below items to formula area.</h4>
 				<p>If you want to set a value on your custom drag and drop item, Set <span class="label label-default">data-value</span> attribute on your element.</p>
 				<div class="formula-drop-items">
-					<a href="#" class="formula-drop-item" data-value="3.14">PI</a>
-					<a href="#" class="formula-drop-item" data-value="3">Variable (INT 3)</a>
-					<a href="#" class="formula-drop-item" data-value="+">Custom operator (+)</a>
+					<a href="#" class="formula-custom" data-value="3.14">PI</a>
+					<a href="#" class="formula-custom formula-custom-operator" data-value="+">Custom operator (+)</a>
+					<a href="#" class="formula-custom" data-value="3">Variable (INT 3)</a>
 				</div>
 			</div>
 

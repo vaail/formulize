@@ -18,10 +18,10 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-                banner: '//================================================================================\n' + 
+                banner: '//================================================================================\n' +
                         '// [<%= pkg.name %>]\n' +
                         '// version: <%= pkg.version %>\n' +
-                        '// update: <%= grunt.template.today("yyyy.mm.dd") %>\n' + 
+                        '// update: <%= grunt.template.today("yyyy.mm.dd") %>\n' +
                         '//================================================================================\n\n'
             },
             dist: {
@@ -32,10 +32,10 @@ module.exports = function (grunt) {
         },
         cssmin: {
           options: {
-            banner: '//================================================================================\n' + 
+            banner: '//================================================================================\n' +
                     '// [<%= pkg.name %>]\n' +
                     '// version: <%= pkg.version %>\n' +
-                    '// update: <%= grunt.template.today("yyyy.mm.dd") %>\n' + 
+                    '// update: <%= grunt.template.today("yyyy.mm.dd") %>\n' +
                     '//================================================================================\n\n'
           },
           dist: {
@@ -64,7 +64,7 @@ module.exports = function (grunt) {
         },
         watch: {
             scripts: {
-                files: 'src/js/pignose.formula.js',
+                files: ['src/js/pignose.formula.js', 'src/js/FormulaParser/src/formula.parser.js'],
                 tasks: ['default'],
                 options: {
                     interrupt: true
@@ -86,4 +86,3 @@ module.exports = function (grunt) {
     grunt.registerTask('build', ['default', 'watch']);
     grunt.registerTask('test', ['concat', 'jshint', 'csslint']);
 };
-

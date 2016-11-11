@@ -1,14 +1,15 @@
 /************************************************************************************************************
  *
- * @ Version 2.0.4
+ * @ Version 2.0.5
  * @ Formula Generator
- * @ Update 11. 10. 2016
+ * @ Update 11. 11. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
  ***********************************************************************************************************/
 
 (function ($) {
+    var _PLUGIN_VERSION_ = '2.0.5';
     String.prototype.toFormulaDecimal = function () {
         var split = this.split('.');
         return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');
@@ -47,10 +48,16 @@
             },
             export: {
                 filter: function (data) {
-                    return data;
+                    var filterData = data;
+                    if(typeof data !== 'undefined') {
+                        filterData = data.map(function(e, i) {
+                            return (typeof e !== 'undefined' && typeof e.value !== 'undefined')? e.value:e;
+                        });
+                    }
+                    return filterData;
                 },
-                item: function ($e) {
-                    return $e.text();
+                item: function (e) {
+                    return e.data('value') !== 'undefined' && e.data('value') !== null? e.data('value'):e.text();
                 }
             }
         };
@@ -184,20 +191,18 @@
                             _this.selectAll();
                         } else if (keyCode >= 96 && keyCode <= 105) {
                             keyCode -= 48;
-                        } else if (keyCode == 8) {
+                        } else if (keyCode === 8) {
                             $drag = _this.container.find('.' + _this.opt.id + '-drag');
                             if ($drag.length > 0) {
                                 _this.cursor.insertBefore($drag);
                                 $drag.remove();
-                            } else {
-                                if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-                                    $prev = _this.cursor.prev();
-                                    if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
-                                        text = $prev.text();
-                                        _this.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
-                                    } else {
-                                        $prev.remove();
-                                    }
+                            } else if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
+                                $prev = _this.cursor.prev();
+                                if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
+                                    text = $prev.text();
+                                    _this.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
+                                } else {
+                                    $prev.remove();
                                 }
                             }
                             _this.syntaxCheck();
@@ -375,8 +380,14 @@
                                         _this.cursor.insertBefore(_this.container.children(':first'));
                                     }
                                 }
+                            } else {
+                                return false;
                             }
+                        } else if((keyCode >= 48 && keyCode <= 57) === false &&
+                                  (keyCode !== 88 && keyCode !== 187 && keyCode !== 189 && keyCode !== 190 && keyCode !== 191) === true) {
+                            return false;
                         }
+
                         _this.keydown(keyCode.toString().toFormulaString(event.shiftKey), event.shiftKey);
                         _this.syntaxCheck();
                     }
@@ -385,10 +396,11 @@
 
             this.syntaxCheck = function (callback) {
                 var _this = this;
-                var formula = _this.getFormula();
+                var formula = _this.getFormula().data;
+                console.log(formula);
                 if (typeof formula !== 'undefined') {
                     var result = new FormulaParser(formula);
-                    if (result.status) {
+                    if (result.status === true) {
                         _this.alert.text(_this.opt.strings.validationPassed).addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(true);
@@ -546,9 +558,16 @@
                 var _this = this;
                 if ((key >= 0 && key <= 9) || $.inArray(key.toLowerCase(), _this.permitedKey) != -1) {
                     if ((key >= 0 && key <= 9) || key == '.') {
-                        var $unit = $('<div class="' + _this.opt.id + '-unit">' + key + '</div>');
+                        var $unit = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-unit">' + key + '</div>');
                         var $item = null;
                         var decimal = '', merge = false;
+
+                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+
+                        if ($drag.length > 0) {
+                            _this.cursor.insertBefore($drag);
+                            $drag.remove();
+                        }
 
                         if(this.cursor !== null && this.cursor.length > 0) {
                             this.cursor.before($unit);
@@ -583,7 +602,7 @@
                             $unit.remove();
                         }
                     } else if (key !== '') {
-                        var $operator = $('<div class="' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
+                        var $operator = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
                         if(this.cursor !== null && this.cursor.length > 0) {
                             this.cursor.before($operator);
                         } else {
@@ -637,69 +656,68 @@
 
             this.getFormula = function (callback) {
                 var _this = this;
-                var data = null;
-                var parsedData = null;
+                var data = [];
+                var filterData = null;
 
                 if (typeof _this.opt.export.filter === 'function') {
-                    data = [];
-                    _this.container.children('*:not(".' + _this.opt.id + '-cursor, .' + _this.opt.id + '-drag")').each(function () {
+                    _this.container.find('.formula-item').each(function () {
                         var $this = $(this);
                         var item = {};
                         item.value = ($this.data('value') ? $this.data('value') : $this.text());
+
                         if ($this.hasClass(_this.opt.id + '-unit')) {
                             item.type = 'unit';
                             item.value = item.value.toFormulaDecimal();
-                        } else if ($this.hasClass(_this.opt.id + '-operator') && item.value == 'x') {
-                            item.type = 'operator';
-                            item.value = '*';
-                        } else if ($this.hasClass(_this.opt.id + '-item')) {
+                        } else if ($this.hasClass(_this.opt.id + '-custom')) {
                             item.type = 'item';
                             if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
                                 try {
                                     item.value = _this.opt.export.item.call(_this, $this);
                                 } catch (e) {
-                                    item.value = '0 ';
+                                    item.value = '0';
                                 }
                             } else {
-                                item.value = '0 ';
+                                item.value = '0';
                             }
-                        }
-
-                        if ($this.hasClass(_this.opt.id + '-operator')) {
-                            item = item.value;
+                        } else if ($this.hasClass(_this.opt.id + '-operator')) {
+                            item = item.value === 'x'? '*':item.value;
                         }
                         data.push(item);
                     });
-                    parsedData = new FormulaParser(JSON.parse(JSON.stringify(data)));
-                    _this.opt.export.filter.call(_this, parsedData.status ? parsedData.data : parsedData.msg);
+                    data = _this.opt.export.filter(data);
+                    filterData = new FormulaParser(JSON.parse(JSON.stringify(data)));
+
+                    return {
+                        data: data,
+                        filterData: filterData
+                    };
                 } else {
-                    data = '';
-                    _this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function () {
+                    _this.container.find('.formula-item').each(function () {
                         var $this = $(this);
                         var value = ($this.data('value') ? $this.data('value') : $this.text());
                         if ($this.hasClass(_this.opt.id + '-unit')) {
                             value = value.toFormulaDecimal();
-                        } else if ($this.hasClass(_this.opt.id + '-operator') && value == 'x') {
+                        } else if ($this.hasClass(_this.opt.id + '-operator') && value === 'x') {
                             value = '*';
-                        } else if ($this.hasClass(_this.opt.id + '-item')) {
+                        } else if ($this.hasClass(_this.opt.id + '-custom')) {
                             if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
                                 try {
                                     value = _this.opt.export.call(_this, $this);
                                 } catch (e) {
-                                    value = '0 ';
+                                    value = '0';
                                 }
                             } else {
-                                value = '0 ';
+                                value = '0';
                             }
                         }
-                        data += value;
+                        data.push(value);
                     });
-                }
 
-                if (typeof callback === 'function') {
-                    callback.call(this, parsedData ? parsedData : data);
+                    return {
+                        data: data.join(' '),
+                        filterData: filterData
+                    };
                 }
-                return data;
             };
 
             this.insert = function (e) {
@@ -707,7 +725,9 @@
                 if (typeof e === 'string') {
                     e = $(e);
                 }
+                e.addClass(_this.opt.id + '-item');
                 e.insertBefore(_this.cursor);
+                _this.text.focus();
                 _this.syntaxCheck();
             };
 
@@ -753,5 +773,9 @@
                 this[opt].apply(this, Array.prototype.slice.call(_args, 1));
             }
         });
+    };
+
+    $.fn.formula.getVersion = function() {
+        return _PLUGIN_VERSION_;
     };
 }(jQuery));

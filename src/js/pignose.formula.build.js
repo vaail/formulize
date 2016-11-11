@@ -1,14 +1,15 @@
 /************************************************************************************************************
  *
- * @ Version 2.0.4
+ * @ Version 2.0.5
  * @ Formula Generator
- * @ Update 11. 10. 2016
+ * @ Update 11. 11. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
  ***********************************************************************************************************/
 
 (function ($) {
+    var _PLUGIN_VERSION_ = '2.0.5';
     String.prototype.toFormulaDecimal = function () {
         var split = this.split('.');
         return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');
@@ -47,10 +48,16 @@
             },
             export: {
                 filter: function (data) {
-                    return data;
+                    var filterData = data;
+                    if(typeof data !== 'undefined') {
+                        filterData = data.map(function(e, i) {
+                            return (typeof e !== 'undefined' && typeof e.value !== 'undefined')? e.value:e;
+                        });
+                    }
+                    return filterData;
                 },
-                item: function ($e) {
-                    return $e.text();
+                item: function (e) {
+                    return e.data('value') !== 'undefined' && e.data('value') !== null? e.data('value'):e.text();
                 }
             }
         };
@@ -184,20 +191,18 @@
                             _this.selectAll();
                         } else if (keyCode >= 96 && keyCode <= 105) {
                             keyCode -= 48;
-                        } else if (keyCode == 8) {
+                        } else if (keyCode === 8) {
                             $drag = _this.container.find('.' + _this.opt.id + '-drag');
                             if ($drag.length > 0) {
                                 _this.cursor.insertBefore($drag);
                                 $drag.remove();
-                            } else {
-                                if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-                                    $prev = _this.cursor.prev();
-                                    if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
-                                        text = $prev.text();
-                                        _this.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
-                                    } else {
-                                        $prev.remove();
-                                    }
+                            } else if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
+                                $prev = _this.cursor.prev();
+                                if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
+                                    text = $prev.text();
+                                    _this.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
+                                } else {
+                                    $prev.remove();
                                 }
                             }
                             _this.syntaxCheck();
@@ -375,8 +380,14 @@
                                         _this.cursor.insertBefore(_this.container.children(':first'));
                                     }
                                 }
+                            } else {
+                                return false;
                             }
+                        } else if((keyCode >= 48 && keyCode <= 57) === false &&
+                                  (keyCode !== 88 && keyCode !== 187 && keyCode !== 189 && keyCode !== 190 && keyCode !== 191) === true) {
+                            return false;
                         }
+
                         _this.keydown(keyCode.toString().toFormulaString(event.shiftKey), event.shiftKey);
                         _this.syntaxCheck();
                     }
@@ -385,10 +396,11 @@
 
             this.syntaxCheck = function (callback) {
                 var _this = this;
-                var formula = _this.getFormula();
+                var formula = _this.getFormula().data;
+                console.log(formula);
                 if (typeof formula !== 'undefined') {
                     var result = new FormulaParser(formula);
-                    if (result.status) {
+                    if (result.status === true) {
                         _this.alert.text(_this.opt.strings.validationPassed).addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(true);
@@ -546,9 +558,16 @@
                 var _this = this;
                 if ((key >= 0 && key <= 9) || $.inArray(key.toLowerCase(), _this.permitedKey) != -1) {
                     if ((key >= 0 && key <= 9) || key == '.') {
-                        var $unit = $('<div class="' + _this.opt.id + '-unit">' + key + '</div>');
+                        var $unit = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-unit">' + key + '</div>');
                         var $item = null;
                         var decimal = '', merge = false;
+
+                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+
+                        if ($drag.length > 0) {
+                            _this.cursor.insertBefore($drag);
+                            $drag.remove();
+                        }
 
                         if(this.cursor !== null && this.cursor.length > 0) {
                             this.cursor.before($unit);
@@ -583,7 +602,7 @@
                             $unit.remove();
                         }
                     } else if (key !== '') {
-                        var $operator = $('<div class="' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
+                        var $operator = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
                         if(this.cursor !== null && this.cursor.length > 0) {
                             this.cursor.before($operator);
                         } else {
@@ -637,69 +656,68 @@
 
             this.getFormula = function (callback) {
                 var _this = this;
-                var data = null;
-                var parsedData = null;
+                var data = [];
+                var filterData = null;
 
                 if (typeof _this.opt.export.filter === 'function') {
-                    data = [];
-                    _this.container.children('*:not(".' + _this.opt.id + '-cursor, .' + _this.opt.id + '-drag")').each(function () {
+                    _this.container.find('.formula-item').each(function () {
                         var $this = $(this);
                         var item = {};
                         item.value = ($this.data('value') ? $this.data('value') : $this.text());
+
                         if ($this.hasClass(_this.opt.id + '-unit')) {
                             item.type = 'unit';
                             item.value = item.value.toFormulaDecimal();
-                        } else if ($this.hasClass(_this.opt.id + '-operator') && item.value == 'x') {
-                            item.type = 'operator';
-                            item.value = '*';
-                        } else if ($this.hasClass(_this.opt.id + '-item')) {
+                        } else if ($this.hasClass(_this.opt.id + '-custom')) {
                             item.type = 'item';
                             if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
                                 try {
                                     item.value = _this.opt.export.item.call(_this, $this);
                                 } catch (e) {
-                                    item.value = '0 ';
+                                    item.value = '0';
                                 }
                             } else {
-                                item.value = '0 ';
+                                item.value = '0';
                             }
-                        }
-
-                        if ($this.hasClass(_this.opt.id + '-operator')) {
-                            item = item.value;
+                        } else if ($this.hasClass(_this.opt.id + '-operator')) {
+                            item = item.value === 'x'? '*':item.value;
                         }
                         data.push(item);
                     });
-                    parsedData = new FormulaParser(JSON.parse(JSON.stringify(data)));
-                    _this.opt.export.filter.call(_this, parsedData.status ? parsedData.data : parsedData.msg);
+                    data = _this.opt.export.filter(data);
+                    filterData = new FormulaParser(JSON.parse(JSON.stringify(data)));
+
+                    return {
+                        data: data,
+                        filterData: filterData
+                    };
                 } else {
-                    data = '';
-                    _this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function () {
+                    _this.container.find('.formula-item').each(function () {
                         var $this = $(this);
                         var value = ($this.data('value') ? $this.data('value') : $this.text());
                         if ($this.hasClass(_this.opt.id + '-unit')) {
                             value = value.toFormulaDecimal();
-                        } else if ($this.hasClass(_this.opt.id + '-operator') && value == 'x') {
+                        } else if ($this.hasClass(_this.opt.id + '-operator') && value === 'x') {
                             value = '*';
-                        } else if ($this.hasClass(_this.opt.id + '-item')) {
+                        } else if ($this.hasClass(_this.opt.id + '-custom')) {
                             if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
                                 try {
                                     value = _this.opt.export.call(_this, $this);
                                 } catch (e) {
-                                    value = '0 ';
+                                    value = '0';
                                 }
                             } else {
-                                value = '0 ';
+                                value = '0';
                             }
                         }
-                        data += value;
+                        data.push(value);
                     });
-                }
 
-                if (typeof callback === 'function') {
-                    callback.call(this, parsedData ? parsedData : data);
+                    return {
+                        data: data.join(' '),
+                        filterData: filterData
+                    };
                 }
-                return data;
             };
 
             this.insert = function (e) {
@@ -707,7 +725,9 @@
                 if (typeof e === 'string') {
                     e = $(e);
                 }
+                e.addClass(_this.opt.id + '-item');
                 e.insertBefore(_this.cursor);
+                _this.text.focus();
                 _this.syntaxCheck();
             };
 
@@ -754,591 +774,600 @@
             }
         });
     };
+
+    $.fn.formula.getVersion = function() {
+        return _PLUGIN_VERSION_;
+    };
 }(jQuery));
+
 /************************************************************************************************************
  *
- * @ Version 2.0.3
+ * @ Version 2.0.4
  * @ FormulaParser
- * @ Date 11. 10. 2016
+ * @ Date 11. 11. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
  ***********************************************************************************************************/
 
-var _PLUGIN_VERSION_ = '2.0.3';
+var FormulaParser = (function() {
+    var _PLUGIN_VERSION_ = '2.0.4';
 
-function FormulaParser(formula) {
-    var idx;
-    this.formula = formula;
+    function FormulaParser(formula) {
+        var idx;
+        this.formula = formula;
 
-    /***********************************************
-     *
-     * @ Note OperandToken Declaration
-     *
-     **********************************************/
+        /***********************************************
+         *
+         * @ Note OperandToken Declaration
+         *
+         **********************************************/
 
-    this.OperandToken                = {};
-    this.OperandToken.Addition       = ['+'];
-    this.OperandToken.Subtraction    = ['-'];
-    this.OperandToken.Multiplication = ['x', '*'];
-    this.OperandToken.Division       = ['/'];
-    this.OperandToken.Mod            = ['%'];
-    this.OperandToken.Pow            = ['^'];
-    this.OperandToken.Bracket        = ['(', ')', '[', ']', '{', '}'];
+        this.OperandToken                = {};
+        this.OperandToken.Addition       = ['+'];
+        this.OperandToken.Subtraction    = ['-'];
+        this.OperandToken.Multiplication = ['x', '*'];
+        this.OperandToken.Division       = ['/'];
+        this.OperandToken.Mod            = ['%'];
+        this.OperandToken.Pow            = ['^'];
+        this.OperandToken.Bracket        = ['(', ')', '[', ']', '{', '}'];
 
-    /***********************************************
-     *
-     * @ Note Resitration the priority.
-     *
-     **********************************************/
+        /***********************************************
+         *
+         * @ Note Resitration the priority.
+         *
+         **********************************************/
 
-    this.OperandPriority             = [];
-    this.OperandPriority[0]          = [].concat(this.OperandToken.Mod, this.OperandToken.Pow);
-    this.OperandPriority[1]          = [].concat(this.OperandToken.Multiplication, this.OperandToken.Division);
-    this.OperandPriority[2]          = [].concat(this.OperandToken.Addition, this.OperandToken.Subtraction);
+        this.OperandPriority             = [];
+        this.OperandPriority[0]          = [].concat(this.OperandToken.Mod, this.OperandToken.Pow);
+        this.OperandPriority[1]          = [].concat(this.OperandToken.Multiplication, this.OperandToken.Division);
+        this.OperandPriority[2]          = [].concat(this.OperandToken.Addition, this.OperandToken.Subtraction);
 
-    /***********************************************
-     *
-     * @ Note Resitration operators.
-     *
-     **********************************************/
+        /***********************************************
+         *
+         * @ Note Resitration operators.
+         *
+         **********************************************/
 
-    this.Operators                   = [];
-    for(idx in this.OperandToken) {
-    	var item = this.OperandToken[idx];
-    	this.Operators = this.Operators.concat(item);	
+        this.Operators                   = [];
+        for(idx in this.OperandToken) {
+        	var item = this.OperandToken[idx];
+        	this.Operators = this.Operators.concat(item);
+        }
+
+        /***********************************************
+         *
+         * @ Note Resitration units.
+         *
+         **********************************************/
+
+        this.Units                       = [].concat(this.Operators, this.OperandToken.Bracket);
+
+        /***********************************************
+         *
+         * @ Note Resitration parsers.
+         *
+         **********************************************/
+
+        this.Parsers                     = [
+        	'LayerParser',
+        	'SyntaxParser',
+            'FilterParser',
+            'StringParser'
+        ];
+
+        this.ParserMap                   = {};
+
+        for(idx in this.Parsers) {
+        	var parser = this.Parsers[idx];
+        	this.ParserMap[parser] = parser;
+        }
+
+        this.Message                     = {};
+        this.Message[0x01]               = 'Formula must has characters than {0} times';
+        this.Message[0x02]               = '\'{0}\' operator is not supported.';
+        this.Message[0x03]               = 'Left side operand is not valid.';
+        this.Message[0x04]               = 'Right side operand is not valid.';
+        this.Message[0x05]               = 'Bracket must be opened.';
+        this.Message[0x06]               = 'Bracket must be closed.';
+        this.Message[0x20]               = 'Operator\'s key must be in data.';
+        this.Message[0x21]               = 'Left operand\'s key must be in data.';
+        this.Message[0x22]               = 'Right operand\'s key must be in data.';
+
+        /***********************************************
+         *
+         * @ Start to parsing.
+         *
+         **********************************************/
+
+        return this.init();
     }
 
-    /***********************************************
-     *
-     * @ Note Resitration units.
-     *
-     **********************************************/
+    /**
+     * This method retuns current version. (This isn't prototype function.)
+     * @namespace FormulaParser
+     * @method getVersion
+     * @return {Number}
+     */
+    FormulaParser.getVersion = function() {
+        return _PLUGIN_VERSION_;
+    };
 
-    this.Units                       = [].concat(this.Operators, this.OperandToken.Bracket);
-
-    /***********************************************
-     *
-     * @ Note Resitration parsers.
-     *
-     **********************************************/
-
-    this.Parsers                     = [
-    	'LayerParser',
-    	'SyntaxParser',
-        'FilterParser',
-        'StringParser'
-    ];
-
-    this.ParserMap                   = {};
-
-    for(idx in this.Parsers) {
-    	var parser = this.Parsers[idx];
-    	this.ParserMap[parser] = parser;
-    }
-
-    this.Message                     = {};
-    this.Message[0x01]               = 'Formula must has characters than {0} times';
-    this.Message[0x02]               = '\'{0}\' operator is not supported.';
-    this.Message[0x03]               = 'Left side operand is not valid.';
-    this.Message[0x04]               = 'Right side operand is not valid.';
-    this.Message[0x05]               = 'Bracket must be opened.';
-    this.Message[0x06]               = 'Bracket must be closed.';
-    this.Message[0x20]               = 'Operator\'s key must be in data.';
-    this.Message[0x21]               = 'Left operand\'s key must be in data.';
-    this.Message[0x22]               = 'Right operand\'s key must be in data.';
-
-    /***********************************************
-     *
-     * @ Start to parsing.
-     *
-     **********************************************/
-
-    return this.init();
-}
-
-/**
- * This method retuns current version. (This isn't prototype function.)
- * @namespace FormulaParser
- * @method getVersion
- * @return {Number}
- */
-FormulaParser.getVersion = function() {
-    return _PLUGIN_VERSION_;
-};
-
-/**
- * When item is in the array, This will returns true.
- * @namespace FormulaParser
- * @method inArray
- * @param {Dynamic} i - item
- * @param {Array} a - array
- * @return {bool}
- */
-FormulaParser.prototype.inArray = function (i, a) {
-    for (var idx in a) if (a[idx] === i) return idx;
-    return -1;
-};
-
-/**
- * When item is operand type(number, object), This will returns true.
- * @namespace FormulaParser
- * @method isOperand
- * @param {Dynamic} i - item
- * @return {bool}
- */
-FormulaParser.prototype.isOperand = function (i) {
-    return typeof i === 'object' || this.isNumeric(i);
-};
-
-/**
- * Get operator string to priority number.
- * @namespace FormulaParser
- * @method getOperatorPriority
- * @param {String} operator
- * @return {Number}
- */
-FormulaParser.prototype.getOperatorPriority = function (operator) {
-    if(this.inArray(operator, this.Operators) === -1) {
+    /**
+     * When item is in the array, This will returns true.
+     * @namespace FormulaParser
+     * @method inArray
+     * @param {Dynamic} i - item
+     * @param {Array} a - array
+     * @return {bool}
+     */
+    FormulaParser.prototype.inArray = function (i, a) {
+        for (var idx in a) if (a[idx] === i) return idx;
         return -1;
-    } else {
-        var priority = -1;
-        for(var idx=0; idx<this.OperandPriority.length; idx++) {
-            if(this.inArray(operator, this.OperandPriority[idx]) !== -1) {
-                priority = idx;
-                break;
-            }
-        }
-        return priority;
-    }
-};
+    };
 
-/**
- * When item is number type, This will returns true. The method is part of isOperand.
- * @namespace FormulaParser
- * @method isNumeric
- * @param {Number} n - number
- * @return {bool}
- */
-FormulaParser.prototype.isNumeric = function (n) {
-    return (/\d+(\.\d*)?|\.\d+/).test(n);
-};
+    /**
+     * When item is operand type(number, object), This will returns true.
+     * @namespace FormulaParser
+     * @method isOperand
+     * @param {Dynamic} i - item
+     * @return {bool}
+     */
+    FormulaParser.prototype.isOperand = function (i) {
+        return typeof i === 'object' || this.isNumeric(i);
+    };
 
-/**
- * This method can make string type formula to array.
- * @namespace FormulaParser
- * @method stringToArray
- * @param {String} s - formula string
- * @return {array}
- */
-FormulaParser.prototype.stringToArray = function (s) {
-    var data = [];
-    var dataSplited = s.split('');
-    var dataSplitedLen = dataSplited.length;
-    for (var idx=0; idx<dataSplitedLen; idx++) {
-        var item = dataSplited[idx];
-        if (this.inArray(item, this.Units) === -1 && this.isOperand(item) === false) {
-            // continue;
+    /**
+     * Get operator string to priority number.
+     * @namespace FormulaParser
+     * @method getOperatorPriority
+     * @param {String} operator
+     * @return {Number}
+     */
+    FormulaParser.prototype.getOperatorPriority = function (operator) {
+        if(this.inArray(operator, this.Operators) === -1) {
+            return -1;
         } else {
-            if (idx > 0 && this.isOperand(item) === true && this.isOperand(data[data.length - 1]) === true) {
-                data[data.length - 1] += item.toString();
+            var priority = -1;
+            for(var idx=0; idx<this.OperandPriority.length; idx++) {
+                if(this.inArray(operator, this.OperandPriority[idx]) !== -1) {
+                    priority = idx;
+                    break;
+                }
+            }
+            return priority;
+        }
+    };
+
+    /**
+     * When item is number type, This will returns true. The method is part of isOperand.
+     * @namespace FormulaParser
+     * @method isNumeric
+     * @param {Number} n - number
+     * @return {bool}
+     */
+    FormulaParser.prototype.isNumeric = function (n) {
+        return (/\d+(\.\d*)?|\.\d+/).test(n);
+    };
+
+    /**
+     * This method can make string type formula to array.
+     * @namespace FormulaParser
+     * @method stringToArray
+     * @param {String} s - formula string
+     * @return {array}
+     */
+    FormulaParser.prototype.stringToArray = function (s) {
+        var data = [];
+        var dataSplited = s.split('');
+        var dataSplitedLen = dataSplited.length;
+        for (var idx=0; idx<dataSplitedLen; idx++) {
+            var item = dataSplited[idx];
+            if (this.inArray(item, this.Units) === -1 && this.isOperand(item) === false) {
+                // continue;
             } else {
-                data.push(item);
+                if (idx > 0 && this.isOperand(item) === true && this.isOperand(data[data.length - 1]) === true) {
+                    data[data.length - 1] += item.toString();
+                } else {
+                    data.push(item);
+                }
             }
         }
-    }
-    return data;
-};
+        return data;
+    };
 
-/**
- * Standard logger for formula parser, But this method does not display in console.
- * @namespace FormulaParser
- * @method log
- * @param {Number} code - return code
- * @param {Dynamic} data - return data
- * @param {Array} mapping - return message mapping data
- * @return {array}
- */
-FormulaParser.prototype.log = function(code, data, mapping) {
-	var message = this.Message[code], idx, item;
+    /**
+     * Standard logger for formula parser, But this method does not display in console.
+     * @namespace FormulaParser
+     * @method log
+     * @param {Number} code - return code
+     * @param {Dynamic} data - return data
+     * @param {Array} mapping - return message mapping data
+     * @return {array}
+     */
+    FormulaParser.prototype.log = function(code, data, mapping) {
+    	var message = this.Message[code], idx, item;
 
-	for(idx in mapping) {
-		item = mapping[idx];
-		message = message.replace(new RegExp('\\\{' + idx + '\\\}', 'g'), item);
-	}
+    	for(idx in mapping) {
+    		item = mapping[idx];
+    		message = message.replace(new RegExp('\\\{' + idx + '\\\}', 'g'), item);
+    	}
 
-	var obj = {
-		status: code === 0x00,
-		code: code,
-		msg: message
-	};
+    	var obj = {
+    		status: code === 0x00,
+    		code: code,
+    		msg: message
+    	};
 
-	if(typeof data !== 'undefined') {
-		for(idx in data) {
-			item = data[idx];
-			if(typeof item !== 'function') {
-				obj[idx] = item;
-			}
-		}
-	}
+    	if(typeof data !== 'undefined') {
+    		for(idx in data) {
+    			item = data[idx];
+    			if(typeof item !== 'function') {
+    				obj[idx] = item;
+    			}
+    		}
+    	}
 
-	return obj;
-};
+    	return obj;
+    };
 
-/**
- * Layer parser is examination all formula syntax minutely and parsing by search method.
- * @namespace FormulaParser
- * @method layerParser
- * @related search method
- * @param {Array} data - formula array data
- * @param {Number} pos - formula stack cursor
- * @param {Number} depth - formula search depth (start from 0)
- * @return {Object}
- */
-FormulaParser.prototype.layerParser = function (data, pos, depth) {
-    var innerDepth    = 0;
-    var startPos      = [], endPos = [];
-    var currentParser = this.ParserMap.LayerParser;
-    var totalLength   = data.length;
+    /**
+     * Layer parser is examination all formula syntax minutely and parsing by search method.
+     * @namespace FormulaParser
+     * @method layerParser
+     * @related search method
+     * @param {Array} data - formula array data
+     * @param {Number} pos - formula stack cursor
+     * @param {Number} depth - formula search depth (start from 0)
+     * @return {Object}
+     */
+    FormulaParser.prototype.layerParser = function (data, pos, depth) {
+        var innerDepth    = 0;
+        var startPos      = [], endPos = [];
+        var currentParser = this.ParserMap.LayerParser;
+        var totalLength   = data.length;
 
-    depth             = depth || 0;
+        depth             = depth || 0;
 
-    if (data.length === 1 && typeof data[0] !== 'object') {
-		return {
-			status: true,
-			data: data[0],
-			length: 1
-		};
-	}
+        if (data.length === 1 && typeof data[0] !== 'object') {
+    		return {
+    			status: true,
+    			data: data[0],
+    			length: 1
+    		};
+    	}
 
-    for (var idx = 0; idx < data.length; idx++) {
-        var item = data[idx];
-        if (item === '(') {
-            innerDepth++;
-            startPos[innerDepth] = idx + 1;
-        } else if (item === ')') {
-        	if(innerDepth < 1) {
-        		return this.log(0x05, {
-    				stack: currentParser,
-        			col: startPos.length > 0? startPos[startPos.length - 1]:0
-        		});
-        	}
+        for (var idx = 0; idx < data.length; idx++) {
+            var item = data[idx];
+            if (item === '(') {
+                innerDepth++;
+                startPos[innerDepth] = idx + 1;
+            } else if (item === ')') {
+            	if(innerDepth < 1) {
+            		return this.log(0x05, {
+        				stack: currentParser,
+            			col: startPos.length > 0? startPos[startPos.length - 1]:0
+            		});
+            	}
 
-            if (innerDepth === 1) {
-                var paramData = [];
-                endPos[innerDepth] = idx - 1;
+                if (innerDepth === 1) {
+                    var paramData = [];
+                    endPos[innerDepth] = idx - 1;
 
-                for (var j = startPos[innerDepth]; j <= endPos[innerDepth]; j++) {
-                    paramData.push(data[j]);
+                    for (var j = startPos[innerDepth]; j <= endPos[innerDepth]; j++) {
+                        paramData.push(data[j]);
+                    }
+
+                    var result = this.search(paramData, pos + startPos[innerDepth] + 1, depth + 1);
+
+                    if (result.status === false) {
+                        return result;
+                    } else {
+                    	var length = result.length;
+                    	if(typeof result.data === 'object' && typeof result.data[0] !== 'object' && result.data.length === 1) {
+                    		result.data = result.data[0];
+                    	}
+                        data.splice(startPos[innerDepth] - 1, length + 2, result.data);
+                        idx -= length + 1;
+                    }
                 }
+                innerDepth--;
+            }
+        }
 
-                var result = this.search(paramData, pos + startPos[innerDepth] + 1, depth + 1);
+        if(innerDepth > 0) {
+        	return this.log(0x06, {
+        		stack: currentParser,
+        		col: data.length || -1
+        	});
+        }
 
+        return {
+            status: true,
+            depth: depth,
+            length: totalLength || -1
+        };
+    };
+
+    /**
+     * Syntax layer makes formula object from formula expression.
+     * @namespace FormulaParser
+     * @method syntaxParser
+     * @related search method
+     * @param {Array} data - formula array data
+     * @param {Number} pos - formula stack cursor
+     * @param {Number} depth - formula search depth (start from 0)
+     * @param {Number} length - compressed formula expression length
+     * @param {Array} operators - permitted formula unit array
+     * @return {Object}
+     */
+    FormulaParser.prototype.syntaxParser = function (data, pos, depth, length, operators) {
+    	this.currentParser = this.ParserMap.SyntaxParser;
+
+    	data  = data  || [];
+    	pos   = pos   || 0;
+    	depth = depth || 0;
+
+    	var cursor = pos;
+
+    	if(typeof data[0][0] === 'object' && typeof data[0].operator === 'undefined') {
+    		data[0] = data[0][0];
+    	}
+
+    	if (data.length < 3) {
+    		if(data.length <= 1 && typeof data[0] === 'object' && typeof data[0].operator !== 'undefined') {
+    			return data[0];
+    		} else {
+    	        return this.log(0x01, {
+    	            stack: this.currentParser,
+    	            col: pos + (typeof data[0] === 'object'? data[0].length:0) + 1
+    	        }, [3]);
+    	    }
+        }
+
+        if (typeof data.length !== 'undefined') {
+            if (data.length > 1) {
+                for (var idx = 0; idx < data.length; idx++) {
+                	cursor = idx + pos;
+                    var item = data[idx];
+                    if (this.inArray(item, this.Operators) === -1 && this.isOperand(item) === false) {
+    			        return this.log(0x02, {
+    			            stack: this.currentParser,
+    			            col: cursor
+    			        }, [item]);
+                    }
+
+                    if (this.inArray(item, operators) !== -1) {
+                        if (this.isOperand(data[idx - 1]) === false) {
+    				        return this.log(0x03, {
+    				            stack: this.currentParser,
+    				            col: cursor - 1
+    				        });
+                        }
+
+                        if (this.isOperand(data[idx + 1]) === false) {
+    				        return this.log(0x04, {
+    				            stack: this.currentParser,
+    				            col: cursor + 1
+    				        });
+                        }
+
+                        data.splice(idx - 1, 3, {
+                            operator: item,
+                            operand1: data[idx - 1],
+                            operand2: data[idx + 1],
+                            length: length
+                        });
+
+                       	if(typeof data[idx - 1][0] === 'object') {
+                       		data[idx - 1] = data[idx - 1][0];
+                       	}
+
+                        idx--;
+                    }
+                }
+            }
+        }
+
+        return {
+            status: true,
+            data: data
+        };
+    };
+
+    /**
+     * Filter parser remains the formula object's only useful data for user
+     * @namespace FormulaParser
+     * @method filterParser
+     * @related search method
+     * @param {Object} data - formula object
+     * @return {Object}
+     */
+    FormulaParser.prototype.filterParser = function(data) {
+    	if(typeof data[0] === 'object') {
+    		data = data[0];
+    	}
+
+    	if(typeof data.operand1 === 'object') {
+    		this.filterParser(data.operand1);
+    	}
+
+    	if(typeof data.operand2 === 'object') {
+    		this.filterParser(data.operand2);
+    	}
+
+    	if(typeof data.length !== 'undefined') {
+    		delete data.length;
+    	}
+
+    	return data;
+    };
+
+    /**
+     * String parser is using for convert formula object to readable formula array.
+     * @namespace FormulaParser
+     * @method stringParser
+     * @related collapse method
+     * @param {Object} data - formula object
+     * @param {Number} depth - formula parse depth
+     * @param {Number} pos - formula stack cursor
+     * @return {Array}
+     */
+    FormulaParser.prototype.stringParser = function (data, depth, pos) {
+        this.currentParser = this.ParserMap.StringParser;
+
+        var _this = this;
+        var formula = [];
+
+        depth = depth || 0;
+        pos   = pos   || 0;
+
+        if (typeof data.value === 'undefined') {
+            if (typeof data.operator === 'undefined') {
+                return this.log(0x20, {
+                    stack: this.currentParser,
+                    col: pos,
+                    depth: depth
+                });
+            } else if (typeof data.operand1 === 'undefined') {
+                return this.log(0x21, {
+                    stack: this.currentParser,
+                    col: pos,
+                    depth: depth
+                });
+            } else if (typeof data.operand2 === 'undefined') {
+                return this.log(0x22, {
+                    stack: this.currentParser,
+                    col: pos,
+                    depth: depth
+                });
+            }
+        } else {
+            return {
+                status: true,
+                data: ((data.value.type === 'unit') ? data.value.unit : data.value)
+            };
+        }
+
+        var params = ['operand1', 'operator', 'operand2'];
+        for (var idx=0; idx<params.length; idx++) {
+            var param = params[idx];
+            if (typeof data[param] === 'object') {
+                var result = _this.stringParser(data[param], depth + 1, pos + idx);
                 if (result.status === false) {
                     return result;
                 } else {
-                	var length = result.length;
-                	if(typeof result.data === 'object' && typeof result.data[0] !== 'object' && result.data.length === 1) {
-                		result.data = result.data[0];
-                	}
-                    data.splice(startPos[innerDepth] - 1, length + 2, result.data);
-                    idx -= length + 1;
-                }
-            }
-            innerDepth--;
-        }
-    }
-
-    if(innerDepth > 0) {
-    	return this.log(0x06, {
-    		stack: currentParser,
-    		col: data.length || -1
-    	});
-    }
-
-    return {
-        status: true,
-        depth: depth,
-        length: totalLength || -1
-    };
-};
-
-/**
- * Syntax layer makes formula object from formula expression.
- * @namespace FormulaParser
- * @method syntaxParser
- * @related search method
- * @param {Array} data - formula array data
- * @param {Number} pos - formula stack cursor
- * @param {Number} depth - formula search depth (start from 0)
- * @param {Number} length - compressed formula expression length
- * @param {Array} operators - permitted formula unit array
- * @return {Object}
- */
-FormulaParser.prototype.syntaxParser = function (data, pos, depth, length, operators) {
-	this.currentParser = this.ParserMap.SyntaxParser;
-
-	data  = data  || [];
-	pos   = pos   || 0;
-	depth = depth || 0;
-
-	var cursor = pos;
-
-	if(typeof data[0][0] === 'object' && typeof data[0].operator === 'undefined') {
-		data[0] = data[0][0];
-	}
-
-	if (data.length < 3) {
-		if(data.length <= 1 && typeof data[0] === 'object' && typeof data[0].operator !== 'undefined') {
-			return data[0];
-		} else {
-	        return this.log(0x01, {
-	            stack: this.currentParser,
-	            col: pos + (typeof data[0] === 'object'? data[0].length:0) + 1
-	        }, [3]);
-	    }
-    }
-
-    if (typeof data.length !== 'undefined') {
-        if (data.length > 1) {
-            for (var idx = 0; idx < data.length; idx++) {
-            	cursor = idx + pos;
-                var item = data[idx];
-                if (this.inArray(item, this.Operators) === -1 && this.isOperand(item) === false) {
-			        return this.log(0x02, {
-			            stack: this.currentParser,
-			            col: cursor
-			        }, [item]);
-                }
-
-                if (this.inArray(item, operators) !== -1) {
-                    if (this.isOperand(data[idx - 1]) === false) {
-				        return this.log(0x03, {
-				            stack: this.currentParser,
-				            col: cursor - 1
-				        });
+                    formula = formula.concat(result.data);
+                    if(typeof data.operator !== 'undefined' && typeof result.operator !== 'undefined') {
+                        if(this.getOperatorPriority(data.operator) < this.getOperatorPriority(result.operator) && this.getOperatorPriority(data.operator) !== -1) {
+                            formula.splice([formula.length - 3], 0, '(');
+                            formula.splice([formula.length], 0, ')');
+                        }
                     }
-
-                    if (this.isOperand(data[idx + 1]) === false) {
-				        return this.log(0x04, {
-				            stack: this.currentParser,
-				            col: cursor + 1
-				        });
-                    }
-
-                    data.splice(idx - 1, 3, {
-                        operator: item,
-                        operand1: data[idx - 1],
-                        operand2: data[idx + 1],
-                        length: length
-                    });
-
-                   	if(typeof data[idx - 1][0] === 'object') {
-                   		data[idx - 1] = data[idx - 1][0];
-                   	}
-
-                    idx--;
                 }
+            } else {
+                formula.push(data[param]);
             }
         }
-    }
 
-    return {
-        status: true,
-        data: data
-    };
-};
-
-/**
- * Filter parser remains the formula object's only useful data for user
- * @namespace FormulaParser
- * @method filterParser
- * @related search method
- * @param {Object} data - formula object
- * @return {Object}
- */
-FormulaParser.prototype.filterParser = function(data) {
-	if(typeof data[0] === 'object') {
-		data = data[0];
-	}
-
-	if(typeof data.operand1 === 'object') {
-		this.filterParser(data.operand1);
-	}
-
-	if(typeof data.operand2 === 'object') {
-		this.filterParser(data.operand2);
-	}
-
-	if(typeof data.length !== 'undefined') {
-		delete data.length;
-	}
-
-	return data;
-};
-
-/**
- * String parser is using for convert formula object to readable formula array.
- * @namespace FormulaParser
- * @method stringParser
- * @related collapse method
- * @param {Object} data - formula object
- * @param {Number} depth - formula parse depth
- * @param {Number} pos - formula stack cursor
- * @return {Array}
- */
-FormulaParser.prototype.stringParser = function (data, depth, pos) {
-    this.currentParser = this.ParserMap.StringParser;
-
-    var _this = this;
-    var formula = [];
-
-    depth = depth || 0;
-    pos   = pos   || 0;
-
-    if (typeof data.value === 'undefined') {
-        if (typeof data.operator === 'undefined') {
-            return this.log(0x20, {
-                stack: this.currentParser,
-                col: pos,
-                depth: depth
-            });
-        } else if (typeof data.operand1 === 'undefined') {
-            return this.log(0x21, {
-                stack: this.currentParser,
-                col: pos,
-                depth: depth
-            });
-        } else if (typeof data.operand2 === 'undefined') {
-            return this.log(0x22, {
-                stack: this.currentParser,
-                col: pos,
-                depth: depth
-            });
-        }
-    } else {
         return {
             status: true,
-            data: ((data.value.type === 'unit') ? data.value.unit : data.value)
+            data: formula,
+            operator: depth > 0? data.operator:undefined
         };
-    }
+    };
 
-    var params = ['operand1', 'operator', 'operand2'];
-    for (var idx=0; idx<params.length; idx++) {
-        var param = params[idx];
-        if (typeof data[param] === 'object') {
-            var result = _this.stringParser(data[param], depth + 1, pos + idx);
-            if (result.status === false) {
-                return result;
-            } else {
-                formula = formula.concat(result.data);
-                if(typeof data.operator !== 'undefined' && typeof result.operator !== 'undefined') {
-                    if(this.getOperatorPriority(data.operator) < this.getOperatorPriority(result.operator) && this.getOperatorPriority(data.operator) !== -1) {
-                        formula.splice([formula.length - 3], 0, '(');
-                        formula.splice([formula.length], 0, ')');
-                    }
-                }
-            }
-        } else {
-            formula.push(data[param]);
+    /**
+     * Search method routes each of commands to right steps.
+     * @namespace FormulaParser
+     * @method search
+     * @related layerParser, syntaxParser, filterParser methods.
+     * @param {Array} data - formula array data
+     * @param {Number} pos - formula stack cursor
+     * @param {Number} depth - formula search depth (start from 0)
+     * @return {Object}
+     */
+    FormulaParser.prototype.search = function (data, pos, depth) {
+    	var _super = this;
+        pos   = pos   || 0;
+        depth = depth || 0;
+
+        if (typeof data === 'string' && depth < 1) {
+            data = this.stringToArray(data);
         }
-    }
 
-    return {
-        status: true,
-        data: formula,
-        operator: depth > 0? data.operator:undefined
-    };
-};
+        var result = null;
+        var len = this.OperandPriority.length + 1;
+        var parserLength = 0;
+        var parserComplete = function() {
+        	if(depth === 0) {
+        		data = _super.filterParser(data);
+        	}
 
-/**
- * Search method routes each of commands to right steps.
- * @namespace FormulaParser
- * @method search
- * @related layerParser, syntaxParser, filterParser methods.
- * @param {Array} data - formula array data
- * @param {Number} pos - formula stack cursor
- * @param {Number} depth - formula search depth (start from 0)
- * @return {Object}
- */
-FormulaParser.prototype.search = function (data, pos, depth) {
-	var _super = this;
-    pos   = pos   || 0;
-    depth = depth || 0;
+        	return {
+    	        status: true,
+    	        data: data,
+    	        length: depth === 0? undefined:parserLength,
+    	        depth:  depth === 0? undefined:depth
+    	    };
+        };
 
-    if (typeof data === 'string' && depth < 1) {
-        data = this.stringToArray(data);
-    }
+        for(var i=0; i<len; i++) {
+        	if(result !== null && typeof result.data !== 'undefined' && result.data.length === 1) {
+    	    	return parserComplete.call();
+        	}
 
-    var result = null;
-    var len = this.OperandPriority.length + 1;
-    var parserLength = 0;
-    var parserComplete = function() {
-    	if(depth === 0) {
-    		data = _super.filterParser(data);
-    	}
+        	if(i === 0) {
+        		result = this.layerParser(data, pos, depth);
+        		parserLength = result.length;
+        	} else {
+        		result = this.syntaxParser(data, pos, depth, parserLength, this.OperandPriority[i - 1]);
+        	}
 
-    	return {
-	        status: true,
-	        data: data,
-	        length: depth === 0? undefined:parserLength,
-	        depth:  depth === 0? undefined:depth
-	    };
+    	    if (result.status === false) {
+    	        return result;
+    	    } else if(i + 1 === len) {
+    	    	return parserComplete.call();
+    	    }
+        }
     };
 
-    for(var i=0; i<len; i++) {
-    	if(result !== null && typeof result.data !== 'undefined' && result.data.length === 1) {
-	    	return parserComplete.call();
-    	}
+    /**
+     * Collapse method can convert formula object to readable and user-friendly formula array.
+     * @namespace FormulaParser
+     * @method collapse
+     * @related stringParser method.
+     * @param {Object} data - formula object data
+     * @param {Number} depth - formula search depth (start from 0)
+     * @return {Object}
+     */
+    FormulaParser.prototype.collapse = function (data, depth) {
+        var _this = this, formula = null;
+        depth = depth || 0;
+        formula = this.stringParser(data, depth);
 
-    	if(i === 0) {
-    		result = this.layerParser(data, pos, depth);
-    		parserLength = result.length;
-    	} else {
-    		result = this.syntaxParser(data, pos, depth, parserLength, this.OperandPriority[i - 1]);
-    	}
-
-	    if (result.status === false) {
-	        return result;
-	    } else if(i + 1 === len) {
-	    	return parserComplete.call();
-	    }
-    }
-};
-
-/**
- * Collapse method can convert formula object to readable and user-friendly formula array.
- * @namespace FormulaParser
- * @method collapse
- * @related stringParser method.
- * @param {Object} data - formula object data
- * @param {Number} depth - formula search depth (start from 0)
- * @return {Object}
- */
-FormulaParser.prototype.collapse = function (data, depth) {
-    var _this = this, formula = null;
-    depth = depth || 0;
-    formula = this.stringParser(data, depth);
-
-    return {
-        status: true,
-        data: formula.data
+        return {
+            status: true,
+            data: formula.data
+        };
     };
-};
 
-/**
- * Init method is fired when you declare FormulaParser object by new keyword.
- * @namespace FormulaParser
- * @method init
- * @related FormulaParser object.
- * @return {Dynamic}
- */
-FormulaParser.prototype.init = function () {
-    if (typeof this.formula === 'string' || (typeof this.formula === 'object' && typeof this.formula.operator === 'undefined')) {
-        return this.search(this.formula);
-    } else if(typeof this.formula === 'object' && typeof this.formula.operator !== 'undefined') {
-        return this.collapse(this.formula);
-    } else {
-        console.error('Unkown type formula', this.formula);
-    }
-};
+    /**
+     * Init method is fired when you declare FormulaParser object by new keyword.
+     * @namespace FormulaParser
+     * @method init
+     * @related FormulaParser object.
+     * @return {Dynamic}
+     */
+    FormulaParser.prototype.init = function () {
+        if (typeof this.formula === 'string' || (typeof this.formula === 'object' && typeof this.formula.operator === 'undefined')) {
+            return this.search(this.formula);
+        } else if(typeof this.formula === 'object' && typeof this.formula.operator !== 'undefined') {
+            return this.collapse(this.formula);
+        } else {
+            console.error('Unkown type formula', this.formula);
+        }
+    };
+
+    return FormulaParser;
+}) ();

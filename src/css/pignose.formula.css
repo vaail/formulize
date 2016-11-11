@@ -62,10 +62,14 @@
 	padding: .35em .8em;
 	word-break: break-all;
 	margin: .4em;
-	line-height: 1.4;
+	line-height: 1em;
 	border-radius: 1em;
 	background-color: #ffffff;
 	border: 1px solid #1280ff;
+}
+
+.formula-container .formula-unit {
+	padding: .2em .8em .5em;
 }
 
 .formula-container .formula-operator {
@@ -117,6 +121,11 @@
 .formula-alert.formula-alert-error {
 	color: #ff9090;
 	border-top-color: #ff9090;
+}
+
+.formula-prefix,
+.formula-surfix {
+	vertical-align: middle;
 }
 
 .formula-prefix {
