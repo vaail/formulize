@@ -1,8 +1,8 @@
 /************************************************************************************************************
  *
- * @ Version 2.0.7
+ * @ Version 2.0.8
  * @ Formula Generator
- * @ Update 11. 11. 2016
+ * @ Update 12. 02. 2016
  * @ Author PIGNOSE
  * @ Licensed under MIT.
  *
@@ -17,7 +17,7 @@
 
     String.prototype.toFormulaString = function (shift) {
         var keyCode = parseInt(this);
-        if (keyCode == 106) {
+        if (keyCode === 106) {
             return 'x';
         } else if (((keyCode === 187 || keyCode === 61) && shift === true) || keyCode === 107) {
             return '+';
@@ -151,7 +151,7 @@
                             $drag.insertAfter(_this.cursor);
                         }
 
-                        if (start == end) {
+                        if (start === end) {
                             return true;
                         }
 
@@ -185,9 +185,9 @@
 
                     if (_this.cursor !== null && _this.cursor.length > 0) {
                         var keyCode = event.which;
-                        if (keyCode == 116 || (keyCode == 82 && event.ctrlKey)) {
+                        if (keyCode === 116 || (keyCode === 82 && event.ctrlKey)) {
                             location.reload();
-                        } else if (keyCode == 65 && event.ctrlKey) {
+                        } else if (keyCode === 65 && event.ctrlKey) {
                             _this.selectAll();
                         } else if (keyCode >= 96 && keyCode <= 105) {
                             keyCode -= 48;
@@ -207,7 +207,7 @@
                             }
                             _this.syntaxCheck();
                             return false;
-                        } else if (keyCode == 46) {
+                        } else if (keyCode === 46) {
                             $drag = _this.container.find('.' + _this.opt.id + '-drag');
                             if ($drag.length > 0) {
                                 _this.cursor.insertAfter($drag);
@@ -226,7 +226,7 @@
                             _this.syntaxCheck();
                             return false;
                         } else if (keyCode >= 37 && keyCode <= 40) {
-                            if (keyCode == 37) {
+                            if (keyCode === 37) {
                                 if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
                                     if (event.shiftKey) {
                                         $drag = _this.container.find('.' + _this.opt.id + '-drag');
@@ -261,7 +261,7 @@
                                 } else {
                                     _this.destroyDrag();
                                 }
-                            } else if (keyCode == 38) {
+                            } else if (keyCode === 38) {
                                 if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
                                     parentPadding = {
                                         x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
@@ -314,7 +314,7 @@
                                 } else {
                                     _this.destroyDrag();
                                 }
-                            } else if (keyCode == 40) {
+                            } else if (keyCode === 40) {
                                 if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
                                     parentPadding = {
                                         x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
@@ -334,8 +334,8 @@
                                 }
                             }
                             return false;
-                        } else if (keyCode == 35 || keyCode == 36) {
-                            if (keyCode == 35) {
+                        } else if (keyCode === 35 || keyCode === 36) {
+                            if (keyCode === 35) {
                                 if (_this.cursor.length > 0 && _this.container.children(':last').length > 0) {
                                     if (event.shiftKey) {
                                         $drag = _this.container.find('.' + _this.opt.id + '-drag');
@@ -356,7 +356,7 @@
                                         _this.cursor.insertAfter(_this.container.children(':last'));
                                     }
                                 }
-                            } else if (keyCode == 36) {
+                            } else if (keyCode === 36) {
                                 if (_this.cursor.length > 0 && _this.container.children(':first').length > 0) {
                                     if (event.shiftKey) {
                                         $drag = _this.container.find('.' + _this.opt.id + '-drag');
@@ -438,14 +438,13 @@
 
             this.click = function (pos) {
                 var _this = this;
-                var $cursor = $('<div class="' + this.opt.id + '-cursor"></div>');
+                this.container.find('.' + _this.opt.id + '-cursor').remove();
+
+                var $cursor = $('<div class="' + _this.opt.id + '-cursor"></div>');
                 var check = null, idx = null;
-
                 pos = pos || { x: 0, y: 0 };
-
-                this.container.find('.' + this.opt.id + '-cursor').remove();
-                $cursor.appendTo(this.container);
-                this.cursor = $cursor;
+                $cursor.appendTo(_this.container);
+                _this.cursor = $cursor;
 
                 var parentPos = {
                     x: _this.container.offset().left,
@@ -559,7 +558,7 @@
             this.insertChar = function (key) {
                 var _this = this;
                 if ((key >= 0 && key <= 9) || $.inArray(key.toLowerCase(), _this.permitedKey) != -1) {
-                    if ((key >= 0 && key <= 9) || key == '.') {
+                    if ((key >= 0 && key <= 9) || key === '.') {
                         var $unit = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-unit">' + key + '</div>');
                         var $item = null;
                         var decimal = '', merge = false;
@@ -610,7 +609,7 @@
                         } else {
                             this.container.append($operator);
                         }
-                        if (key == '(' || key == ')') {
+                        if (key === '(' || key === ')') {
                             $operator.addClass(_this.opt.id + '-bracket');
                         }
                     }
@@ -732,6 +731,7 @@
                 if (typeof e === 'string') {
                     e = $(e);
                 }
+
                 e.addClass(_this.opt.id + '-item');
                 e.insertBefore(_this.cursor);
                 _this.text.focus();

@@ -1,12 +1,18 @@
 {
   "name": "jquery-formula",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Javscript WYSWYG formula builder.",
   "main": "index.html",
   "dependencies": {},
   "devDependencies": {
-    "grunt-contrib-csslint": "^1.0.0",
-    "grunt-contrib-cssmin": "^1.0.1"
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-csslint": "^2.0.0",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
