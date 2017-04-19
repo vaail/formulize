@@ -76,13 +76,13 @@ module.exports = function (grunt) {
     // These plugins provide necessary tasks
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-csslint');
+    //grunt.loadNpmTasks('grunt-contrib-csslint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task
-    grunt.registerTask('default', ['concat', 'jshint', 'csslint', 'cssmin', 'uglify']);
+    grunt.registerTask('default', ['concat', 'jshint', 'cssmin', 'uglify']);
     grunt.registerTask('build', ['default', 'watch']);
-    grunt.registerTask('test', ['concat', 'jshint', 'csslint']);
+    grunt.registerTask('test', ['concat', 'jshint']);
 };

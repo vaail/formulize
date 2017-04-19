@@ -30,10 +30,13 @@
 		// Plugin version confirmation.
 		$('.version strong').text('v' + $.fn.formula.getVersion());
 
-		// You want to get loadable data like below, check code line 103.
+		// You can load formula expression by wrting JSON type value;
 		var data = {"operator":"+","operand1":{"operator":"+","operand1":{"value":"1","type":"unit"},"operand2":{"value":"2","type":"unit"}},"operand2":{"value":"3","type":"unit"}};
+
+        // .setFormula({:data}) can load new expression.
 		$formula.data('formula').setFormula(data);
 
+        // .draggable is normal jQuery UI plugin. It support to dragging the element by using mouse click and move.
 		$('.formula-drop .formula-drop-items .formula-custom').draggable({
 			revert: 'invalid',
 			helper: 'clone',
@@ -41,27 +44,31 @@
 			scroll: false
 		});
 
+        // .droppable can detect drop event of draggable element.
 		$('.formula-advanced').droppable({
-			hoverClass: "formula-active",
-			drop: function( event, ui ) {
-				var $e = ui.draggable.clone();
-				$(this).formula('insert', $e);
+			drop: function(event, ui) {
+                // You can clone drop item to move inside formula.
+				var $element = ui.draggable.clone();
+
+                // Position variable describes `where` you put the element.
+                var position = {
+                    x: event.offsetX,
+                    y: event.offsetY
+                };
+
+                // 'insert' command can put the element at some position.
+				$(this).formula('insert', $element, position);
 			}
 		});
 
-		$('.formula-get .button').bind('click', function(event) {
+		$('.formula-get .compact .item').bind('click', function(event) {
 			event.preventDefault();
-			// $('.formula-advanced').data('formula').getFormula() retuns javascript object.
-			// $('.formula-advanced').data('formula').getFormula(function(data) {
-			// 	console.log(data.data); // It may returns loadable data.
-			// });
 			var data = $('.formula-advanced').data('formula').getFormula();
-			console.log(data);
+			console.log('Formula result:', data);
 
 			$('.formula-get .formula-get-json .formula-get-json-data').text(JSON.stringify(data));
 		});
 
-		// This use for DEMO page tab component.
 		$('.menu .item').tab();
 	});
 	//]]>
@@ -90,8 +97,8 @@
 
 			<div class="formula-drop">
 				<i class="fa fa-mouse-pointer" aria-hidden="true"></i>
-				<h4>You can drag and drop each of below items to formula area.</h4>
-				<p>If you want to set a value on your custom drag and drop item, Set <span class="label label-default">data-value</span> attribute on your element.</p>
+				<p>You can drag and drop each of below items to the formula area.</p>
+				<p>If you want to set a value on your custom element, Set <span class="ui label">data-value</span> attribute on your element.</p>
 				<div class="formula-drop-items">
 					<a href="#" class="formula-custom" data-value="3.14">PI</a>
 					<a href="#" class="formula-custom formula-custom-operator" data-value="+">Custom operator (+)</a>
@@ -100,17 +107,21 @@
 			</div>
 
 			<div class="formula-get">
-				<h4>Also you can get the <span class="label label-default">javascript object</span> data by calling <span class="label label-primary">getFormula();</span></h4>
-				<a href="#" class="ui button blue">getFormula</a>
+				<h4>Also you can get the <span class="ui label">javascript object</span> data by calling <span class="ui label primary">getFormula();</span></h4>
+                <div class="ui compact menu">
+                    <a href="#" class="item">getFormula</a>
+                </div>
 				<div class="formula-get-json">
-					<span class="formula-get-json-label">JSON Data</span>
-					<div class="formula-get-json-data">The json data will be appeared when you click <span class="label label-default">getFormula</span> button.</div>
+                    <span class="ui right ribbon label" style="margin-top: -40px; margin-left: 30px;">JSON</span>
+					<div class="formula-get-json-data">The json data will be appeared when you click <span class="ui label">getFormula</span> button.</div>
 				</div>
-				<h4>If you want to change loadable data, And you use <span class="label label-default">setFormula()</span> function in case, Use callback like follows.</h4>
-				<pre><code class="language-js">$formula.data('formula').getFormula(function(data) {
-	// data.data is formula parsed object data.
-	console.log(data.data);
- });</code></pre>
+				<h4>You can easily get the formula result to call <span class="ui label">getFormula();</span> function in case. Check the following codes.</h4>
+				<pre><code class="language-js">var result = $formula.data('formula').getFormula();
+// result.data is parsed formula exression (like [1, '*', 3, '+', 2]);
+console.log(result.data);
+
+// result.filterData is original formula object (like { operation: '*', operand1: 1, operand2: 3 })
+console.log(result.filterData);</code></pre>
 			</div>
 		</div>
 		<div id="content" class="article">
@@ -136,55 +147,55 @@
 				<tbody>
 					<tr>
 						<td colspan="2">id</td>
-						<td class="center"><span class="label label-primary">string</span></td>
-						<td>The unique id for formula's textarea element.</td>
+						<td class="center"><span class="ui label blue">string</span></td>
+						<td>An unique id of formula textarea element.</td>
 						<td>formula</td>
 					</tr>
 					<tr>
 						<td colspan="2">cursorAnimTime</td>
-						<td class="center"><span class="label label-primary">int</span></td>
-						<td>Cursor pointer blinking animation time. (ms)</td>
+						<td class="center"><span class="ui label blue">int</span></td>
+						<td>Blinking animation time of cursor. (ms)</td>
 						<td>160</td>
 					</tr>
 					<tr>
 						<td colspan="2">cursorDelayTime</td>
-						<td class="center"><span class="label label-primary">int</span></td>
-						<td>Cursor pointer blinking delay time. (ms)</td>
+						<td class="center"><span class="ui label blue">int</span></td>
+						<td>Blinking delay time of cursor. (ms)</td>
 						<td>500</td>
 					</tr>
 					<tr>
 						<td>strings</td>
 						<td>formula</td>
-						<td class="center"><span class="label label-primary">string</span></td>
+						<td class="center"><span class="ui label blue">string</span></td>
 						<td>Default label text in formula.</td>
 						<td>Formula</td>
 					</tr>
 					<tr>
 						<td>strings</td>
 						<td>validationPassed</td>
-						<td class="center"><span class="label label-primary">string</span></td>
+						<td class="center"><span class="ui label blue">string</span></td>
 						<td>The label text when result of validation is passed.</td>
 						<td>Passed</td>
 					</tr>
 					<tr>
 						<td>strings</td>
 						<td>validationError</td>
-						<td class="center"><span class="label label-primary">string</span></td>
-						<td>The label text when result of validation is error.</td>
+						<td class="center"><span class="ui label blue">string</span></td>
+						<td>A message when formula occurs validation error.</td>
 						<td>Validation Error</td>
 					</tr>
 					<tr>
 						<td>export</td>
 						<td>filter(data)</td>
-						<td class="center"><span class="label label-primary">function</span></td>
+						<td class="center"><span class="ui label blue">function</span></td>
 						<td>You can filter pre-export data as map filtering.</td>
 						<td>function(data) { return data; }</td>
 					</tr>
 					<tr>
 						<td>export</td>
-						<td>item($e)</td>
-						<td class="center"><span class="label label-primary">function</span></td>
-						<td>You can bind a trigger or customize for item which be inserted by <span class="label label-default">insert()</span> function.</td>
+						<td>item(element)</td>
+						<td class="center"><span class="ui label blue">function</span></td>
+						<td>You can bind a trigger or customize for item which be inserted by <span class="ui label">insert()</span> function.</td>
 						<td>function($e) { return $e.text(); }</td>
 					</tr>
 				</tbody>
@@ -194,7 +205,7 @@
 			<h3>
 				<span>Methods</span>
 			</h3>
-			<h4>First of all, You can call the function to use <span class="label label-default">$element.data('formula').Function Name();</span></h4>
+			<h4>You can call the function to use <span class="ui label">$element.data('formula').Function Name();</span></h4>
 			<table class="ui table celled">
 				<thead>
 					<tr>
@@ -205,54 +216,54 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td>syntaxCheck(callback)</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>This feature can check the formula syntax, And inform result (passed or not) to label in the formula box. First argument are callback for checking result.</td>
+						<td>syntaxCheck()</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>This feature can check the formula syntax, And that informs a result (passed or not) at label in the formula area.</td>
 					</tr>
 					<tr>
 						<td>destroyDrag</td>
-						<td><div class="label label-primary">function</div></td>
+						<td><div class="ui label blue">function</div></td>
 						<td>You can destroy drag selection in formula.</td>
 					</tr>
 					<tr>
 						<td>selectAll</td>
-						<td><div class="label label-primary">function</div></td>
+						<td><div class="ui label blue">function</div></td>
 						<td>You can select all unit in formula.</td>
 					</tr>
 					<tr>
-						<td>click(pos)</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>If you want click and make a cursor in formula, Use this feature. You need to send the correct coordinate like <span class="label label-default">event.clientX</span></td>
+						<td>click(position)</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>If you want click and make a cursor in formula, Use this feature. You need to send the correct coordinate as <span class="ui label">{x: ~~, y: ~~}</span></td>
 					</tr>
 					<tr>
 						<td>keydown(key, shift)</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>This method helps you to insert a character by <span class="label label-default">event.keycode</span>. If you give second argument as boolean, You can insert new character which be combined with Shift key.</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>This method helps you to insert a character as <span class="ui label">event.keycode</span>. If you give second argument as boolean, You can insert new character which be combined with Shift key.</td>
 					</tr>
 					<tr>
 						<td>insertChar(key)</td>
-						<td><div class="label label-primary">function</div></td>
+						<td><div class="ui label blue">function</div></td>
 						<td>It is more simple usage to insert a character.</td>
 					</tr>
 					<tr>
 						<td>empty()</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>Remove all unit in formula, It seems like <span class="label label-default">jQuery empty()</span>.</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>Remove all unit in formula, It seems like <span class="ui label">jQuery.empty()</span>.</td>
 					</tr>
 					<tr>
 						<td>setFormula(data)</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>You can load formula units by <span class="label label-default">javascript object</span>.</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>You can load formula units by <span class="ui label">javascript object</span>.</td>
 					</tr>
 					<tr>
-						<td>getFormula(callback)</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>You can get formula units as <span class="label label-default">javascript object</span>.</td>
+						<td>getFormula()</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>You can get formula units as <span class="ui label">javascript object</span>.</td>
 					</tr>
 					<tr>
 						<td>insert(e)</td>
-						<td><div class="label label-primary">function</div></td>
-						<td>You can insert html tag directly on formula.</td>
+						<td><div class="ui label blue">function</div></td>
+						<td>You can insert html tag directly in formula.</td>
 					</tr>
 				</tbody>
 			</table>

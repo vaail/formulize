@@ -1,37 +1,27 @@
-/************************************************************************************************************
- *
- * @ Version 2.0.8
- * @ Formula Generator
- * @ Update 12. 02. 2016
- * @ Author PIGNOSE
- * @ Licensed under MIT.
- *
- ***********************************************************************************************************/
+String.prototype.toFormulaDecimal = function () {
+    var split = this.split('.');
+    return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');
+};
+
+String.prototype.toFormulaString = function (shift) {
+    var keyCode = parseInt(this);
+    if (keyCode === 106) {
+        return 'x';
+    } else if (((keyCode === 187 || keyCode === 61) && shift === true) || keyCode === 107) {
+        return '+';
+    } else if (keyCode === 189 || keyCode === 173 || keyCode === 109) {
+        return '-';
+    } else if (keyCode === 190 || keyCode === 110) {
+        return '.';
+    } else if (keyCode === 191 || keyCode === 111) {
+        return '/';
+    } else {
+        return String.fromCharCode(keyCode);
+    }
+};
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.7';
-    String.prototype.toFormulaDecimal = function () {
-        var split = this.split('.');
-        return split[0].replace(/[^\d.]*/gi, '').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (typeof split[1] !== 'undefined' ? '.' + split[1].replace(/[^\d.]*/gi, '') : '');
-    };
-
-    String.prototype.toFormulaString = function (shift) {
-        var keyCode = parseInt(this);
-        if (keyCode === 106) {
-            return 'x';
-        } else if (((keyCode === 187 || keyCode === 61) && shift === true) || keyCode === 107) {
-            return '+';
-        } else if (keyCode === 189 || keyCode === 173 || keyCode === 109) {
-            return '-';
-        } else if (keyCode === 190 || keyCode === 110) {
-            return '.';
-        } else if (keyCode === 191 || keyCode === 111) {
-            return '/';
-        } else {
-            return String.fromCharCode(keyCode);
-        }
-    };
-
+    var _PLUGIN_VERSION_ = '2.0.9';
 
     $.fn.formula = function (opt) {
         var _opt = {
@@ -70,25 +60,26 @@
             $this.data('formula', this);
 
             this.init = function () {
-                var _this = this;
+                var context = this;
+
                 var drag = false, move = false, offset = null;
                 this.container = $(this).addClass(this.opt.id + '-container');
                 this.container.wrap('<div class="' + this.opt.id + '-wrapper"></div>');
 
                 this.alert = $('<div class="' + this.opt.id + '-alert">' + _opt.strings.formula + '</div>');
-                this.alert.insertBefore(_this.container);
+                this.alert.insertBefore(context.container);
 
                 this.text = $('<textarea id="' + this.opt.id + '-text" name="' + this.opt.id + '-text" class="' + this.opt.id + '-text"></textarea>');
                 this.text.insertAfter(this.container).focus();
                 this.text.bind('blur', function () {
-                    if (_this.cursor !== null) {
-                        _this.cursor.remove();
-                        _this.destroyDrag();
+                    if (context.cursor !== null) {
+                        context.cursor.remove();
+                        context.destroyDrag();
                     }
                 });
 
                 this.text.unbind('dblclick.' + this.opt.id + 'Handler').bind('dblclick.' + this.opt.id + 'Handler', function (event) {
-                    _this.selectAll();
+                    context.selectAll();
                 });
 
                 this.text.unbind('mousedown.' + this.opt.id + 'Handler').bind('mousedown.' + this.opt.id + 'Handler', function (event) {
@@ -105,7 +96,7 @@
                     if (move === true) {
                         move = false;
                     } else {
-                        _this.click({
+                        context.click({
                             x: event.offsetX,
                             y: event.offsetY
                         });
@@ -122,212 +113,212 @@
                         return true;
                     }
 
-                    if (_this.container.hasClass('formula-active')) {
-                        _this.click({
+                    if (context.container.hasClass('formula-active')) {
+                        context.click({
                             x: event.offsetX,
                             y: event.offsetY
                         });
                     }
 
                     move = true;
-                    if (_this.container.find('.' + _this.opt.id + '-drag').length > 0) {
+                    if (context.container.find('.' + context.opt.id + '-drag').length > 0) {
                         var endIndex = 0;
-                        _this.destroyDrag();
-                        _this.click({
+                        context.destroyDrag();
+                        context.click({
                             x: event.offsetX,
                             y: event.offsetY
                         });
-                        endIndex = _this.cursor.index();
+                        endIndex = context.cursor.index();
 
-                        $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
+                        $drag = $('<div class="' + context.opt.id + '-drag"></div>');
                         var start = 0, end = 0;
                         if (startIndex > endIndex) {
                             end = startIndex;
                             start = endIndex;
-                            $drag.insertBefore(_this.cursor);
+                            $drag.insertBefore(context.cursor);
                         } else {
                             start = startIndex;
                             end = endIndex;
-                            $drag.insertAfter(_this.cursor);
+                            $drag.insertAfter(context.cursor);
                         }
 
                         if (start === end) {
                             return true;
                         }
 
-                        _this.container.children(':not(".' + _this.opt.id + '-cursor")').filter(':gt("' + start + '")').filter(':lt("' + (end - start) + '")')
-                        .add(_this.container.children(':not(".' + _this.opt.id + '-cursor")').eq(start)).each(function () {
+                        context.container.children(':not(".' + context.opt.id + '-cursor")').filter(':gt("' + start + '")').filter(':lt("' + (end - start) + '")')
+                        .add(context.container.children(':not(".' + context.opt.id + '-cursor")').eq(start)).each(function () {
                             var $this = $(this);
                             $this.appendTo($drag);
                         });
 
                         if (startIndex > endIndex) {
-                            $drag.insertAfter(_this.cursor);
+                            $drag.insertAfter(context.cursor);
                         } else {
-                            $drag.insertBefore(_this.cursor);
+                            $drag.insertBefore(context.cursor);
                         }
                     } else {
-                        _this.destroyDrag();
-                        _this.click({
+                        context.destroyDrag();
+                        context.click({
                             x: event.offsetX,
                             y: event.offsetY
                         });
-                        startIndex = _this.cursor.index();
+                        startIndex = context.cursor.index();
 
-                        $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                        $drag.insertAfter(_this.cursor);
+                        $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                        $drag.insertAfter(context.cursor);
                     }
                 });
 
-                _this.text.unbind('keydown.' + this.opt.id + 'Handler').bind('keydown.' + this.opt.id + 'Handler', function (event) {
+                context.text.unbind('keydown.' + this.opt.id + 'Handler').bind('keydown.' + this.opt.id + 'Handler', function (event) {
                     event.preventDefault();
                     var $drag, $prev, $next, $item, $dragItem, text, parentPadding;
 
-                    if (_this.cursor !== null && _this.cursor.length > 0) {
+                    if (context.cursor !== null && context.cursor.length > 0) {
                         var keyCode = event.which;
                         if (keyCode === 116 || (keyCode === 82 && event.ctrlKey)) {
                             location.reload();
                         } else if (keyCode === 65 && event.ctrlKey) {
-                            _this.selectAll();
+                            context.selectAll();
                         } else if (keyCode >= 96 && keyCode <= 105) {
                             keyCode -= 48;
                         } else if (keyCode === 8) {
-                            $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                            $drag = context.container.find('.' + context.opt.id + '-drag');
                             if ($drag.length > 0) {
-                                _this.cursor.insertBefore($drag);
+                                context.cursor.insertBefore($drag);
                                 $drag.remove();
-                            } else if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
-                                $prev = _this.cursor.prev();
-                                if ($prev.hasClass(_this.opt.id + '-unit') && $prev.text().length > 1) {
+                            } else if (context.cursor.length > 0 && context.cursor.prev().length > 0) {
+                                $prev = context.cursor.prev();
+                                if ($prev.hasClass(context.opt.id + '-unit') && $prev.text().length > 1) {
                                     text = $prev.text();
-                                    _this.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
+                                    context.setDecimal($prev, text.substring(0, text.length - 1).toFormulaDecimal());
                                 } else {
                                     $prev.remove();
                                 }
                             }
-                            _this.syntaxCheck();
+                            context.syntaxCheck();
                             return false;
                         } else if (keyCode === 46) {
-                            $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                            $drag = context.container.find('.' + context.opt.id + '-drag');
                             if ($drag.length > 0) {
-                                _this.cursor.insertAfter($drag);
+                                context.cursor.insertAfter($drag);
                                 $drag.remove();
                             } else {
-                                if (_this.cursor.length > 0 && _this.cursor.next().length > 0) {
-                                    $next = _this.cursor.next();
-                                    if ($next.hasClass(_this.opt.id + '-unit') && $next.text().length > 1) {
+                                if (context.cursor.length > 0 && context.cursor.next().length > 0) {
+                                    $next = context.cursor.next();
+                                    if ($next.hasClass(context.opt.id + '-unit') && $next.text().length > 1) {
                                         text = $next.text();
-                                        _this.setDecimal($next, text.substring(1, text.length).toFormulaDecimal());
+                                        context.setDecimal($next, text.substring(1, text.length).toFormulaDecimal());
                                     } else {
                                         $next.remove();
                                     }
                                 }
                             }
-                            _this.syntaxCheck();
+                            context.syntaxCheck();
                             return false;
                         } else if (keyCode >= 37 && keyCode <= 40) {
                             if (keyCode === 37) {
-                                if (_this.cursor.length > 0 && _this.cursor.prev().length > 0) {
+                                if (context.cursor.length > 0 && context.cursor.prev().length > 0) {
                                     if (event.shiftKey) {
-                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = context.container.find('.' + context.opt.id + '-drag');
                                         if ($drag.length < 1) {
-                                            $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                            $drag.insertAfter(_this.cursor);
+                                            $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                            $drag.insertAfter(context.cursor);
                                         } else {
                                             if ($drag.data('active') === false) {
-                                                _this.destroyDrag();
-                                                $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                                $drag.insertAfter(_this.cursor);
+                                                context.destroyDrag();
+                                                $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                                $drag.insertAfter(context.cursor);
                                             }
                                         }
                                         $drag.data('active', true);
 
-                                        $prev = _this.cursor.prev();
-                                        if ($prev.hasClass(_this.opt.id + '-drag')) {
+                                        $prev = context.cursor.prev();
+                                        if ($prev.hasClass(context.opt.id + '-drag')) {
                                             $dragItem = $drag.children('*');
                                             if ($dragItem.length < 1) {
                                                 $drag.remove();
                                             } else {
                                                 $dragItem.last().insertAfter($drag);
-                                                _this.cursor.insertAfter($drag);
+                                                context.cursor.insertAfter($drag);
                                             }
                                         } else {
-                                            _this.cursor.prev().prependTo($drag);
+                                            context.cursor.prev().prependTo($drag);
                                         }
                                     } else {
-                                        _this.destroyDrag();
-                                        _this.cursor.insertBefore(_this.cursor.prev());
+                                        context.destroyDrag();
+                                        context.cursor.insertBefore(context.cursor.prev());
                                     }
                                 } else {
-                                    _this.destroyDrag();
+                                    context.destroyDrag();
                                 }
                             } else if (keyCode === 38) {
-                                if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
+                                if (context.cursor.prev().length > 0 || context.cursor.next().length > 0) {
                                     parentPadding = {
-                                        x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
-                                        y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
+                                        x: parseFloat(context.container.css('padding-left').replace(/[^\d.]/gi, '')),
+                                        y: parseFloat(context.container.css('padding-top').replace(/[^\d.]/gi, ''))
                                     };
 
-                                    $item = _this.cursor.prev();
+                                    $item = context.cursor.prev();
                                     if ($item.length < 0) {
-                                        $item = _this.cursor.next();
+                                        $item = context.cursor.next();
                                     }
-                                    _this.click({
-                                        x: _this.cursor.position().left + $item.outerWidth(),
-                                        y: _this.cursor.position().top - $item.outerHeight() / 2
+                                    context.click({
+                                        x: context.cursor.position().left + $item.outerWidth(),
+                                        y: context.cursor.position().top - $item.outerHeight() / 2
                                     });
                                 } else {
 
                                 }
                             } else if (keyCode === 39) {
-                                if (_this.cursor.length > 0 && _this.cursor.next().length > 0) {
+                                if (context.cursor.length > 0 && context.cursor.next().length > 0) {
                                     if (event.shiftKey) {
-                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = context.container.find('.' + context.opt.id + '-drag');
                                         if ($drag.length < 1) {
-                                            $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                            $drag.insertBefore(_this.cursor);
+                                            $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                            $drag.insertBefore(context.cursor);
                                         } else {
                                             if ($drag.data('active') === false) {
-                                                _this.destroyDrag();
-                                                $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                                $drag.insertBefore(_this.cursor);
+                                                context.destroyDrag();
+                                                $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                                $drag.insertBefore(context.cursor);
                                             }
                                         }
                                         $drag.data('active', true);
 
-                                        $next = _this.cursor.next();
-                                        if ($next.hasClass(_this.opt.id + '-drag')) {
+                                        $next = context.cursor.next();
+                                        if ($next.hasClass(context.opt.id + '-drag')) {
                                             $dragItem = $drag.children('*');
                                             if ($dragItem.length < 1) {
                                                 $drag.remove();
                                             } else {
                                                 $dragItem.first().insertBefore($drag);
-                                                _this.cursor.insertBefore($drag);
+                                                context.cursor.insertBefore($drag);
                                             }
                                         } else {
-                                            _this.cursor.next().appendTo($drag);
+                                            context.cursor.next().appendTo($drag);
                                         }
                                     } else {
-                                        _this.destroyDrag();
-                                        _this.cursor.insertAfter(_this.cursor.next());
+                                        context.destroyDrag();
+                                        context.cursor.insertAfter(context.cursor.next());
                                     }
                                 } else {
-                                    _this.destroyDrag();
+                                    context.destroyDrag();
                                 }
                             } else if (keyCode === 40) {
-                                if (_this.cursor.prev().length > 0 || _this.cursor.next().length > 0) {
+                                if (context.cursor.prev().length > 0 || context.cursor.next().length > 0) {
                                     parentPadding = {
-                                        x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
-                                        y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
+                                        x: parseFloat(context.container.css('padding-left').replace(/[^\d.]/gi, '')),
+                                        y: parseFloat(context.container.css('padding-top').replace(/[^\d.]/gi, ''))
                                     };
 
-                                    $item = _this.cursor.prev();
+                                    $item = context.cursor.prev();
                                     if ($item.length < 0) {
-                                        $item = _this.cursor.next();
+                                        $item = context.cursor.next();
                                     }
-                                    _this.click({
-                                        x: _this.cursor.position().left + $item.outerWidth(),
-                                        y: _this.cursor.position().top + $item.outerHeight() * 1.5
+                                    context.click({
+                                        x: context.cursor.position().left + $item.outerWidth(),
+                                        y: context.cursor.position().top + $item.outerHeight() * 1.5
                                     });
                                 } else {
 
@@ -336,48 +327,48 @@
                             return false;
                         } else if (keyCode === 35 || keyCode === 36) {
                             if (keyCode === 35) {
-                                if (_this.cursor.length > 0 && _this.container.children(':last').length > 0) {
+                                if (context.cursor.length > 0 && context.container.children(':last').length > 0) {
                                     if (event.shiftKey) {
-                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = context.container.find('.' + context.opt.id + '-drag');
                                         if ($drag.length < 1) {
-                                            $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                            $drag.insertBefore(_this.cursor);
+                                            $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                            $drag.insertBefore(context.cursor);
                                         } else {
                                             if ($drag.data('active') === false) {
-                                                _this.destroyDrag();
-                                                $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                                $drag.insertBefore(_this.cursor);
+                                                context.destroyDrag();
+                                                $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                                $drag.insertBefore(context.cursor);
                                             }
                                         }
                                         $drag.data('active', true);
-                                        _this.cursor.nextAll().appendTo($drag);
+                                        context.cursor.nextAll().appendTo($drag);
                                     } else {
-                                        _this.destroyDrag();
-                                        _this.cursor.insertAfter(_this.container.children(':last'));
+                                        context.destroyDrag();
+                                        context.cursor.insertAfter(context.container.children(':last'));
                                     }
                                 }
                             } else if (keyCode === 36) {
-                                if (_this.cursor.length > 0 && _this.container.children(':first').length > 0) {
+                                if (context.cursor.length > 0 && context.container.children(':first').length > 0) {
                                     if (event.shiftKey) {
-                                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                                        $drag = context.container.find('.' + context.opt.id + '-drag');
                                         if ($drag.length < 1) {
-                                            $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                            $drag.insertAfter(_this.cursor);
+                                            $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                            $drag.insertAfter(context.cursor);
                                         } else {
                                             if ($drag.data('active') === false) {
-                                                _this.destroyDrag();
-                                                $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                                                $drag.insertAfter(_this.cursor);
+                                                context.destroyDrag();
+                                                $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                                                $drag.insertAfter(context.cursor);
                                             }
                                         }
                                         $drag.data('active', true);
-                                        _this.cursor.prevAll().each(function () {
+                                        context.cursor.prevAll().each(function () {
                                             var $this = $(this);
                                             $this.prependTo($drag);
                                         });
                                     } else {
-                                        _this.destroyDrag();
-                                        _this.cursor.insertBefore(_this.container.children(':first'));
+                                        context.destroyDrag();
+                                        context.cursor.insertBefore(context.container.children(':first'));
                                     }
                                 }
                             } else {
@@ -388,36 +379,39 @@
                             return false;
                         }
 
-                        _this.keydown(keyCode.toString().toFormulaString(event.shiftKey), event.shiftKey);
-                        _this.syntaxCheck();
+                        context.keydown(keyCode.toString().toFormulaString(event.shiftKey), event.shiftKey);
+                        context.syntaxCheck();
                     }
                 });
             };
 
             this.syntaxCheck = function (callback) {
-                var _this = this;
-                var formula = _this.getFormula().data;
+                var context = this;
+                var formula = context.getFormula().data;
 
                 if (typeof formula !== 'undefined') {
                     var result = new FormulaParser(formula);
                     if (result.status === true) {
-                        _this.alert.text(_this.opt.strings.validationPassed).addClass(_this.opt.id + '-alert-good').removeClass(_this.opt.id + '-alert-error');
+                        context.alert.text(context.opt.strings.validationPassed).addClass(context.opt.id + '-alert-good').removeClass(context.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
+                            console.warn('$.formula(\'syntaxCheck\') method\'s callback option is deprecated.\nPlease use var reponse = $.formula(\'syntaxCheck\'); pattern.');
                             callback(true);
                         }
+                        return true;
                     }
                     else {
-                        _this.alert.text(_this.opt.strings.validationError).removeClass(_this.opt.id + '-alert-good').addClass(_this.opt.id + '-alert-error');
+                        context.alert.text(context.opt.strings.validationError).removeClass(context.opt.id + '-alert-good').addClass(context.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
                             callback(false);
                         }
+                        return false;
                     }
                 }
             };
 
             this.destroyDrag = function () {
-                var _this = this;
-                var $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                var context = this;
+                var $drag = context.container.find('.' + context.opt.id + '-drag');
                 $drag.children('*').each(function () {
                     var $this = $(this);
                     $this.insertBefore($drag);
@@ -426,39 +420,41 @@
             };
 
             this.selectAll = function () {
-                var _this = this;
-                _this.destroyDrag();
-                $drag = $('<div class="' + _this.opt.id + '-drag"></div>');
-                $drag.prependTo(_this.container);
-                _this.container.children(':not(".' + _this.opt.id + '-cursor")').each(function () {
+                var context = this;
+
+                context.destroyDrag();
+                $drag = $('<div class="' + context.opt.id + '-drag"></div>');
+                $drag.prependTo(context.container);
+                context.container.children(':not(".' + context.opt.id + '-cursor")').each(function () {
                     var $this = $(this);
                     $this.appendTo($drag);
                 });
             };
 
-            this.click = function (pos) {
-                var _this = this;
-                this.container.find('.' + _this.opt.id + '-cursor').remove();
+            this.click = function (position) {
+                var context = this;
 
-                var $cursor = $('<div class="' + _this.opt.id + '-cursor"></div>');
+                context.container.find('.' + context.opt.id + '-cursor').remove();
+
+                var $cursor = $('<div class="' + context.opt.id + '-cursor"></div>');
                 var check = null, idx = null;
-                pos = pos || { x: 0, y: 0 };
-                $cursor.appendTo(_this.container);
-                _this.cursor = $cursor;
+                position = position || { x: 0, y: 0 };
+                $cursor.appendTo(context.container);
+                context.cursor = $cursor;
 
                 var parentPos = {
-                    x: _this.container.offset().left,
-                    y: _this.container.offset().top
+                    x: context.container.offset().left,
+                    y: context.container.offset().top
                 };
 
                 var parentPadding = {
-                    x: parseFloat(_this.container.css('padding-left').replace(/[^\d.]/gi, '')),
-                    y: parseFloat(_this.container.css('padding-top').replace(/[^\d.]/gi, ''))
+                    x: parseFloat(context.container.css('padding-left').replace(/[^\d.]/gi, '')),
+                    y: parseFloat(context.container.css('padding-top').replace(/[^\d.]/gi, ''))
                 };
 
                 var checkArea = [];
 
-                _this.container.children('*:not(".' + _this.opt.id + '-cursor")').each(function () {
+                context.container.children('*:not(".' + context.opt.id + '-cursor")').each(function () {
                     var $this = $(this);
                     checkArea.push({
                         x: $this.offset().left - parentPos.x + parentPadding.x,
@@ -472,13 +468,13 @@
                 var maxY = 0, maxDiff = 10000;
                 for (idx in checkArea) {
                     check = checkArea[idx];
-                    if (check.y <= pos.y) {
-                        if (check.y >= maxY * 0.5 && check.x <= pos.x) {
+                    if (check.y <= position.y) {
+                        if (check.y >= maxY * 0.5 && check.x <= position.x) {
                             if (check.y >= maxY) {
                                 maxY = check.y;
                             }
-                            if (pos.x - check.x <= maxDiff) {
-                                maxDiff = pos.x - check.x;
+                            if (position.x - check.x <= maxDiff) {
+                                maxDiff = position.x - check.x;
                                 $pointer = check.e;
                             }
                         }
@@ -490,25 +486,25 @@
                     maxDiff = 10000;
                     for (idx in checkArea) {
                         check = checkArea[idx];
-                        if (check.y >= maxY * 0.5 && check.x <= pos.x) {
+                        if (check.y >= maxY * 0.5 && check.x <= position.x) {
                             if (check.y >= maxY) {
                                 maxY = check.y;
                             }
-                            if (pos.x - check.x < maxDiff) {
-                                maxDiff = pos.x - check.x;
+                            if (position.x - check.x < maxDiff) {
+                                maxDiff = position.x - check.x;
                                 $pointer = check.e;
                             }
                         }
                     }
                 }
 
-                if (checkArea.length > 0 && $pointer !== null && maxY + checkArea[0].e.outerHeight() >= pos.y) {
-                    _this.cursor.insertAfter($pointer);
+                if (checkArea.length > 0 && $pointer !== null && maxY + checkArea[0].e.outerHeight() >= position.y) {
+                    context.cursor.insertAfter($pointer);
                 } else {
-                    if (checkArea.length > 0 && pos.x > checkArea[0].x) {
-                        _this.cursor.appendTo(_this.container);
+                    if (checkArea.length > 0 && position.x > checkArea[0].x) {
+                        context.cursor.appendTo(context.container);
                     } else {
-                        _this.cursor.prependTo(_this.container);
+                        context.cursor.prependTo(context.container);
                     }
                 }
 
@@ -516,24 +512,25 @@
                     setTimeout(function () {
                         if ($cursor.hasClass('inactive')) {
                             $cursor.removeClass('inactive');
-                            $cursor.stop().animate({ opacity: 1 }, _this.opt.cursorAnimTime);
+                            $cursor.stop().animate({ opacity: 1 }, context.opt.cursorAnimTime);
                         } else {
                             $cursor.addClass('inactive');
-                            $cursor.stop().animate({ opacity: 0 }, _this.opt.cursorAnimTime);
+                            $cursor.stop().animate({ opacity: 0 }, context.opt.cursorAnimTime);
                         }
 
                         if ($cursor.length > 0) {
                             loop();
                         }
-                    }, _this.opt.cursorDelayTime);
+                    }, context.opt.cursorDelayTime);
                 };
                 loop();
 
-                _this.destroyDrag();
+                context.destroyDrag();
             };
 
             this.keydown = function (key, shift) {
-                var _this = this;
+                var context = this;
+
                 var convert = {
                     0: ')',
                     1: '!',
@@ -552,46 +549,47 @@
                 }
                 key = $.trim(key);
 
-                this.insertChar.call(this, key);
+                context.insertChar.call(context, key);
             };
 
             this.insertChar = function (key) {
-                var _this = this;
-                if ((key >= 0 && key <= 9) || $.inArray(key.toLowerCase(), _this.permitedKey) != -1) {
+                var context = this;
+
+                if ((key >= 0 && key <= 9) || $.inArray(key.toLowerCase(), context.permitedKey) != -1) {
                     if ((key >= 0 && key <= 9) || key === '.') {
-                        var $unit = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-unit">' + key + '</div>');
+                        var $unit = $('<div class="' + context.opt.id + '-item ' + context.opt.id + '-unit">' + key + '</div>');
                         var $item = null;
                         var decimal = '', merge = false;
 
-                        $drag = _this.container.find('.' + _this.opt.id + '-drag');
+                        $drag = context.container.find('.' + context.opt.id + '-drag');
 
                         if ($drag.length > 0) {
-                            _this.cursor.insertBefore($drag);
+                            context.cursor.insertBefore($drag);
                             $drag.remove();
                         }
 
-                        if (this.cursor !== null && this.cursor.length > 0) {
-                            this.cursor.before($unit);
+                        if (context.cursor !== null && context.cursor.length > 0) {
+                            context.cursor.before($unit);
                         } else {
-                            this.container.append($unit);
+                            context.container.append($unit);
                         }
 
                         var $prev = $unit.prev();
                         var $next = $unit.next();
 
-                        if ($prev.length > 0 && $prev.hasClass(_this.opt.id + '-cursor')) {
+                        if ($prev.length > 0 && $prev.hasClass(context.opt.id + '-cursor')) {
                             $prev = $prev.prev();
                         }
 
-                        if ($next.length > 0 && $next.hasClass(_this.opt.id + '-cursor')) {
+                        if ($next.length > 0 && $next.hasClass(context.opt.id + '-cursor')) {
                             $next = $next.next();
                         }
 
-                        if ($prev.length > 0 && $prev.hasClass(_this.opt.id + '-unit')) {
+                        if ($prev.length > 0 && $prev.hasClass(context.opt.id + '-unit')) {
                             merge = true;
                             $item = $prev;
                             $item.append($unit[0].innerHTML);
-                        } else if ($next.length > 0 && $next.hasClass(_this.opt.id + '-unit')) {
+                        } else if ($next.length > 0 && $next.hasClass(context.opt.id + '-unit')) {
                             merge = true;
                             $item = $next;
                             $item.prepend($unit[0].innerHTML);
@@ -599,45 +597,50 @@
 
                         if (merge === true) {
                             decimal = $item.text().toFormulaDecimal();
-                            _this.setDecimal($item, decimal);
+                            context.setDecimal($item, decimal);
                             $unit.remove();
                         }
                     } else if (key !== '') {
-                        var $operator = $('<div class="' + _this.opt.id + '-item ' + _this.opt.id + '-operator">' + key.toLowerCase() + '</div>');
-                        if (this.cursor !== null && this.cursor.length > 0) {
-                            this.cursor.before($operator);
+                        var $operator = $('<div class="' + context.opt.id + '-item ' + context.opt.id + '-operator">' + key.toLowerCase() + '</div>');
+                        if (context.cursor !== null && context.cursor.length > 0) {
+                            context.cursor.before($operator);
                         } else {
-                            this.container.append($operator);
+                            context.container.append($operator);
                         }
                         if (key === '(' || key === ')') {
-                            $operator.addClass(_this.opt.id + '-bracket');
+                            $operator.addClass(context.opt.id + '-bracket');
                         }
                     }
                 }
             };
 
             this.empty = function () {
-                this.container.find(':not(".' + this.opt.id + '-cursor")').remove();
-                return this.container;
+                var context = this;
+
+                context.container.find(':not(".' + context.opt.id + '-cursor")').remove();
+                return context.container;
             };
 
-            this.setDecimal = function (e, decimal) {
-                var _this = this;
+            this.setDecimal = function (element, decimal) {
+                var context = this;
+
                 if (decimal !== '') {
-                    e.empty();
+                    element.empty();
                     var split = decimal.split('.');
-                    var $prefix = $('<span class="' + _this.opt.id + '-prefix ' + _this.opt.id + '-decimal-highlight">' + split[0] + '</span>');
-                    $prefix.appendTo(e);
+                    var $prefix = $('<span class="' + context.opt.id + '-prefix ' + context.opt.id + '-decimal-highlight">' + split[0] + '</span>');
+                    $prefix.appendTo(element);
+
                     if (typeof split[1] !== 'undefined') {
-                        var $surfix = $('<span class="' + _this.opt.id + '-surfix ' + _this.opt.id + '-decimal-highlight">.' + split[1] + '</span>');
-                        $surfix.appendTo(e);
+                        var $surfix = $('<span class="' + context.opt.id + '-surfix ' + context.opt.id + '-decimal-highlight">.' + split[1] + '</span>');
+                        $surfix.appendTo(element);
                     }
                 }
             };
 
             this.setFormula = function (data) {
-                var _this = this;
-                this.empty();
+                var context = this;
+
+                context.empty();
                 try {
                     var obj = null;
                     if (typeof data !== 'object') {
@@ -648,7 +651,7 @@
 
                     var decodedData = new FormulaParser(obj);
                     if (decodedData.status === true) {
-                        this.insertFormula.call(this, decodedData.data);
+                        context.insertFormula.call(context, decodedData.data);
                     }
                 } catch (e) {
                     console.trace(e.stack);
@@ -656,36 +659,37 @@
             };
 
             this.getFormula = function () {
-                var _this = this;
+                var context = this;
+
                 var data = [];
                 var filterData = null;
 
-                if (typeof _this.opt.export.filter === 'function') {
-                    _this.container.find('.formula-item').each(function () {
+                if (typeof context.opt.export.filter === 'function') {
+                    context.container.find('.formula-item').each(function () {
                         var $this = $(this);
                         var item = {};
                         item.value = ($this.data('value') ? $this.data('value') : $this.text());
 
-                        if ($this.hasClass(_this.opt.id + '-unit')) {
+                        if ($this.hasClass(context.opt.id + '-unit')) {
                             item.type = 'unit';
                             item.value = item.value.toFormulaDecimal();
-                        } else if ($this.hasClass(_this.opt.id + '-custom')) {
+                        } else if ($this.hasClass(context.opt.id + '-custom')) {
                             item.type = 'item';
-                            if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
+                            if (typeof context.opt.export !== 'undefined' && typeof context.opt.export.item === 'function') {
                                 try {
-                                    item.value = _this.opt.export.item.call(_this, $this);
+                                    item.value = context.opt.export.item.call(context, $this);
                                 } catch (e) {
                                     item.value = '0';
                                 }
                             } else {
                                 item.value = '0';
                             }
-                        } else if ($this.hasClass(_this.opt.id + '-operator')) {
+                        } else if ($this.hasClass(context.opt.id + '-operator')) {
                             item = item.value === 'x' ? '*' : item.value;
                         }
                         data.push(item);
                     });
-                    data = _this.opt.export.filter(data);
+                    data = context.opt.export.filter(data);
                     filterData = new FormulaParser(JSON.parse(JSON.stringify(data)));
 
                     return {
@@ -693,17 +697,17 @@
                         filterData: filterData
                     };
                 } else {
-                    _this.container.find('.formula-item').each(function () {
+                    context.container.find('.formula-item').each(function () {
                         var $this = $(this);
                         var value = ($this.data('value') ? $this.data('value') : $this.text());
-                        if ($this.hasClass(_this.opt.id + '-unit')) {
+                        if ($this.hasClass(context.opt.id + '-unit')) {
                             value = value.toFormulaDecimal();
-                        } else if ($this.hasClass(_this.opt.id + '-operator') && value === 'x') {
+                        } else if ($this.hasClass(context.opt.id + '-operator') && value === 'x') {
                             value = '*';
-                        } else if ($this.hasClass(_this.opt.id + '-custom')) {
-                            if (typeof _this.opt.export !== 'undefined' && typeof _this.opt.export.item === 'function') {
+                        } else if ($this.hasClass(context.opt.id + '-custom')) {
+                            if (typeof context.opt.export !== 'undefined' && typeof context.opt.export.item === 'function') {
                                 try {
-                                    value = _this.opt.export.call(_this, $this);
+                                    value = context.opt.export.call(context, $this);
                                 } catch (e) {
                                     value = '0';
                                 }
@@ -721,31 +725,30 @@
                 }
             };
 
-            this.insert = function (e) {
-                var _this = this;
+            this.insert = function (item, position) {
+                var context = this;
 
-                if (_this.cursor === null || _this.cursor.length < 1) {
-                    _this.click();
+                context.click(position);
+
+                if (typeof item === 'string') {
+                    item = $(item);
                 }
 
-                if (typeof e === 'string') {
-                    e = $(e);
-                }
-
-                e.addClass(_this.opt.id + '-item');
-                e.insertBefore(_this.cursor);
-                _this.text.focus();
-                _this.syntaxCheck();
+                item.addClass(context.opt.id + '-item');
+                item.insertBefore(context.cursor);
+                
+                context.text.focus();
+                context.syntaxCheck();
             };
 
             this.insertFormula = function (data) {
-                var _this = this;
+                var context = this;
                 var idx = 0;
 
                 if (typeof data === 'string') {
                     var data_split = data.split('');
                     for (idx in data_split) {
-                        this.insertChar.call(this, data_split[idx]);
+                        context.insertChar.call(context, data_split[idx]);
                     }
                 } else {
                     for (idx in data) {
@@ -753,19 +756,19 @@
                         if (typeof item !== 'object') {
                             var data_splited = item.toString().split('');
                             for (var key in data_splited) {
-                                this.insertChar.call(this, data_splited[key]);
+                                context.insertChar.call(context, data_splited[key]);
                             }
                         } else {
-                            if (typeof _this.opt.import.item === 'function') {
-                                var $e = _this.opt.import.item.call(_this, item);
+                            if (typeof context.opt.import.item === 'function') {
+                                var $e = context.opt.import.item.call(context, item);
                                 if (typeof $e !== 'undefined' && $e !== null) {
-                                    _this.insert($e);
+                                    context.insert($e);
                                 }
                             }
                         }
                     }
                 }
-                _this.syntaxCheck();
+                context.syntaxCheck();
             };
 
             if (_args.length < 1 || typeof _args[0] === 'object') {
