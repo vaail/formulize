@@ -751,8 +751,10 @@ String.prototype.toFormulaString = function (shift) {
                         }
                         data.push(item);
                     });
-                    data = context.opt.export.filter(data);
-                    filterData = new FormulaParser(JSON.parse(JSON.stringify(data)));
+                    
+                    data = data;
+                    filterData = new FormulaParser(Object.assign([], data));
+                    filterData.data = context.opt.export.filter(filterData.data);
 
                     result = {
                         data: data,
