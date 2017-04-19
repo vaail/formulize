@@ -58,6 +58,8 @@ String.prototype.toFormulaString = function (shift) {
         return this.each(function () {
             var $this = $(this);
 
+            $this.data('formula', this);
+
             this.init = function () {
                 var context = this;
 
