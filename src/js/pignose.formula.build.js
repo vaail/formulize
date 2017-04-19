@@ -21,7 +21,7 @@ String.prototype.toFormulaString = function (shift) {
 };
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.10';
+    var _PLUGIN_VERSION_ = '2.0.11';
 
     $.fn.formula = function (opt) {
         var _opt = {
@@ -751,7 +751,7 @@ String.prototype.toFormulaString = function (shift) {
                         }
                         data.push(item);
                     });
-                    
+
                     data = data;
                     filterData = new FormulaParser(Object.assign([], data));
                     filterData.data = context.opt.export.filter(filterData.data);
