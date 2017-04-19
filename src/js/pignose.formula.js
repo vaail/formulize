@@ -21,7 +21,7 @@ String.prototype.toFormulaString = function (shift) {
 };
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.9';
+    var _PLUGIN_VERSION_ = '2.0.10';
 
     $.fn.formula = function (opt) {
         var _opt = {
@@ -57,32 +57,31 @@ String.prototype.toFormulaString = function (shift) {
 
         return this.each(function () {
             var $this = $(this);
-            $this.data('formula', this);
 
             this.init = function () {
                 var context = this;
 
                 var drag = false, move = false, offset = null;
-                this.container = $(this).addClass(this.opt.id + '-container');
-                this.container.wrap('<div class="' + this.opt.id + '-wrapper"></div>');
+                context.container = $(context).addClass(context.opt.id + '-container');
+                context.container.wrap('<div class="' + context.opt.id + '-wrapper"></div>');
 
-                this.alert = $('<div class="' + this.opt.id + '-alert">' + _opt.strings.formula + '</div>');
-                this.alert.insertBefore(context.container);
+                context.alert = $('<div class="' + context.opt.id + '-alert">' + _opt.strings.formula + '</div>');
+                context.alert.insertBefore(context.container);
 
-                this.text = $('<textarea id="' + this.opt.id + '-text" name="' + this.opt.id + '-text" class="' + this.opt.id + '-text"></textarea>');
-                this.text.insertAfter(this.container).focus();
-                this.text.bind('blur', function () {
+                context.text = $('<textarea id="' + context.opt.id + '-text" name="' + context.opt.id + '-text" class="' + context.opt.id + '-text"></textarea>');
+                context.text.insertAfter(context.container).focus();
+                context.text.bind('blur', function () {
                     if (context.cursor !== null) {
                         context.cursor.remove();
                         context.destroyDrag();
                     }
                 });
 
-                this.text.unbind('dblclick.' + this.opt.id + 'Handler').bind('dblclick.' + this.opt.id + 'Handler', function (event) {
+                context.text.unbind('dblclick.' + context.opt.id + 'Handler').bind('dblclick.' + context.opt.id + 'Handler', function (event) {
                     context.selectAll();
                 });
 
-                this.text.unbind('mousedown.' + this.opt.id + 'Handler').bind('mousedown.' + this.opt.id + 'Handler', function (event) {
+                context.text.unbind('mousedown.' + context.opt.id + 'Handler').bind('mousedown.' + context.opt.id + 'Handler', function (event) {
                     drag = true;
 
                     offset = {
@@ -91,7 +90,7 @@ String.prototype.toFormulaString = function (shift) {
                     };
                 });
 
-                this.text.unbind('mouseup.' + this.opt.id + 'Handler').bind('mouseup.' + this.opt.id + 'Handler', function (event) {
+                context.text.unbind('mouseup.' + context.opt.id + 'Handler').bind('mouseup.' + context.opt.id + 'Handler', function (event) {
                     drag = false;
                     if (move === true) {
                         move = false;
@@ -104,7 +103,7 @@ String.prototype.toFormulaString = function (shift) {
                 });
 
                 var startIndex;
-                this.text.unbind('mousemove.' + this.opt.id + 'Handler').bind('mousemove.' + this.opt.id + 'Handler', function (event) {
+                context.text.unbind('mousemove.' + context.opt.id + 'Handler').bind('mousemove.' + context.opt.id + 'Handler', function (event) {
                     if (drag === false) {
                         return true;
                     }
@@ -170,7 +169,7 @@ String.prototype.toFormulaString = function (shift) {
                     }
                 });
 
-                context.text.unbind('keydown.' + this.opt.id + 'Handler').bind('keydown.' + this.opt.id + 'Handler', function (event) {
+                context.text.unbind('keydown.' + context.opt.id + 'Handler').bind('keydown.' + context.opt.id + 'Handler', function (event) {
                     event.preventDefault();
                     var $drag, $prev, $next, $item, $dragItem, text, parentPadding;
 
@@ -197,6 +196,7 @@ String.prototype.toFormulaString = function (shift) {
                                 }
                             }
                             context.syntaxCheck();
+                            $this.triggerHandler('formula.input', context.getFormula());
                             return false;
                         } else if (keyCode === 46) {
                             $drag = context.container.find('.' + context.opt.id + '-drag');
@@ -215,6 +215,7 @@ String.prototype.toFormulaString = function (shift) {
                                 }
                             }
                             context.syntaxCheck();
+                            $this.triggerHandler('formula.input', context.getFormula());
                             return false;
                         } else if (keyCode >= 37 && keyCode <= 40) {
                             if (keyCode === 37) {
@@ -387,6 +388,7 @@ String.prototype.toFormulaString = function (shift) {
 
             this.syntaxCheck = function (callback) {
                 var context = this;
+
                 var formula = context.getFormula().data;
 
                 if (typeof formula !== 'undefined') {
@@ -394,7 +396,6 @@ String.prototype.toFormulaString = function (shift) {
                     if (result.status === true) {
                         context.alert.text(context.opt.strings.validationPassed).addClass(context.opt.id + '-alert-good').removeClass(context.opt.id + '-alert-error');
                         if (typeof callback === 'function') {
-                            console.warn('$.formula(\'syntaxCheck\') method\'s callback option is deprecated.\nPlease use var reponse = $.formula(\'syntaxCheck\'); pattern.');
                             callback(true);
                         }
                         return true;
@@ -411,12 +412,14 @@ String.prototype.toFormulaString = function (shift) {
 
             this.destroyDrag = function () {
                 var context = this;
+
                 var $drag = context.container.find('.' + context.opt.id + '-drag');
                 $drag.children('*').each(function () {
                     var $this = $(this);
                     $this.insertBefore($drag);
                 });
                 $drag.remove();
+                $this.triggerHandler('formula.input', context.getFormula());
             };
 
             this.selectAll = function () {
@@ -552,6 +555,26 @@ String.prototype.toFormulaString = function (shift) {
                 context.insertChar.call(context, key);
             };
 
+            this.insert = function (item, position) {
+                var context = this;
+
+                if (context.cursor === null || context.cursor.length < 1 || typeof position === 'object') {
+                    context.click(position);
+                }
+
+                if (typeof item === 'string') {
+                    item = $(item);
+                }
+
+                item.addClass(context.opt.id + '-item');
+                item.insertBefore(context.cursor);
+                
+                context.text.focus();
+                context.syntaxCheck();
+
+                $this.triggerHandler('formula.input', context.getFormula());
+            };
+
             this.insertChar = function (key) {
                 var context = this;
 
@@ -611,13 +634,49 @@ String.prototype.toFormulaString = function (shift) {
                             $operator.addClass(context.opt.id + '-bracket');
                         }
                     }
+
+                    $this.triggerHandler('formula.input', context.getFormula());
                 }
+            };
+
+            this.insertFormula = function (data) {
+                var context = this;
+                var idx = 0;
+
+                if (typeof data === 'string') {
+                    var data_split = data.split('');
+                    for (idx in data_split) {
+                        context.insertChar.call(context, data_split[idx]);
+                    }
+                } else {
+                    for (idx in data) {
+                        var item = data[idx];
+                        if (typeof item !== 'object') {
+                            var data_splited = item.toString().split('');
+                            for (var key in data_splited) {
+                                context.insertChar.call(context, data_splited[key]);
+                            }
+                        } else {
+                            if (typeof context.opt.import.item === 'function') {
+                                var $e = context.opt.import.item.call(context, item);
+                                if (typeof $e !== 'undefined' && $e !== null) {
+                                    context.insert($e);
+                                }
+                            }
+                        }
+                    }
+                }
+                context.syntaxCheck();
+
+                $this.triggerHandler('formula.input', context.getFormula());
             };
 
             this.empty = function () {
                 var context = this;
 
                 context.container.find(':not(".' + context.opt.id + '-cursor")').remove();
+                $this.triggerHandler('formula.input', context.getFormula());
+
                 return context.container;
             };
 
@@ -658,11 +717,12 @@ String.prototype.toFormulaString = function (shift) {
                 }
             };
 
-            this.getFormula = function () {
+            this.getFormula = function (callback) {
                 var context = this;
 
                 var data = [];
                 var filterData = null;
+                var result;
 
                 if (typeof context.opt.export.filter === 'function') {
                     context.container.find('.formula-item').each(function () {
@@ -692,7 +752,7 @@ String.prototype.toFormulaString = function (shift) {
                     data = context.opt.export.filter(data);
                     filterData = new FormulaParser(JSON.parse(JSON.stringify(data)));
 
-                    return {
+                    result = {
                         data: data,
                         filterData: filterData
                     };
@@ -718,57 +778,17 @@ String.prototype.toFormulaString = function (shift) {
                         data.push(value);
                     });
 
-                    return {
+                    result = {
                         data: data.join(' '),
                         filterData: filterData
                     };
                 }
-            };
 
-            this.insert = function (item, position) {
-                var context = this;
-
-                context.click(position);
-
-                if (typeof item === 'string') {
-                    item = $(item);
+                if (typeof callback === 'function') {
+                    callback(result);
                 }
 
-                item.addClass(context.opt.id + '-item');
-                item.insertBefore(context.cursor);
-                
-                context.text.focus();
-                context.syntaxCheck();
-            };
-
-            this.insertFormula = function (data) {
-                var context = this;
-                var idx = 0;
-
-                if (typeof data === 'string') {
-                    var data_split = data.split('');
-                    for (idx in data_split) {
-                        context.insertChar.call(context, data_split[idx]);
-                    }
-                } else {
-                    for (idx in data) {
-                        var item = data[idx];
-                        if (typeof item !== 'object') {
-                            var data_splited = item.toString().split('');
-                            for (var key in data_splited) {
-                                context.insertChar.call(context, data_splited[key]);
-                            }
-                        } else {
-                            if (typeof context.opt.import.item === 'function') {
-                                var $e = context.opt.import.item.call(context, item);
-                                if (typeof $e !== 'undefined' && $e !== null) {
-                                    context.insert($e);
-                                }
-                            }
-                        }
-                    }
-                }
-                context.syntaxCheck();
+                return result;
             };
 
             if (_args.length < 1 || typeof _args[0] === 'object') {

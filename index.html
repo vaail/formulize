@@ -27,14 +27,11 @@
 	$(function() {
 		var $formula = $('.formula').formula();
 
-		// Plugin version confirmation.
-		$('.version strong').text('v' + $.fn.formula.getVersion());
-
 		// You can load formula expression by wrting JSON type value;
 		var data = {"operator":"+","operand1":{"operator":"+","operand1":{"value":"1","type":"unit"},"operand2":{"value":"2","type":"unit"}},"operand2":{"value":"3","type":"unit"}};
 
         // .setFormula({:data}) can load new expression.
-		$formula.data('formula').setFormula(data);
+		$formula.first().formula('setFormula', data);
 
         // .draggable is normal jQuery UI plugin. It support to dragging the element by using mouse click and move.
 		$('.formula-drop .formula-drop-items .formula-custom').draggable({
@@ -61,12 +58,16 @@
 			}
 		});
 
+        $('.formula-advanced').bind('formula.input', function(event, data) {
+            console.log('input', data);
+        });
+
 		$('.formula-get .compact .item').bind('click', function(event) {
 			event.preventDefault();
-			var data = $('.formula-advanced').data('formula').getFormula();
-			console.log('Formula result:', data);
-
-			$('.formula-get .formula-get-json .formula-get-json-data').text(JSON.stringify(data));
+			$('.formula-advanced').formula('getFormula', function(data) {
+                console.log('Formula result:', data);
+                $('.formula-get .formula-get-json .formula-get-json-data').text(JSON.stringify(data));                
+            });
 		});
 
 		$('.menu .item').tab();
@@ -240,6 +241,11 @@ console.log(result.filterData);</code></pre>
 						<td><div class="ui label blue">function</div></td>
 						<td>This method helps you to insert a character as <span class="ui label">event.keycode</span>. If you give second argument as boolean, You can insert new character which be combined with Shift key.</td>
 					</tr>
+                    <tr>
+                        <td>insert(element)</td>
+                        <td><div class="ui label blue">function</div></td>
+                        <td>You can insert html tag directly in formula.</td>
+                    </tr>
 					<tr>
 						<td>insertChar(key)</td>
 						<td><div class="ui label blue">function</div></td>
@@ -260,14 +266,31 @@ console.log(result.filterData);</code></pre>
 						<td><div class="ui label blue">function</div></td>
 						<td>You can get formula units as <span class="ui label">javascript object</span>.</td>
 					</tr>
-					<tr>
-						<td>insert(e)</td>
-						<td><div class="ui label blue">function</div></td>
-						<td>You can insert html tag directly in formula.</td>
-					</tr>
 				</tbody>
 			</table>
 		</div>
+        <div id="content" class="article">
+            <h3>
+                <span>Event</span>
+            </h3>
+            <h4>You can attach event listener to formula element as <span class="ui label">$element.data('formula').on();</span></h4>
+            <table class="ui table celled">
+                <thead>
+                    <tr>
+                        <th>name</th>
+                        <th>type</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>formula.input</td>
+                        <td><div class="ui label blue">event</div></td>
+                        <td>When user type or change the formula expression this event will be fired.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 		<div id="bower" class="article">
 			<h3>
 				<span>bower</span>
