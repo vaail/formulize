@@ -17,7 +17,7 @@ It's a stable version on IE8 higher and any most browsers.
 
 You can customize UI
 
-![Designed sample](http://www.nhpcw.com/upload/screen2_042017052248.png)
+![Designed sample](http://www.nhpcw.com/upload/screen2_042017052400.png)
 
 ----
 
