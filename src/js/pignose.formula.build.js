@@ -21,7 +21,7 @@ String.prototype.toFormulaString = function (shift) {
 };
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.11';
+    var _PLUGIN_VERSION_ = '2.0.12';
 
     $.fn.formula = function (opt) {
         var _opt = {
@@ -39,11 +39,6 @@ String.prototype.toFormulaString = function (shift) {
             export: {
                 filter: function (data) {
                     var filterData = data;
-                    if (typeof data !== 'undefined') {
-                        filterData = data.map(function (e, i) {
-                            return (typeof e !== 'undefined' && typeof e.value !== 'undefined') ? e.value : e;
-                        });
-                    }
                     return filterData;
                 },
                 item: function (e) {

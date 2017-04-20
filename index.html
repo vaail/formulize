@@ -25,6 +25,9 @@
 	<script type="text/javascript">
 	//<![CDATA[
 	$(function() {
+        // Plugin version confirmation.
+        $('.version strong').text('v' + $.fn.formula.getVersion());
+        
 		var $formula = $('.formula').formula();
 
 		// You can load formula expression by wrting JSON type value;
@@ -285,7 +288,7 @@ console.log(result.filterData);</code></pre>
                 <tbody>
                     <tr>
                         <td>formula.input</td>
-                        <td><div class="ui label blue">event</div></td>
+                        <td class="center"><div class="ui label blue">event</div></td>
                         <td>When user type or change the formula expression this event will be fired.</td>
                     </tr>
                 </tbody>
