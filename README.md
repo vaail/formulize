@@ -12,11 +12,7 @@ It's a stable version on IE8 higher and any most browsers.
 
 [Check demo page](http://www.pigno.se/barn/PIGNOSE-Formula)
 
-![Sample screen](http://www.nhpcw.com/upload/screen_042017051937.png)
-
-You can customize UI
-
-![Designed sample](http://www.nhpcw.com/upload/screen2_042017052400.png)
+![Sample screen](http://www.pigno.se/barn/PGINOSE-Formula/demo/img/screenshot_main.png)
 
 ----
 
