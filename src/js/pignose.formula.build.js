@@ -810,7 +810,7 @@ String.prototype.toFormulaString = function (shift) {
     };
 }(jQuery));
 var FormulaParser = (function () {
-    var _PLUGIN_VERSION_ = '2.0.10';
+    var _PLUGIN_VERSION_ = '2.0.11';
 
     function FormulaParser(formula) {
         var idx;
@@ -1048,7 +1048,7 @@ var FormulaParser = (function () {
 
         depth = depth || 0;
 
-        if (data.length === 1 && typeof data[0] !== 'object') {
+        if (typeof data === 'object' && data.length === 1) {
             return {
                 status: true,
                 data: data[0],
@@ -1129,12 +1129,20 @@ var FormulaParser = (function () {
 
         var cursor = pos;
 
-        if (typeof data[0] !== 'undefined' && data[0] !== null && typeof data[0][0] === 'object' && (typeof data[0].operator === 'undefined' || data[0].operator === null)) {
+        if (
+            typeof data[0] !== 'undefined' &&
+            data[0] !== null &&
+            typeof data[0][0] === 'object' &&
+            (
+                typeof data[0].operator === 'undefined' ||
+                data[0].operator === null
+            )
+        ) {
             data[0] = data[0][0];
         }
 
         if (data.length < 3) {
-            if (data.length <= 1 && typeof data[0] === 'object' && typeof data[0].operator !== 'undefined' && data[0].operator !== null) {
+            if (typeof data === 'object' && data.length === 1) {
                 return data[0];
             } else {
                 return this.log(0x01, {
@@ -1171,6 +1179,14 @@ var FormulaParser = (function () {
                             });
                         }
 
+                        if (typeof data[idx - 1] === 'object' && data[idx - 1].length === 1) {
+                            data[idx - 1] = data[idx - 1][0];
+                        }
+
+                        if (typeof data[idx + 1] === 'object' && data[idx + 1].length === 1) {
+                            data[idx + 1] = data[idx + 1][0];
+                        }
+
                         data.splice(idx - 1, 3, {
                             operator: item,
                             operand1: data[idx - 1],
@@ -1203,10 +1219,6 @@ var FormulaParser = (function () {
      * @returns {Object}
      */
     FormulaParser.prototype.filterParser = function (data) {
-        if (typeof data[0] === 'object') {
-            data = data[0];
-        }
-
         if (typeof data.operand1 === 'object') {
             this.filterParser(data.operand1);
         }
@@ -1217,6 +1229,10 @@ var FormulaParser = (function () {
 
         if (typeof data.length !== 'undefined') {
             delete data.length;
+        }
+
+        if (typeof data === 'object' && data.length === 1) {
+            data = data[0];
         }
 
         return data;
