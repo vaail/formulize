@@ -748,7 +748,7 @@ String.prototype.toFormulaString = function (shift) {
                     });
 
                     data = data;
-                    filterData = new FormulaParser(Object.assign([], data));
+                    filterData = new FormulaParser($.extend([], data));
                     filterData.data = context.opt.export.filter(filterData.data);
 
                     result = {
