@@ -21,7 +21,7 @@ String.prototype.toFormulaString = function (shift) {
 };
 
 (function ($) {
-    var _PLUGIN_VERSION_ = '2.0.12';
+    var _PLUGIN_VERSION_ = '2.0.13';
 
     $.fn.formula = function (opt) {
         var _opt = {
@@ -373,7 +373,7 @@ String.prototype.toFormulaString = function (shift) {
                                 return false;
                             }
                         } else if ((keyCode >= 48 && keyCode <= 57) === false &&
-                                  (keyCode !== 88 && keyCode !== 187 && keyCode !== 189 && keyCode !== 190 && keyCode !== 191) === true) {
+                                  (keyCode !== 88 && keyCode !== 106 && keyCode !== 187 && keyCode !== 61 && keyCode !== 107 && keyCode !== 189 && keyCode !== 173 && keyCode !== 109 && keyCode !== 190 && keyCode !== 110 && keyCode !== 191 && keyCode !== 111) === true) {
                             return false;
                         }
 
