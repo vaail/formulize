@@ -7,7 +7,7 @@ formula UI generator
 
 [![Build Status](https://travis-ci.org/KennethanCeyer/formulize.svg?branch=master)](https://travis-ci.org/KennethanCeyer/formulize) [![codecov](https://codecov.io/gh/KennethanCeyer/formulize/branch/master/graph/badge.svg)](https://codecov.io/gh/KennethanCeyer/formulize) [![Coverage Status](https://coveralls.io/repos/github/KennethanCeyer/formulize/badge.svg?branch=master)](https://coveralls.io/github/KennethanCeyer/formulize?branch=master) [![Test Coverage](https://api.codeclimate.com/v1/badges/e8bbc8a49edebf28cb2a/test_coverage)](https://codeclimate.com/github/KennethanCeyer/formulize/test_coverage)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/e8bbc8a49edebf28cb2a/maintainability)](https://codeclimate.com/github/KennethanCeyer/formulize/maintainability) [![CodeFactor](https://www.codefactor.io/repository/github/kennethanceyer/formulize/badge)](https://www.codefactor.io/repository/github/kennethanceyer/formulize) 
+[![Maintainability](https://api.codeclimate.com/v1/badges/e8bbc8a49edebf28cb2a/maintainability)](https://codeclimate.com/github/KennethanCeyer/formulize/maintainability) [![CodeFactor](https://www.codefactor.io/repository/github/kennethanceyer/formulize/badge)](https://www.codefactor.io/repository/github/kennethanceyer/formulize) [![dependencies Status](https://david-dm.org/KennethanCeyer/formulize/status.svg)](https://david-dm.org/KennethanCeyer/formulize) [![devDependencies Status](https://david-dm.org/KennethanCeyer/formulize/dev-status.svg)](https://david-dm.org/KennethanCeyer/formulize?type=dev) 
 
 ----
 
