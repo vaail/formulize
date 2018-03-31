@@ -3,7 +3,7 @@ formula UI generator
 
 [![NPM](https://nodei.co/npm/formulize.png)](https://nodei.co/npm/formulize/)
 
-[![npm version](https://badge.fury.io/js/formulize.svg)](https://badge.fury.io/js/formulize) [![Join the chat at https://gitter.im/KennethanCeyer/PIGNOSE](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/KennethanCeyer/PIGNOSE?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/formulize.svg)](https://badge.fury.io/js/formulize) [![Join the chat at https://gitter.im/KennethanCeyer/PIGNOSE](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/KennethanCeyer/PIGNOSE?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![GitHub forks](https://img.shields.io/github/forks/KennethanCeyer/formulize.svg)](https://github.com/KennethanCeyer/formulize/network) [![GitHub license](https://img.shields.io/github/license/KennethanCeyer/formulize.svg)](https://github.com/KennethanCeyer/formulize/blob/master/LICENSE)
 
 [![Build Status](https://travis-ci.org/KennethanCeyer/formulize.svg?branch=master)](https://travis-ci.org/KennethanCeyer/formulize) [![codecov](https://codecov.io/gh/KennethanCeyer/formulize/branch/master/graph/badge.svg)](https://codecov.io/gh/KennethanCeyer/formulize) [![Coverage Status](https://coveralls.io/repos/github/KennethanCeyer/formulize/badge.svg?branch=master)](https://coveralls.io/github/KennethanCeyer/formulize?branch=master) [![Test Coverage](https://api.codeclimate.com/v1/badges/e8bbc8a49edebf28cb2a/test_coverage)](https://codeclimate.com/github/KennethanCeyer/formulize/test_coverage)
 
