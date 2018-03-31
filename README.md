@@ -1,127 +1,149 @@
-# Formula
-Javscript WYSWYG formula builder.
+# formulize
+formula UI generator
 
-[![npm version](https://badge.fury.io/js/jquery-formula.svg)](https://badge.fury.io/js/jquery-formula) [![Bower version](https://badge.fury.io/bo/jquery-formula.svg)](https://badge.fury.io/bo/jquery-formula) [![ghit.me](https://ghit.me/badge.svg?repo=KennethanCeyer/Formula)](https://ghit.me/repo/KennethanCeyer/Formula) [![Join the chat at https://gitter.im/KennethanCeyer/PIGNOSE](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/KennethanCeyer/PIGNOSE?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-----
+[![NPM](https://nodei.co/npm/formulize.png)](https://nodei.co/npm/formulize/)
 
-### Getting started
+[![npm version](https://badge.fury.io/js/formulize.svg)](https://badge.fury.io/js/formulize) [![Join the chat at https://gitter.im/KennethanCeyer/PIGNOSE](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/KennethanCeyer/PIGNOSE?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![GitHub forks](https://img.shields.io/github/forks/KennethanCeyer/formulize.svg)](https://github.com/KennethanCeyer/formulize/network) [![GitHub license](https://img.shields.io/github/license/KennethanCeyer/formulize.svg)](https://github.com/KennethanCeyer/formulize/blob/master/LICENSE)
 
-This plugin helps you to make formulas.
+[![Build Status](https://travis-ci.org/KennethanCeyer/formulize.svg?branch=master)](https://travis-ci.org/KennethanCeyer/formulize) [![codecov](https://codecov.io/gh/KennethanCeyer/formulize/branch/master/graph/badge.svg)](https://codecov.io/gh/KennethanCeyer/formulize) [![Coverage Status](https://coveralls.io/repos/github/KennethanCeyer/formulize/badge.svg?branch=master)](https://coveralls.io/github/KennethanCeyer/formulize?branch=master) [![Test Coverage](https://api.codeclimate.com/v1/badges/e8bbc8a49edebf28cb2a/test_coverage)](https://codeclimate.com/github/KennethanCeyer/formulize/test_coverage)
 
-It's a stable version on IE8 higher and any most browsers.
-
-[Check demo page](http://www.pigno.se/barn/PIGNOSE-Formula)
-
-![Sample screen](http://www.pigno.se/barn/PIGNOSE-Formula/demo/img/screenshot_main.png)
-
-----
-
-### Usage
-
-This plugin has a dependency on jQuery library.
-
-So first of all, you need to import formula css, js file (check src or dist folder in this repository) after jQuery imported.
-
-And try to write this snippet in your html file.
-
-```html
-<head>
-	...
-	<script type="text/javascript">
-		$(function() {
-			var $formula = $('.formula').formula();
-		});
-	</script>
-</head>
-<body>
-	<div class="formula"></div>
-</body>
-```
-
-----
-
-#### Advanced usage
-
-If you want get javascript object from the formula, you can call getFormula() method.
-
-Check the sample below.
-
-```html
-<head>
-	...
-	<script type="text/javascript">
-		$(function() {
-			var $formula = $('.formula').formula();
-			$formula.data('formula').getFormula(); // Get formula as a string type.
-			
-			//=====================================
-			
-			var $formulaCustom = $('.formula-custom').formula({
-				filter: function(data) {
-				// filter option is called when getFormula() method is called.
-				// this option helps you to customize the formula data.
-				// data parameter on this function are about formula (object type).
-					return data;
-				}
-			});
-			
-			// if filter option is used, getFormula() will return data as an object type. 
-			console.log($formulaCustom.data('formula').getFormula());
-		});
-	</script>
-</head>
-<body>
-	<div class="formula"></div>
-	<div class="formula-custom"></div>
-</body>
-```
+[![Maintainability](https://api.codeclimate.com/v1/badges/e8bbc8a49edebf28cb2a/maintainability)](https://codeclimate.com/github/KennethanCeyer/formulize/maintainability) [![CodeFactor](https://www.codefactor.io/repository/github/kennethanceyer/formulize/badge)](https://www.codefactor.io/repository/github/kennethanceyer/formulize) [![dependencies Status](https://david-dm.org/KennethanCeyer/formulize/status.svg)](https://david-dm.org/KennethanCeyer/formulize) [![devDependencies Status](https://david-dm.org/KennethanCeyer/formulize/dev-status.svg)](https://david-dm.org/KennethanCeyer/formulize?type=dev) 
 
 ----
 
 ### Installation
 
-#### Zip file download
-
-[Latest zip file link](https://github.com/KennethanCeyer/Formula/archive/master.zip)
-
-#### Git
+#### git
 
 ```bash
-git clone git@github.com:KennethanCeyer/Formula.git --recursive
+$ git clone git@github.com:KennethanCeyer/formulize
 ```
 
-#### Bower
+#### npm
 
 ```bash
-bower install jquery-formula
+$ npm install formulize
 ```
 
-#### NPM
+### yarn
 
 ```bash
-npm install jquery-formula
+$ yarn add formulize
 ```
 
 ----
 
-### Notes
+### Getting started
 
-The purpose of this plugin is as follows. 
+This plugin helps you to make formulas WYSWYG UI
 
-1. The textarea can be edited with HTML markup. 
-2. It must support the validation check of formula expressions.
-3. The UI of numbers or other operators in formula should be cool and easy.
+> this plugin is based [metric-parser](https://github.com/KennethanCeyer/metric-parser)
 
-----
+[demo page](http://www.pigno.se/barn/PIGNOSE-Formula)
 
-### Library
-
-This project is related with https://github.com/KennethanCeyer/FormulaParser (built-in)
+![Sample screen](http://www.pigno.se/barn/PIGNOSE-Formula/demo/img/screenshot_main.png)
 
 ----
 
-### Question
+### Example (basic)
 
-If you found something problem of this plugin, or you have some question.
 
-Please send me a message to use either [gitter](https://gitter.im/KennethanCeyer/PIGNOSE) or [Github issue](https://github.com/KennethanCeyer/Formula/issues). (gitter url is on the top of the manual)
+```html
+<div id="formulize"></div>
+```
+
+If you want to make UI into `#formulize`
+
+#### typescript
+
+```typescript
+import { UI } from 'formulize';
+
+const target = document.getElementById('formulize');
+const formulize = new UI(target, {
+    ...options
+});
+
+const data: Tree = {
+    operator: '*',
+    operand1: { value: { type: 'unit', unit: 1 } },
+    operand2: { value: { type: 'unit', unit: 2 } }
+};
+
+formulize.setData(data);
+```  
+
+#### javascript (ES6)
+
+```javascript
+import { UI } from 'formulize';
+
+const target = document.getElementById('formulize');
+const formulize = new UI(target, {
+    ...options
+});
+
+const data = {
+    operator: '*',
+    operand1: { value: { type: 'unit', unit: 1 } },
+    operand2: { value: { type: 'unit', unit: 2 } }
+};
+
+formulize.setData(data);
+```
+
+#### jQuery
+
+```javascript
+$(function() {
+    $('#formulize').formulize({
+        ...options
+    });
+
+    const formulize = $('#formulize').data('$formulize');
+    const data = {
+        operator: '*',
+        operand1: { value: { type: 'unit', unit: 1 } },
+        operand2: { value: { type: 'unit', unit: 2 } }
+    };
+
+    formulize.setData(data);
+
+    // unrecommended way
+    $('#formulize').setData(data);
+});
+```
+
+----
+
+### Roadmap
+
+- [x] support typescript
+- [x] update formula tree parser
+- [x] support reference docs
+- [x] follow clean code philosophy
+- [x] follow object based implementation
+- [x] support UMD module
+- [x] support code qualify tool
+- [x] support automation test environment
+- [x] support scss style file
+- [ ] support multiple themes
+- [ ] support unit code to achieve coverage over 90%
+- [ ] support integration testing with mocking dom in the code-level 
+- [ ] support e2e testing
+- [ ] add guideline in Github WIKI
+- [ ] add guideline snippet gist and jsfiddle
+- [ ] add contributor guidelines
+- [ ] support cdn
+
+----
+
+### License
+
+The MIT License (MIT)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
