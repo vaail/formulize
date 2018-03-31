@@ -1,278 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="description" content="formula UI generator">
-	<meta name="viewport" content="width=device-width, user-scalable=no">
-	<meta property="og:url" content="http://www.pigno.se/barn/PIGNOSE-Formula">
-	<meta property="og:type" content="product">
-	<meta property="og:title" content="formulize">
-	<meta property="og:description" content="formula UI generator">
-	<meta property="og:image" content="http://www.pigno.se/barn/PIGNOSE-Formula/demo/img/cover@250.png">
-	<meta property="og:site_name" content="PIGNOSE">
-	<title>formulize</title>
-	<link rel="shortcut icon" type="image/x-icon" href="demo/img/pignose-ico.ico">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/themes/prism.min.css">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta property="og:url" content="http://www.pigno.se/barn/PIGNOSE-Formula">
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="formulize">
+    <meta property="og:description" content="formula UI generator">
+    <meta property="og:image" content="http://www.pigno.se/barn/PIGNOSE-Formula/demo/img/cover@250.png">
+    <meta property="og:site_name" content="PIGNOSE">
+    <title>formulize</title>
+    <link rel="shortcut icon" type="image/x-icon" href="demo/img/pignose-ico.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/themes/prism.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/icon.min.css">
-	<link rel="stylesheet" href="demo/css/ui.css">
-	<link rel="stylesheet" href="demo/css/style.css">
-	<link rel="stylesheet" type="text/css" href="dist/formulize.css">
+    <link rel="stylesheet" href="demo/css/ui.css">
+    <link rel="stylesheet" href="demo/css/style.css">
+    <link rel="stylesheet" type="text/css" href="dist/formulize.css">
 </head>
 <body>
-	<div id="wrapper">
-		<div class="header">
-			<img src="demo/img/pignose-logo.png" alt="">
-			<h1>formulize 🌒</h1>
-			<a href="https://github.com/KennethanCeyer/formulize" target="_blank" class="ui button black">View project on Github</a>
-			<a href="https://github.com/KennethanCeyer/formulize/archive/master.zip" target="_blank" class="ui button teal">Download zip</a>
-            <a href="./docs/index.html" target="_blank" class="ui button blue">Reference doc</a>
-			<h4 class="version">Latest version <strong></strong></h4>
-            <div class="ui pointing label beta-mark">beta</div>
-		</div>
-		<div class="article">
-			<h3>
-				<span>Basic</span>
-			</h3>
-			<div class="formulize formulize-basic"></div>
-		</div>
-		<div class="article">
-			<h3>
-				<span>Advanced</span>
-			</h3>
-			<div class="formulize formulize-advanced"></div>
+<div id="wrapper">
+    <div class="header">
+        <img src="demo/img/pignose-logo.png" alt="">
+        <h1>formulize 🌒</h1>
+        <a href="https://github.com/KennethanCeyer/formulize" target="_blank" class="ui button black">View project on
+            Github</a>
+        <a href="https://github.com/KennethanCeyer/formulize/archive/master.zip" target="_blank" class="ui button teal">Download
+            zip</a>
+        <a href="./docs/index.html" target="_blank" class="ui button blue">Reference doc</a>
+        <h4 class="version">Latest version <strong></strong></h4>
+        <div class="ui pointing label beta-mark">beta</div>
+    </div>
+    <div class="article">
+        <h3>
+            <span>Basic</span>
+        </h3>
+        <div class="formulize formulize-basic"></div>
+    </div>
+    <div class="article">
+        <h3>
+            <span>Advanced</span>
+        </h3>
+        <div class="formulize formulize-advanced"></div>
+    </div>
+    <div class="article">
+        <div><h3><span>👈 Drop your custom value</span></h3></div>
+        <p><strong class="code">formulize</strong> supports custom property, check the <a href="#method-insert"
+                                                                                          class="code">insert()</a></p>
+        <div class="ui piled segment center">
+            <h4 class="ui header">❤️drag those box to above formulize</h4>
+            <a href="#" class="formulize-custom" data-value="3.14">PI</a>
+            <a href="#" class="formulize-custom formulize-custom-operator" data-value="+">Custom operator (+)</a>
+            <a href="#" class="formulize-custom" data-value="3">Variable (INT 3)</a>
         </div>
-        <div class="article">
-            <div><h3><span>👈 Drop your custom value</span></h3></div>
-            <p><strong class="code">formulize</strong> supports custom property, check the <a href="#method-insert" class="code">insert()</a></p>
-            <div class="ui piled segment center">
-                <h4 class="ui header">❤️drag those box to above formulize</h4>
-                <a href="#" class="formulize-custom" data-value="3.14">PI</a>
-                <a href="#" class="formulize-custom formulize-custom-operator" data-value="+">Custom operator (+)</a>
-                <a href="#" class="formulize-custom" data-value="3">Variable (INT 3)</a>
+    </div>
+    <div class="article">
+        <div><h3><span>🤔 Get formula tree data</span></h3></div>
+        <div>Also you can get the <span class="ui label">javascript object</span> data by calling <span
+            class="ui label primary">getData();</span></div>
+        <div class="ui compact menu button-grow">
+            <a href="#" class="item btn-get-data">getData</a>
+        </div>
+        <div class="formulize-get-json">
+            <span class="ui right ribbon label">JSON</span>
+            <div class="formulize-get-json-data">The json data will be appeared when you click <span class="ui label">getData</span>
+                button.
             </div>
         </div>
-        <div class="article">
-            <div><h3><span>🤔 Get formula tree data</span></h3></div>
-            <div>Also you can get the <span class="ui label">javascript object</span> data by calling <span class="ui label primary">getData();</span></div>
-            <div class="ui compact menu button-grow">
-                <a href="#" class="item btn-get-data">getData</a>
-            </div>
-            <div class="formulize-get-json">
-                <span class="ui right ribbon label">JSON</span>
-                <div class="formulize-get-json-data">The json data will be appeared when you click <span class="ui label">getData</span> button.</div>
-            </div>
-            <pre><code class="language-typescript">const result = $formulize.data('$formulize').getData();
+        <pre><code class="language-typescript">const result = $formulize.data('$formulize').getData();
 
 // result.data is parsed formula tree
 console.log(result.data);</code></pre>
-			</div>
-		</div>
-		<div id="option" class="article">
-			<h3>
-				<span>⚡ Options</span>
-			</h3>
-			<table class="ui table celled">
-				<colgroup>
-					<col style="width: 320px;">
-                    <col style="width: 140px;">
-					<col>
-					<col>
-				</colgroup>
-				<thead>
-					<tr>
-						<th>name</th>
-						<th>type</th>
-						<th>description</th>
-						<th>default</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr id="event-id">
-                        <td class="code inline"><pre><code class="language-typescript">id: string</code></pre></td>
-						<td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
-						<td>the identifier used class prefix</td>
-						<td class="code">formulize</td>
-					</tr>
-					<tr id="event-text-formula">
-                        <td class="code inline"><pre><code class="language-typescript">text.formula: string</code></pre></td>
-						<td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
-						<td>text for a default status</td>
-						<td class="code">formula</td>
-					</tr>
-					<tr id="event-text-pass">
-                        <td class="code inline"><pre><code class="language-typescript">text.pass: string</code></pre></td>
-						<td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
-						<td>text for a pass status(ms)</td>
-						<td class="code">pass</td>
-					</tr>
-                    <tr id="event-text-error">
-                        <td class="code inline"><pre><code class="language-typescript">text.error: string</code></pre></td>
-                        <td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
-                        <td>text for an error status</td>
-                        <td class="code">error</td>
-                    </tr>
-                    <tr id="event-import">
-                        <td class="code inline"><pre><code class="language-typescript">import: &lt;T&gt;(data: any) =&gt; T</code></pre></td>
-                        <td class="center"><span class="ui label"><i class="fas fa-code"></i>function</span></td>
-                        <td>a pipeline function for convert imported data</td>
-                        <td class="code">undefined</td>
-                    </tr>
-                    <tr id="event-export">
-                        <td class="code inline"><pre><code class="language-typescript">export: &lt;T&gt;(data: any) =&gt; T</code></pre></td>
-                        <td class="center"><span class="ui label"><i class="fas fa-code"></i>function</span></td>
-                        <td>a pipeline function for convert exported data</td>
-                        <td class="code">undefined</td>
-                    </tr>
-				</tbody>
-			</table>
-		</div>
-		<div id="method" class="article">
-			<h3>
-				<span>⚡ Methods</span>
-			</h3>
-			<div>You can call the function to use <strong class="inline"><pre><code class="language-typescript">$formulize.method()</code></pre></strong></div>
-			<table class="ui table celled">
-                <colgroup>
-                    <col style="width: 300px">
-                    <col style="width: 140px">
-                    <col>
-                </colgroup>
-				<thead>
-					<tr>
-						<th>name</th>
-						<th>type</th>
-						<th>description</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr id="method-pick">
-						<td class="code inline"><pre><code class="language-typescript">pick(position)</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-						<td>pick the position (x, y), this function can move the current cursor</td>
-					</tr>
-					<tr id="method-set-data">
-                        <td class="code inline"><pre><code class="language-typescript">setData(data)</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>set formula expression data</td>
-					</tr>
-					<tr id="method-get-data">
-                        <td class="code inline"><pre><code class="language-typescript">getData(extractor: (data: T)): T</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>get a formula data, the data type is a Tree type</td>
-					</tr>
-					<tr id="method-select-range">
-                        <td class="code inline"><pre><code class="language-typescript">selectRange(start: number, end: number)</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>drag a range, the range parameter is index position of the expression unit</td>
-					</tr>
-					<tr id="method-select-all">
-                        <td class="code inline"><pre><code class="language-typescript">selectAll()</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>drag all in the formula</td>
-					</tr>
-                    <tr id="method-select-clear">
-                        <td class="code inline"><pre><code class="language-typescript">clear()</code></pre></td>
-                        <td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>clear all expression in the formula</td>
-                    </tr>
-					<tr id="method-select-blur">
-                        <td class="code inline"><pre><code class="language-typescript">blur()</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>blur the cursor in the formula</td>
-					</tr>
-					<tr id="method-remove-drag">
-                        <td class="code inline"><pre><code class="language-typescript">removeDrag()</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>remove drag, dragged unit will be undragged</td>
-					</tr>
-					<tr id="method-insert">
-                        <td class="code inline"><pre><code class="language-typescript">insert(obj: string | number | HTMLElement | JQuery, position)</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>insert data, data can be <span class="code">HTMLElement</span> or <span class="code">JQuery</span></td>
-					</tr>
-                    <tr id="method-insert-data">
-                        <td class="code inline"><pre><code class="language-typescript">insertData(data: string | string[] | any[])</code></pre></td>
-                        <td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>insert formal string or array data</td>
-                    </tr>
-					<tr id="method-insert-value">
-                        <td class="code inline"><pre><code class="language-typescript">insertValue(value: string)</code></pre></td>
-						<td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>insert a character</td>
-					</tr>
-                    <tr id="method-validate">
-                        <td class="code inline"><pre><code class="language-typescript">validate(extractor?: (valid: boolean) => void): boolean</code></pre></td>
-                        <td class="center"><div class="ui label"><i class="fas fa-code"></i>function</div></td>
-                        <td>validate current expression validation, if it is valid, will returns <span class="code">true</span></td>
-                    </tr>
-				</tbody>
-			</table>
-		</div>
-        <div id="event" class="article">
-            <h3>
-                <span>⚡ Event</span>
-            </h3>
-            <table class="ui table celled">
-                <colgroup>
-                    <col style="width: 200px">
-                    <col style="width: 140px">
-                    <col>
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>name</th>
-                        <th>type</th>
-                        <th>description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id="event-input">
-                        <td class="code inline"><pre><code class="language-typescript">formulize.input</code></pre></td>
-                        <td class="center"><div class="ui label"><i class="fas fa-code"></i>event</div></td>
-                        <td>when the formula expression is updated, this event will be called</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-		<div id="npm" class="article">
-			<h3>
-				<span>📦 npm</span>
-			</h3>
-			<pre><code class="language-bash">$ npm install formulize</code></pre>
-		</div>
-        <div id="yarn" class="article">
-            <h3>
-                <span>📦 yarn</span>
-            </h3>
-            <pre><code class="language-bash">$ yarn add formulize</code></pre>
-        </div>
-        <div id="fork" class="article">
-            <h3>
-                <span>😗 do star it!</span>
-            </h3>
-            <p>If you enjoyed it, please just click the star into below github link</p>
-            <a href="https://github.com/KennethanCeyer/formulize" target="_blank" class="ui black button thin">
-                <i class="fab fa-github-alt"></i>
-                GitHub
-            </a>
-        </div>
-		<div id="sample" class="article">
-			<h3>
-				<span>📖 Example</span>
-			</h3>
-			<br>
-			<ul class="ui top pointing secondary menu">
-				<a href="#" role="presentation" class="item active" data-tab="html">HTML</a>
-                <a href="#" role="presentation" class="item" data-tab="typescript">Typescript</a>
-                <a href="#" role="presentation" class="item" data-tab="javascript">Javascript</a>
-				<a href="#" role="presentation" class="item" data-tab="jquery">JQuery</a>
-			</ul>
-			<div role="tabpanel" class="ui tab segment active" data-tab="html">
-				<pre><code class="language-markup">&lt;div id=&quot;formulize&quot;&gt;&lt;/div&gt;</code></pre>
-			</div>
-            <div role="tabpanel" class="ui tab segment" data-tab="typescript">
+    </div>
+</div>
+<div id="option" class="article">
+    <h3>
+        <span>⚡ Options</span>
+    </h3>
+    <table class="ui table celled">
+        <colgroup>
+            <col style="width: 320px;">
+            <col style="width: 140px;">
+            <col>
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>type</th>
+            <th>description</th>
+            <th>default</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="event-id">
+            <td class="code inline">
+                <pre><code class="language-typescript">id: string</code></pre>
+            </td>
+            <td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
+            <td>the identifier used class prefix</td>
+            <td class="code">formulize</td>
+        </tr>
+        <tr id="event-text-formula">
+            <td class="code inline">
+                <pre><code class="language-typescript">text.formula: string</code></pre>
+            </td>
+            <td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
+            <td>text for a default status</td>
+            <td class="code">formula</td>
+        </tr>
+        <tr id="event-text-pass">
+            <td class="code inline">
+                <pre><code class="language-typescript">text.pass: string</code></pre>
+            </td>
+            <td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
+            <td>text for a pass status(ms)</td>
+            <td class="code">pass</td>
+        </tr>
+        <tr id="event-text-error">
+            <td class="code inline">
+                <pre><code class="language-typescript">text.error: string</code></pre>
+            </td>
+            <td class="center"><span class="ui label"><i class="fas fa-code"></i>string</span></td>
+            <td>text for an error status</td>
+            <td class="code">error</td>
+        </tr>
+        <tr id="event-import">
+            <td class="code inline">
+                <pre><code class="language-typescript">import: &lt;T&gt;(data: any) =&gt; T</code></pre>
+            </td>
+            <td class="center"><span class="ui label"><i class="fas fa-code"></i>function</span></td>
+            <td>a pipeline function for convert imported data</td>
+            <td class="code">undefined</td>
+        </tr>
+        <tr id="event-export">
+            <td class="code inline">
+                <pre><code class="language-typescript">export: &lt;T&gt;(data: any) =&gt; T</code></pre>
+            </td>
+            <td class="center"><span class="ui label"><i class="fas fa-code"></i>function</span></td>
+            <td>a pipeline function for convert exported data</td>
+            <td class="code">undefined</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div id="method" class="article">
+    <h3>
+        <span>⚡ Methods</span>
+    </h3>
+    <div>You can call the function to use <strong class="inline">
+        <pre><code class="language-typescript">$formulize.method()</code></pre>
+    </strong></div>
+    <table class="ui table celled">
+        <colgroup>
+            <col style="width: 300px">
+            <col style="width: 140px">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>type</th>
+            <th>description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="method-pick">
+            <td class="code inline">
+                <pre><code class="language-typescript">pick(position)</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>pick the position (x, y), this function can move the current cursor</td>
+        </tr>
+        <tr id="method-set-data">
+            <td class="code inline">
+                <pre><code class="language-typescript">setData(data)</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>set formula expression data</td>
+        </tr>
+        <tr id="method-get-data">
+            <td class="code inline">
+                <pre><code class="language-typescript">getData(extractor: (data: T)): T</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>get a formula data, the data type is a Tree type</td>
+        </tr>
+        <tr id="method-select-range">
+            <td class="code inline">
+                <pre><code class="language-typescript">selectRange(start: number, end: number)</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>drag a range, the range parameter is index position of the expression unit</td>
+        </tr>
+        <tr id="method-select-all">
+            <td class="code inline">
+                <pre><code class="language-typescript">selectAll()</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>drag all in the formula</td>
+        </tr>
+        <tr id="method-select-clear">
+            <td class="code inline">
+                <pre><code class="language-typescript">clear()</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>clear all expression in the formula</td>
+        </tr>
+        <tr id="method-select-blur">
+            <td class="code inline">
+                <pre><code class="language-typescript">blur()</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>blur the cursor in the formula</td>
+        </tr>
+        <tr id="method-remove-drag">
+            <td class="code inline">
+                <pre><code class="language-typescript">removeDrag()</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>remove drag, dragged unit will be undragged</td>
+        </tr>
+        <tr id="method-insert">
+            <td class="code inline">
+                <pre><code
+                    class="language-typescript">insert(obj: string | number | HTMLElement | JQuery, position)</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>insert data, data can be <span class="code">HTMLElement</span> or <span class="code">JQuery</span></td>
+        </tr>
+        <tr id="method-insert-data">
+            <td class="code inline">
+                <pre><code class="language-typescript">insertData(data: string | string[] | any[])</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>insert formal string or array data</td>
+        </tr>
+        <tr id="method-insert-value">
+            <td class="code inline">
+                <pre><code class="language-typescript">insertValue(value: string)</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>insert a character</td>
+        </tr>
+        <tr id="method-validate">
+            <td class="code inline">
+                <pre><code
+                    class="language-typescript">validate(extractor?: (valid: boolean) => void): boolean</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>function</div>
+            </td>
+            <td>validate current expression validation, if it is valid, will returns <span class="code">true</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div id="event" class="article">
+    <h3>
+        <span>⚡ Event</span>
+    </h3>
+    <table class="ui table celled">
+        <colgroup>
+            <col style="width: 200px">
+            <col style="width: 140px">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>name</th>
+            <th>type</th>
+            <th>description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="event-input">
+            <td class="code inline">
+                <pre><code class="language-typescript">formulize.input</code></pre>
+            </td>
+            <td class="center">
+                <div class="ui label"><i class="fas fa-code"></i>event</div>
+            </td>
+            <td>when the formula expression is updated, this event will be called</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div id="npm" class="article">
+    <h3>
+        <span>📦 npm</span>
+    </h3>
+    <pre><code class="language-bash">$ npm install formulize</code></pre>
+</div>
+<div id="yarn" class="article">
+    <h3>
+        <span>📦 yarn</span>
+    </h3>
+    <pre><code class="language-bash">$ yarn add formulize</code></pre>
+</div>
+<div id="fork" class="article">
+    <h3>
+        <span>😗 do star it!</span>
+    </h3>
+    <p>If you enjoyed it, please just click the star into below github link</p>
+    <a href="https://github.com/KennethanCeyer/formulize" target="_blank" class="ui black button thin">
+        <i class="fab fa-github-alt"></i>
+        GitHub
+    </a>
+</div>
+<div id="sample" class="article">
+    <h3>
+        <span>📖 Example</span>
+    </h3>
+    <br>
+    <ul class="ui top pointing secondary menu">
+        <a href="#" role="presentation" class="item active" data-tab="html">HTML</a>
+        <a href="#" role="presentation" class="item" data-tab="typescript">Typescript</a>
+        <a href="#" role="presentation" class="item" data-tab="javascript">Javascript</a>
+        <a href="#" role="presentation" class="item" data-tab="jquery">JQuery</a>
+    </ul>
+    <div role="tabpanel" class="ui tab segment active" data-tab="html">
+        <pre><code class="language-markup">&lt;div id=&quot;formulize&quot;&gt;&lt;/div&gt;</code></pre>
+    </div>
+    <div role="tabpanel" class="ui tab segment" data-tab="typescript">
 					<pre><code class="language-typescript">import { UI } from 'formulize';
 
 const target = document.getElementById('formulize');
@@ -287,8 +361,8 @@ const data: Tree = {
 };
 
 formulize.setData(data);</code></pre>
-            </div>
-            <div role="tabpanel" class="ui tab segment" data-tab="javascript">
+    </div>
+    <div role="tabpanel" class="ui tab segment" data-tab="javascript">
 					<pre><code class="language-js">import { UI } from 'formulize';
 
 const target = document.getElementById('formulize');
@@ -303,8 +377,8 @@ const data = {
 };
 
 formulize.setData(data);</code></pre>
-            </div>
-			<div role="tabpanel" class="ui tab segment" data-tab="jquery">
+    </div>
+    <div role="tabpanel" class="ui tab segment" data-tab="jquery">
 					<pre><code class="language-js">$(function() {
 	$('#formulize').formulize({
         ...options
@@ -322,83 +396,86 @@ formulize.setData(data);</code></pre>
     // unrecommended way
     $('#formulize').setData(data);
 });</code></pre>
-			</div>
-		</div>
-	</div>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
-    <script type="text/javascript" src="dist/formulize.umd.js"></script>
-    <script type="text/javascript">
-        function getTextHtml(text) {
-            return text.split('').map(function(char) {
-                return '<span class="formula-expression-char">' + char + '</span>';
-            });
-        }
-
-        function getHtmlFromJson(data) {
-            if (typeof data !== 'object')
-                return getTextHtml(data);
-
-            var json = JSON.stringify(data, null, '/%t/').replace(/\n/g, "/%b/");
-            return Prism.highlight(json, Prism.languages.json)
-                .replace(/\/%b\//mg, '<br />')
-                .replace(/\/%t\//mg, '&nbsp;&nbsp;&nbsp;&nbsp;');
-        }
-
-        $(function() {
-            // Plugin version confirmation.
-            $('.version strong').text('v' + formulize.getVersion());
-
-            var $formula = $('.formulize').formulize();
-            var data = {
-                operator: '+',
-                operand1: {
-                    operator: '+',
-                    operand1: { value: { type: 'unit', unit: 1 } },
-                    operand2: { value: { type: 'unit', unit: 2 } }
-                },
-                operand2: { value: { type: 'unit', unit: 3 } }
-            };
-            $formula.setData(data);
-
-            $('.formulize-custom')
-                .draggable({
-                    revert: 'invalid',
-                    helper: 'clone',
-                    cancel: '',
-                    scroll: false
-                });
-
-            $('.formulize-advanced').droppable({
-                drop: function(event, ui) {
-                    var $element = ui.draggable.clone();
-                    var position = {
-                        x: event.offsetX,
-                        y: event.offsetY
-                    };
-                    var formulaUI = $(this).data('$formulize');
-                    formulaUI.insert($element, position);
-                }
-            });
-
-            $('.btn-get-data')
-                .on('click', function(event) {
-                    event.preventDefault();
-                    console.log('fire');
-                    $('.formulize-advanced').getData(function(data) {
-                        $('.formulize-get-json .formulize-get-json-data')
-                            .html(getHtmlFromJson(data)).closest('.formulize-get-json').addClass('filled');
-                    });
-                });
-
-            $('.menu .item').tab();
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+<script type="text/javascript" src="dist/formulize.umd.js"></script>
+<script type="text/javascript">
+    function getTextHtml(text) {
+        return text.split('').map(function (char) {
+            return '<span class="formula-expression-char">' + char + '</span>';
         });
-    </script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-javascript.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-typescript.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
-    <script type="text/javascript" src="https://twemoji.maxcdn.com/2/twemoji.min.js?2.5"></script>
+    }
+
+    function getHtmlFromJson(data) {
+        if (typeof data !== 'object')
+            return getTextHtml(data);
+
+        var json = JSON.stringify(data, null, '/%t/').replace(/\n/g, "/%b/");
+        return Prism.highlight(json, Prism.languages.json)
+            .replace(/\/%b\//mg, '<br />')
+            .replace(/\/%t\//mg, '&nbsp;&nbsp;&nbsp;&nbsp;');
+    }
+
+    $(function () {
+        // Plugin version confirmation.
+        $('.version strong').text('v' + formulize.getVersion());
+
+        var $formula = $('.formulize').formulize();
+        var data = {
+            operator: '+',
+            operand1: {
+                operator: '+',
+                operand1: {value: {type: 'unit', unit: 1}},
+                operand2: {value: {type: 'unit', unit: 2}}
+            },
+            operand2: {value: {type: 'unit', unit: 3}}
+        };
+        $formula.setData(data);
+
+        $('.formulize-custom')
+            .draggable({
+                revert: 'invalid',
+                helper: 'clone',
+                cancel: '',
+                scroll: false
+            });
+
+        $('.formulize-advanced').droppable({
+            drop: function (event, ui) {
+                var $element = ui.draggable.clone();
+                var position = {
+                    x: event.offsetX,
+                    y: event.offsetY
+                };
+                var formulaUI = $(this).data('$formulize');
+                formulaUI.insert($element, position);
+            }
+        });
+
+        $('.btn-get-data')
+            .on('click', function (event) {
+                event.preventDefault();
+                console.log('fire');
+                $('.formulize-advanced').getData(function (data) {
+                    $('.formulize-get-json .formulize-get-json-data')
+                        .html(getHtmlFromJson(data)).closest('.formulize-get-json').addClass('filled');
+                });
+            });
+
+        $('.menu .item').tab();
+    });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-javascript.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-typescript.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+<script type="text/javascript" src="https://twemoji.maxcdn.com/2/twemoji.min.js?2.5"></script>
 </body>
 </html>

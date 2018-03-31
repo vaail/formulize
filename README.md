@@ -96,7 +96,7 @@ formulize.setData(data);
 
 ```javascript
 $(function() {
-	$('#formulize').formulize({
+    $('#formulize').formulize({
         ...options
     });
 
