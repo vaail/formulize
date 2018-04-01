@@ -38,42 +38,13 @@
         return t;
     };
 
-    var StringHelper = /** @class */ (function () {
-        function StringHelper() {
-        }
-        StringHelper.isNumeric = function (value) {
-            return /^-?[\d,]+\.?\d*$/.test(value) && typeof value !== 'object';
-        };
-        StringHelper.toNumber = function (value) {
-            return value.replace(/[^\d-\.]/g, '');
-        };
-        return StringHelper;
-    }());
-
-    var UIHelper = /** @class */ (function () {
-        function UIHelper() {
-        }
-        UIHelper.getDataValue = function (elem) {
-            var value = $(elem).data('value') || $(elem).text();
-            return StringHelper.isNumeric(value)
-                ? StringHelper.toNumber(String(value))
-                : value;
-        };
-        UIHelper.isOverDistance = function (position, targetPosition, distance) {
-            return Math.abs(position.x - targetPosition.x) > distance ||
-                Math.abs(position.y - targetPosition.y) > distance;
-        };
-        return UIHelper;
-    }());
-
     var defaultOptions = {
         id: 'formulize',
         text: {
             formula: 'formula',
             error: 'error',
             pass: 'passed'
-        },
-        export: function (elem) { return UIHelper.getDataValue(elem); }
+        }
     };
 
     var Key;
@@ -478,7 +449,7 @@
         return BuilderHelper;
     }());
 
-    var StringHelper$1 = /** @class */ (function () {
+    var StringHelper = /** @class */ (function () {
         function StringHelper() {
         }
         StringHelper.format = function (value) {
@@ -509,7 +480,7 @@
             _this.error = error;
             Object.setPrototypeOf(_this, ParserError.prototype);
             if (args.length)
-                _this.error = __assign$1({}, _this.error, { text: StringHelper$1.format.apply(StringHelper$1, [_this.error.text].concat(args)) });
+                _this.error = __assign$1({}, _this.error, { text: StringHelper.format.apply(StringHelper, [_this.error.text].concat(args)) });
             _this.code = _this.error.code;
             _this.text = _this.error.text;
             _this.message = _this.text;
@@ -1322,11 +1293,23 @@
         return builder.build(data).code === success;
     }
 
+    var StringHelper$1 = /** @class */ (function () {
+        function StringHelper() {
+        }
+        StringHelper.isNumeric = function (value) {
+            return /^-?[\d,]+\.?\d*$/.test(value) && typeof value !== 'object';
+        };
+        StringHelper.toNumber = function (value) {
+            return value.replace(/[^\d-\.]/g, '');
+        };
+        return StringHelper;
+    }());
+
     var FormulizeTokenHelper = /** @class */ (function () {
         function FormulizeTokenHelper() {
         }
         FormulizeTokenHelper.toDecimal = function (value) {
-            var splitValue = StringHelper.toNumber(value).split('.');
+            var splitValue = StringHelper$1.toNumber(value).split('.');
             if (splitValue.length)
                 splitValue[0] = splitValue[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             return splitValue.join('.');
@@ -1388,6 +1371,27 @@
             return UIElementHelper.isElementType(id, 'operator', elem);
         };
         return UIElementHelper;
+    }());
+
+    var UIHelper = /** @class */ (function () {
+        function UIHelper() {
+        }
+        UIHelper.getDataValue = function (data) {
+            if (!UIHelper.isDOM(data))
+                return String(data);
+            var value = $(data).data('value') || $(data).text();
+            return StringHelper$1.isNumeric(value)
+                ? StringHelper$1.toNumber(String(value))
+                : value;
+        };
+        UIHelper.isOverDistance = function (position, targetPosition, distance) {
+            return Math.abs(position.x - targetPosition.x) > distance ||
+                Math.abs(position.y - targetPosition.y) > distance;
+        };
+        UIHelper.isDOM = function (data) {
+            return data instanceof HTMLElement || data instanceof jQuery;
+        };
+        return UIHelper;
     }());
 
     var UIDom = /** @class */ (function () {
@@ -1497,6 +1501,24 @@
         return UIAnalyzer;
     }(UIDom));
 
+    var UIPipe = /** @class */ (function (_super) {
+        __extends(UIPipe, _super);
+        function UIPipe() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        UIPipe.prototype.pipeInsert = function (data) {
+            if (!this.options.pipe || !this.options.pipe.insert)
+                return data;
+            return this.options.pipe.insert(data);
+        };
+        UIPipe.prototype.pipeParse = function (elem) {
+            if (!this.options.pipe || !this.options.pipe.parse)
+                return UIHelper.getDataValue(elem);
+            return this.options.pipe.parse(elem);
+        };
+        return UIPipe;
+    }(UIAnalyzer));
+
     var UIManager = /** @class */ (function (_super) {
         __extends(UIManager, _super);
         function UIManager() {
@@ -1536,10 +1558,11 @@
                 .triggerHandler(this.options.id + ".input", this.getData());
         };
         UIManager.prototype.getExpression = function () {
+            var _this = this;
             return this.container
                 .find("." + this.options.id + "-item")
                 .toArray()
-                .map(function (elem) { return UIHelper.getDataValue(elem); });
+                .map(function (elem) { return _this.pipeParse(elem); });
         };
         UIManager.prototype.startDrag = function (position) {
             this.dragged = true;
@@ -1810,19 +1833,21 @@
             this.dragElem.remove();
             this.triggerUpdate();
         };
-        UIManager.prototype.insert = function (obj, position) {
-            if (!obj)
+        UIManager.prototype.insert = function (data, position) {
+            if (!data)
                 return;
+            var pipedData = this.pipeInsert(data);
             if (!this.cursor || !this.cursor.length || position)
                 this.pick(position);
-            if (typeof obj === 'string' || typeof obj === 'number') {
-                this.insertValue(String(obj));
+            if (typeof pipedData === 'string' || typeof pipedData === 'number') {
+                this.insertValue(String(pipedData));
                 return;
             }
-            if (!(obj instanceof HTMLElement || obj instanceof jQuery))
+            if (!UIHelper.isDOM(pipedData))
                 return;
-            $(obj).addClass(this.options.id + "-item");
-            $(obj).insertBefore(this.cursor);
+            var insertElem = pipedData;
+            $(insertElem).addClass(this.options.id + "-item");
+            $(insertElem).insertBefore(this.cursor);
             this.triggerUpdate();
         };
         UIManager.prototype.insertValue = function (value) {
@@ -1855,13 +1880,7 @@
             var arrayData = typeof data === 'string'
                 ? data.split('')
                 : data;
-            arrayData
-                .forEach(function (value) {
-                var inputValue = typeof value === 'string' || !_this.options.import
-                    ? value
-                    : _this.options.import(value);
-                _this.insert(inputValue);
-            });
+            arrayData.forEach(function (value) { return _this.insert(value); });
             this.triggerUpdate();
         };
         UIManager.prototype.validate = function (extractor) {
@@ -1886,7 +1905,7 @@
             return isValid;
         };
         return UIManager;
-    }(UIAnalyzer));
+    }(UIPipe));
 
     var UIHook = /** @class */ (function (_super) {
         __extends(UIHook, _super);
@@ -1913,7 +1932,7 @@
             if (options === void 0) { options = __assign({}, defaultOptions); }
             var _this = _super.call(this) || this;
             _this.elem = elem;
-            _this.options = options;
+            _this.options = __assign({}, defaultOptions, options);
             if (_this.isAlreadyInitialized())
                 return _this;
             _this.initializeDOM();
@@ -2089,7 +2108,7 @@
         });
     }
 
-    var _MODULE_VERSION_$1 = '0.0.2';
+    var _MODULE_VERSION_$1 = '0.0.3';
     function getVersion$1() {
         return _MODULE_VERSION_$1;
     }
