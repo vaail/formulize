@@ -1,6 +1,6 @@
 {
   "name": "formulize",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "formula UI generator",
   "main": "dist/formulize.umd.js",
   "typings": "dist/types/formulize.d.ts",
@@ -61,7 +61,7 @@
   },
   "homepage": "https://github.com/KennethanCeyer/formulize#readme",
   "dependencies": {
-    "metric-parser": "0.0.7"
+    "metric-parser": "0.0.8"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
