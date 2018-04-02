@@ -1342,7 +1342,22 @@
             return $("<div class=\"" + id + "-cursor\"></div>")[0];
         };
         UIElementHelper.getUnitElement = function (id, value) {
-            return $("<div class=\"" + id + "-item " + id + "-unit\">" + value + "</div>")[0];
+            var unitElem = $("<div class=\"" + id + "-item " + id + "-unit\"></div>");
+            UIElementHelper.setUnitValue(id, unitElem[0], value);
+            return unitElem[0];
+        };
+        UIElementHelper.setUnitValue = function (id, elem, value) {
+            if (value === undefined)
+                return;
+            $(elem).empty();
+            var decimalValue = FormulizeTokenHelper.toDecimal(value);
+            var split = decimalValue.split('.');
+            var prefix = $(UIElementHelper.getUnitDecimalElement(id, 'prefix', split[0]));
+            prefix.appendTo($(elem));
+            if (split[1] === undefined)
+                return;
+            var suffix = $(UIElementHelper.getUnitDecimalElement(id, 'suffix', "." + split[1]));
+            suffix.appendTo($(elem));
         };
         UIElementHelper.getUnitDecimalElement = function (id, side, value) {
             return $("<span class=\"" + id + "-" + side + " " + id + "-decimal-highlight\">" + value + "</span>")[0];
@@ -1415,16 +1430,16 @@
         });
         Object.defineProperty(UIDom.prototype, "dragElem", {
             get: function () {
-                return this.container
-                    .find("." + this.options.id + "-drag");
+                return this.container.find("." + this.options.id + "-drag");
             },
             enumerable: true,
             configurable: true
         });
         UIDom.prototype.initializeDOM = function () {
-            this.container = $(this.elem);
-            this.container.addClass(this.options.id + "-container");
-            this.container.wrap("<div class=\"" + this.options.id + "-wrapper\"></div>");
+            this.wrapper = $(this.elem);
+            this.wrapper.addClass(this.options.id + "-wrapper");
+            this.container = $("<div class=\"" + this.options.id + "-container\"></div>");
+            this.container.appendTo(this.wrapper);
             this.statusBox = $("<div class=\"" + this.options.id + "-alert\">" + this.options.text.formula + "</div>");
             this.statusBox.insertBefore(this.container);
             this.textBox = $(UIElementHelper.getTextBoxElement(this.options.id));
@@ -1432,9 +1447,10 @@
             this.textBox.trigger('focus');
         };
         UIDom.prototype.bindingDOM = function () {
-            this.container = $(this.elem);
-            this.statusBox = this.container.prevAll("." + this.options.id + "-alert").last();
-            this.textBox = this.container.nextAll("." + this.options.id + "-alert").first();
+            this.wrapper = $(this.elem);
+            this.container = this.wrapper.find("." + this.options.id + "-container");
+            this.statusBox = this.wrapper.find("." + this.options.id + "-alert");
+            this.textBox = this.wrapper.find("." + this.options.id + "-text");
         };
         UIDom.prototype.isAlreadyInitialized = function () {
             var selfAndContainer = $(this.elem)
@@ -1474,20 +1490,7 @@
                 this.cursor.insertBefore(baseElem);
             }
             var text = $(baseElem).text();
-            this.setUnitValue(baseElem, text);
-        };
-        UIDom.prototype.setUnitValue = function (elem, value) {
-            if (value === undefined)
-                return;
-            $(elem).empty();
-            var decimalValue = FormulizeTokenHelper.toDecimal(value);
-            var split = decimalValue.split('.');
-            var prefix = $(UIElementHelper.getUnitDecimalElement(this.options.id, 'prefix', split[0]));
-            prefix.appendTo($(elem));
-            if (split[1] === undefined)
-                return;
-            var suffix = $(UIElementHelper.getUnitDecimalElement(this.options.id, 'suffix', "." + split[1]));
-            suffix.appendTo($(elem));
+            UIElementHelper.setUnitValue(this.options.id, baseElem, text);
         };
         UIDom.prototype.removeCursor = function () {
             this.container
@@ -1682,7 +1685,7 @@
             if (prevCursorElem.hasClass(this.options.id + "-unit") &&
                 prevCursorElem.text().length > 1) {
                 var text = prevCursorElem.text();
-                this.setUnitValue(prevCursorElem.get(0), text.substring(0, text.length - 1));
+                UIElementHelper.setUnitValue(this.options.id, prevCursorElem.get(0), text.substring(0, text.length - 1));
             }
             else
                 prevCursorElem.remove();
@@ -1701,7 +1704,7 @@
             if (nextCursorElem.hasClass(this.options.id + "-unit") &&
                 nextCursorElem.text().length > 1) {
                 var text = nextCursorElem.text();
-                this.setUnitValue(nextCursorElem.get(0), text.substring(1, text.length));
+                UIElementHelper.setUnitValue(this.options.id, nextCursorElem.get(0), text.substring(1, text.length));
             }
             else
                 nextCursorElem.remove();
@@ -2126,7 +2129,7 @@
         });
     }
 
-    var _MODULE_VERSION_$1 = '0.0.5';
+    var _MODULE_VERSION_$1 = '0.0.6';
     function getVersion$1() {
         return _MODULE_VERSION_$1;
     }
