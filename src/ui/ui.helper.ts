@@ -4,7 +4,9 @@ import { StringHelper } from '../string.helper';
 export class UIHelper {
     public static getDataValue(data: FormulizeData): string {
         if (!UIHelper.isDOM(data))
-            return String(data);
+            return StringHelper.isNumeric(data)
+                ? StringHelper.toNumber(String(data))
+                : data;
 
         const value = $(<HTMLElement | JQuery>data).data('value') || $(<HTMLElement | JQuery>data).text();
         return StringHelper.isNumeric(value)
@@ -19,5 +21,11 @@ export class UIHelper {
 
     public static isDOM(data: FormulizeData): boolean {
         return data instanceof HTMLElement || data instanceof jQuery;
+    }
+
+    public static getDOM(elem: HTMLElement | JQuery): HTMLElement {
+        return elem instanceof jQuery
+            ? (<JQuery>elem)[0]
+            : <HTMLElement>elem;
     }
 }

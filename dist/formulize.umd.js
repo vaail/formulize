@@ -1378,7 +1378,9 @@
         }
         UIHelper.getDataValue = function (data) {
             if (!UIHelper.isDOM(data))
-                return String(data);
+                return StringHelper$1.isNumeric(data)
+                    ? StringHelper$1.toNumber(String(data))
+                    : data;
             var value = $(data).data('value') || $(data).text();
             return StringHelper$1.isNumeric(value)
                 ? StringHelper$1.toNumber(String(value))
@@ -1390,6 +1392,11 @@
         };
         UIHelper.isDOM = function (data) {
             return data instanceof HTMLElement || data instanceof jQuery;
+        };
+        UIHelper.getDOM = function (elem) {
+            return elem instanceof jQuery
+                ? elem[0]
+                : elem;
         };
         return UIHelper;
     }());
@@ -1509,7 +1516,10 @@
         UIPipe.prototype.pipeInsert = function (data) {
             if (!this.options.pipe || !this.options.pipe.insert)
                 return data;
-            return this.options.pipe.insert(data);
+            var insertData = UIHelper.isDOM(data)
+                ? UIHelper.getDOM(data)
+                : data;
+            return this.options.pipe.insert(insertData);
         };
         UIPipe.prototype.pipeParse = function (elem) {
             if (!this.options.pipe || !this.options.pipe.parse)
@@ -1562,7 +1572,8 @@
             return this.container
                 .find("." + this.options.id + "-item")
                 .toArray()
-                .map(function (elem) { return _this.pipeParse(elem); });
+                .map(function (elem) { return _this.pipeParse(elem); })
+                .map(function (value) { return UIHelper.getDataValue(value); });
         };
         UIManager.prototype.startDrag = function (position) {
             this.dragged = true;
@@ -1845,9 +1856,9 @@
             }
             if (!UIHelper.isDOM(pipedData))
                 return;
-            var insertElem = pipedData;
-            $(insertElem).addClass(this.options.id + "-item");
-            $(insertElem).insertBefore(this.cursor);
+            var insertElem = $(pipedData);
+            insertElem.addClass(this.options.id + "-item");
+            insertElem.insertBefore(this.cursor);
             this.triggerUpdate();
         };
         UIManager.prototype.insertValue = function (value) {
@@ -2108,7 +2119,7 @@
         });
     }
 
-    var _MODULE_VERSION_$1 = '0.0.3';
+    var _MODULE_VERSION_$1 = '0.0.4';
     function getVersion$1() {
         return _MODULE_VERSION_$1;
     }
