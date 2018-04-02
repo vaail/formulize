@@ -54,7 +54,8 @@ export abstract class UIManager extends UIPipe {
         return this.container
             .find(`.${this.options.id}-item`)
             .toArray()
-            .map(elem => this.pipeParse(elem));
+            .map(elem => this.pipeParse(elem))
+            .map(value => UIHelper.getDataValue(value));
     }
 
     protected startDrag(position: Position): void {
@@ -411,9 +412,9 @@ export abstract class UIManager extends UIPipe {
         if (!UIHelper.isDOM(pipedData))
             return;
 
-        const insertElem = <HTMLElement | JQuery>pipedData;
-        $(insertElem).addClass(`${this.options.id}-item`);
-        $(insertElem).insertBefore(this.cursor);
+        const insertElem = $(pipedData);
+        insertElem.addClass(`${this.options.id}-item`);
+        insertElem.insertBefore(this.cursor);
 
         this.triggerUpdate();
     }
