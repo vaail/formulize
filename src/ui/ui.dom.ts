@@ -4,6 +4,7 @@ import { UIElementHelper } from './ui.element.helper';
 import { FormulizeTokenHelper } from '../token.helper';
 
 export abstract class UIDom {
+    protected wrapper: JQuery;
     protected container: JQuery;
     protected statusBox: JQuery;
     protected textBox: JQuery;
@@ -18,14 +19,15 @@ export abstract class UIDom {
     }
 
     protected get dragElem(): JQuery {
-        return this.container
-            .find(`.${this.options.id}-drag`);
+        return this.container.find(`.${this.options.id}-drag`);
     }
 
     protected initializeDOM() {
-        this.container = $(this.elem);
-        this.container.addClass(`${this.options.id}-container`);
-        this.container.wrap(`<div class="${this.options.id}-wrapper"></div>`);
+        this.wrapper = $(this.elem);
+        this.wrapper.addClass(`${this.options.id}-wrapper`);
+
+        this.container = $(`<div class="${this.options.id}-container"></div>`);
+        this.container.appendTo(this.wrapper);
 
         this.statusBox = $(`<div class="${this.options.id}-alert">${this.options.text.formula}</div>`);
         this.statusBox.insertBefore(this.container);
@@ -36,9 +38,10 @@ export abstract class UIDom {
     }
 
     protected bindingDOM() {
-        this.container = $(this.elem);
-        this.statusBox = this.container.prevAll(`.${this.options.id}-alert`).last();
-        this.textBox = this.container.nextAll(`.${this.options.id}-alert`).first();
+        this.wrapper = $(this.elem);
+        this.container = this.wrapper.find(`.${this.options.id}-container`);
+        this.statusBox = this.wrapper.find(`.${this.options.id}-alert`);
+        this.textBox = this.wrapper.find(`.${this.options.id}-text`);
     }
 
     protected isAlreadyInitialized(): boolean {
@@ -85,24 +88,7 @@ export abstract class UIDom {
         }
 
         const text = $(baseElem).text();
-        this.setUnitValue(baseElem, text);
-    }
-
-    protected setUnitValue(elem: HTMLElement, value: string) {
-        if (value === undefined)
-            return;
-
-        $(elem).empty();
-        const decimalValue = FormulizeTokenHelper.toDecimal(value);
-        const split = decimalValue.split('.');
-        const prefix = $(UIElementHelper.getUnitDecimalElement(this.options.id, 'prefix', split[0]));
-        prefix.appendTo($(elem));
-
-        if (split[1] === undefined)
-            return;
-
-        const suffix = $(UIElementHelper.getUnitDecimalElement(this.options.id, 'suffix', `.${split[1]}`));
-        suffix.appendTo($(elem));
+        UIElementHelper.setUnitValue(this.options.id, baseElem, text);
     }
 
     protected removeCursor(): void {
