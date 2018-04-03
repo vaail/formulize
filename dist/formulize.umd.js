@@ -1453,10 +1453,7 @@
             this.textBox = this.wrapper.find("." + this.options.id + "-text");
         };
         UIDom.prototype.isAlreadyInitialized = function () {
-            var selfAndContainer = $(this.elem)
-                .closest("." + this.options.id + "-container")
-                .add(this.elem);
-            return !!selfAndContainer.filter("." + this.options.id + "-container").length;
+            return !!$(this.elem).data('$formulize');
         };
         UIDom.prototype.attachEvents = function () {
             throw new Error('method not implemented');
@@ -2129,7 +2126,7 @@
         });
     }
 
-    var _MODULE_VERSION_$1 = '0.0.6';
+    var _MODULE_VERSION_$1 = '0.0.7';
     function getVersion$1() {
         return _MODULE_VERSION_$1;
     }
