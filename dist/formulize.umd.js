@@ -296,6 +296,44 @@
             BracketClose: ')',
             Dot: '.'
         };
+        Token.value = {
+            Addition: {
+                symbols: [Token.literal.Addition],
+                alias: Token.literal.Addition
+            },
+            Subtraction: {
+                symbols: [Token.literal.Subtraction],
+                alias: Token.literal.Subtraction
+            },
+            Multiplication: {
+                symbols: [Token.literal.Multiplication, Token.literal.MultiplicationLiteral],
+                alias: Token.literal.Multiplication
+            },
+            Division: {
+                symbols: [Token.literal.Division],
+                alias: Token.literal.Division
+            },
+            Mod: {
+                symbols: [Token.literal.Mod],
+                alias: Token.literal.Mod
+            },
+            Pow: {
+                symbols: [Token.literal.Pow],
+                alias: Token.literal.Pow
+            },
+            BracketOpen: {
+                symbols: [Token.literal.BracketOpen],
+                alias: Token.literal.BracketOpen
+            },
+            BracketClose: {
+                symbols: [Token.literal.BracketClose],
+                alias: Token.literal.BracketOpen
+            },
+            Dot: {
+                symbols: [Token.literal.Dot],
+                alias: Token.literal.Dot
+            }
+        };
         Token.addition = [Token.literal.Addition];
         Token.subtraction = [Token.literal.Subtraction];
         Token.multiplication = [Token.literal.Multiplication, Token.literal.MultiplicationLiteral];
@@ -312,7 +350,7 @@
             ' ',
             '',
             null,
-            undefined,
+            undefined
         ];
     })(Token || (Token = {}));
 
@@ -899,12 +937,25 @@
         };
         TokenEnumerable.prototype.findToken = function () {
             while (this.cursor < this.token.length) {
-                var token = this.token[this.cursor];
+                var token = this.getToken();
                 this.cursor += 1;
                 this.calculateStack(token);
                 if (!TokenHelper.isWhiteSpace(token))
                     return token;
             }
+        };
+        TokenEnumerable.prototype.getToken = function () {
+            var token = this.token[this.cursor];
+            return this.getAliasToken(token);
+        };
+        TokenEnumerable.prototype.getAliasToken = function (token) {
+            if (!TokenHelper.isOperator(token))
+                return token;
+            return Object.keys(Token.value)
+                .map(function (operatorType) { return Token.value[operatorType].symbols.includes(token)
+                ? Token.value[operatorType].alias
+                : undefined; })
+                .find(function (alias) { return alias !== undefined; }) || token;
         };
         TokenEnumerable.prototype.isTokenArrayNumeric = function (tokens) {
             return tokens.every(function (token) { return TokenHelper.isNumeric(token) || TokenHelper.isDot(token); });
@@ -1346,6 +1397,15 @@
             UIElementHelper.setUnitValue(id, unitElem[0], value);
             return unitElem[0];
         };
+        UIElementHelper.getUnitDecimalElement = function (id, side, value) {
+            return $("<span class=\"" + id + "-" + side + " " + id + "-decimal-highlight\">" + (value || '') + "</span>")[0];
+        };
+        UIElementHelper.getOperatorElement = function (id, value) {
+            return $("<div class=\"" + id + "-item " + id + "-operator\">" + (value || '').toLowerCase() + "</div>")[0];
+        };
+        UIElementHelper.getTextBoxElement = function (id) {
+            return $("<textarea id=\"" + id + "-text\" name=\"" + id + "-text\" class=\"" + id + "-text\"></textarea>")[0];
+        };
         UIElementHelper.setUnitValue = function (id, elem, value) {
             if (value === undefined)
                 return;
@@ -1359,19 +1419,10 @@
             var suffix = $(UIElementHelper.getUnitDecimalElement(id, 'suffix', "." + split[1]));
             suffix.appendTo($(elem));
         };
-        UIElementHelper.getUnitDecimalElement = function (id, side, value) {
-            return $("<span class=\"" + id + "-" + side + " " + id + "-decimal-highlight\">" + value + "</span>")[0];
-        };
-        UIElementHelper.getOperatorElement = function (id, value) {
-            return $("<div class=\"" + id + "-item " + id + "-operator\">" + value.toLowerCase() + "</div>")[0];
-        };
-        UIElementHelper.getTextBoxElement = function (id) {
-            return $("<textarea id=\"" + id + "-text\" name=\"" + id + "-text\" class=\"" + id + "-text\"></textarea>")[0];
-        };
         UIElementHelper.isElementType = function (id, type, elem) {
-            if (!elem)
-                return;
-            return $(elem).hasClass(id + "-" + type);
+            return elem
+                ? $(elem).hasClass(id + "-" + type)
+                : false;
         };
         UIElementHelper.isDrag = function (id, elem) {
             return UIElementHelper.isElementType(id, 'drag', elem);
@@ -1498,6 +1549,20 @@
             this.container
                 .find(":not(\"." + this.options.id + "-cursor\")")
                 .remove();
+        };
+        UIDom.prototype.updateStatus = function (valid) {
+            if (valid === void 0) { valid = false; }
+            var statusText = valid
+                ? this.options.text.pass
+                : this.options.text.error;
+            var statusBaseClasses = ['good', 'error'];
+            var statusClasses = valid
+                ? statusBaseClasses
+                : statusBaseClasses.reverse();
+            this.statusBox
+                .text(statusText)
+                .addClass(this.options.id + "-alert-" + statusClasses[0])
+                .removeClass(this.options.id + "-alert-" + statusClasses[1]);
         };
         return UIDom;
     }());
@@ -1904,18 +1969,7 @@
             if (!data)
                 return;
             var isValid = valid(data);
-            if (isValid) {
-                this.statusBox
-                    .text(this.options.text.pass)
-                    .addClass(this.options.id + "-alert-good")
-                    .removeClass(this.options.id + "-alert-error");
-            }
-            else {
-                this.statusBox
-                    .text(this.options.text.error)
-                    .removeClass(this.options.id + "-alert-good")
-                    .addClass(this.options.id + "-alert-error");
-            }
+            this.updateStatus(isValid);
             if (extractor)
                 extractor(isValid);
             return isValid;
@@ -2126,7 +2180,7 @@
         });
     }
 
-    var _MODULE_VERSION_$1 = '0.0.9';
+    var _MODULE_VERSION_$1 = '0.0.10';
     function getVersion$1() {
         return _MODULE_VERSION_$1;
     }
