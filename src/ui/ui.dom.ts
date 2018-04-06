@@ -99,4 +99,20 @@ export abstract class UIDom {
             .find(`:not(".${this.options.id}-cursor")`)
             .remove();
     }
+
+    protected updateStatus(valid: boolean = false): void {
+        const statusText = valid
+            ? this.options.text.pass
+            : this.options.text.error;
+
+        const statusBaseClasses = ['good', 'error'];
+        const statusClasses = valid
+            ? statusBaseClasses
+            : statusBaseClasses.reverse();
+
+        this.statusBox
+            .text(statusText)
+            .addClass(`${this.options.id}-alert-${statusClasses[0]}`)
+            .removeClass(`${this.options.id}-alert-${statusClasses[1]}`);
+    }
 }
