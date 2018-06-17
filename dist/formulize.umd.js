@@ -1611,6 +1611,12 @@
                 return UIHelper.getDataValue(elem);
             return this.options.pipe.parse(elem);
         };
+        UIPipe.prototype.pipeTrigger = function (name, value) {
+            $(this.elem).triggerHandler(this.options.id + "." + name, value);
+            var eventPipe = this.options[name];
+            if (eventPipe)
+                eventPipe(value);
+        };
         return UIPipe;
     }(UIAnalyzer));
 
@@ -1649,8 +1655,7 @@
         };
         UIManager.prototype.triggerUpdate = function () {
             this.validate();
-            $(this.elem)
-                .triggerHandler(this.options.id + ".input", this.getData());
+            this.pipeTrigger('input', this.getData());
         };
         UIManager.prototype.getExpression = function () {
             var _this = this;
@@ -1710,7 +1715,7 @@
                 var diffY = Math.abs(position.y - unitPosition.y);
                 return __assign({}, unitPosition, { diff: { x: diffX, y: diffY } });
             })
-                .filter(function (unitPosition) { return !!unitPosition; });
+                .filter(function (unitPosition) { return unitPosition; });
             var maxY = Math.max.apply(Math, closestUnitPositions.map(function (unitPosition) { return unitPosition.y; }));
             var filteredUnitPositions = closestUnitPositions.filter(function (unitPosition) { return unitPosition.y === maxY; }).length
                 ? closestUnitPositions.filter(function (unitPosition) { return unitPosition.y === maxY; })
@@ -2118,8 +2123,8 @@
         function MethodBase(formulize) {
             this.formulize = formulize;
         }
-        MethodBase.prototype.pick = function () {
-            this.formulize.pick();
+        MethodBase.prototype.pick = function (position) {
+            this.formulize.pick(position);
         };
         MethodBase.prototype.clear = function () {
             this.formulize.clear();

@@ -2,6 +2,8 @@ import { expect } from 'chai';
 import { JSDOM } from 'jsdom';
 import { UIElementHelper } from './ui.element.helper';
 import { FormulizeGlobal } from '../formulize.interface';
+import * as fs from 'fs';
+import * as path from 'path';
 
 declare const global: FormulizeGlobal;
 
@@ -9,9 +11,14 @@ describe('test class: UIElementHelper', () => {
     const id = 'formulize';
 
     beforeEach(() => {
-        const jsdom = new JSDOM(`<body></body>`);
+        const style = fs.readFileSync(path.join(__dirname, '../../dist', 'formulize.css')).toString();
+        const jsdom = new JSDOM(`<!DOCTYPE HTML><html>
+                            <head><style>${style}</style></head>
+                            <body></body>
+                        </html>`, { url: 'http://localhost' });
         global.window = jsdom.window;
-        global.document = window.document;
+        global.document = jsdom.window.document;
+        global.HTMLElement = jsdom.window.HTMLElement;
         global.$ = require('jquery');
         global.jQuery = $;
     });
