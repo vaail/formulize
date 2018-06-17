@@ -441,9 +441,6 @@
         function TokenHelper() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        TokenHelper.isHigher = function (source, target) {
-            return TokenHelper.getPrecedence(source) - TokenHelper.getPrecedence(target) > 0;
-        };
         TokenHelper.induceType = function (token) {
             var typeInducers = [
                 { predicate: TokenHelper.isUnkown, type: Token.Type.Unknown },
@@ -465,6 +462,9 @@
                 [TokenHelper.isMod, TokenHelper.isPow],
                 [TokenHelper.isBracket]
             ].findIndex(function (predicate) { return predicate.some(function (func) { return func(token); }); });
+        };
+        TokenHelper.getPrecedenceDiff = function (source, target) {
+            return TokenHelper.getPrecedence(source) - TokenHelper.getPrecedence(target);
         };
         return TokenHelper;
     }(TokenHelperBase));
@@ -710,7 +710,7 @@
                 TokenHelper.isBracketOpen(this.value);
         };
         AbstractSyntaxTreeBase.prototype.isTokenHighest = function (token) {
-            return TokenHelper.isHigher(token, this.value) && this.subType !== Token.SubType.Group;
+            return TokenHelper.getPrecedenceDiff(token, this.value) > 0 && this.subType !== Token.SubType.Group;
         };
         AbstractSyntaxTreeBase.prototype.createChildNode = function (value) {
             var node = new this.constructor(value);
@@ -794,6 +794,13 @@
                 return undefined;
             return this.parent.findOperator();
         };
+        AbstractSyntaxTree.prototype.isNeededBracket = function () {
+            var parentOperator = this.getParentOperator();
+            return parentOperator &&
+                (TokenHelper.getPrecedenceDiff(parentOperator.value, this.value) > 0 ||
+                    TokenHelper.getPrecedenceDiff(parentOperator.value, this.value) >= 0 &&
+                        this.parent.rightNode === this);
+        };
         AbstractSyntaxTree.prototype.findOperator = function () {
             if (this.type === Token.Type.Operator)
                 return this;
@@ -804,16 +811,22 @@
                 ? this.makeOperatorExpression()
                 : this.makeValueExpression();
         };
-        AbstractSyntaxTree.prototype.makeOperatorExpression = function () {
-            var expression = (this.leftNode ? this.leftNode.expression : []).concat([
+        AbstractSyntaxTree.prototype.makeOperatorClause = function () {
+            return (this.leftNode ? this.leftNode.expression : []).concat([
                 this.value
             ], this.rightNode ? this.rightNode.expression : []);
-            var parentOperator = this.getParentOperator();
-            return parentOperator && TokenHelper.isHigher(parentOperator.value, this.value)
-                ? [Token.literal.BracketOpen].concat(expression, [Token.literal.BracketClose]) : expression;
+        };
+        AbstractSyntaxTree.prototype.makeOperatorExpression = function () {
+            var expression = this.makeOperatorClause();
+            return this.isNeededBracket()
+                ? this.wrapBracket(expression)
+                : expression;
         };
         AbstractSyntaxTree.prototype.makeValueExpression = function () {
             return [this.value];
+        };
+        AbstractSyntaxTree.prototype.wrapBracket = function (expression) {
+            return [Token.literal.BracketOpen].concat(expression, [Token.literal.BracketClose]);
         };
         return AbstractSyntaxTree;
     }(AbstractSyntaxTreeBase));
@@ -1294,13 +1307,15 @@
             };
         };
         TreeBuilder.prototype.makeOperandValue = function (sourceNode) {
+            var _a;
             var type = TokenHelper.isObject(sourceNode.value)
                 ? 'item'
                 : 'unit';
             return _a = {
                     type: type
-                }, _a[type] = sourceNode.value, _a;
-            var _a;
+                },
+                _a[type] = sourceNode.value,
+                _a;
         };
         TreeBuilder.prototype.makeAstNode = function (node) {
             if (!node)
@@ -1596,6 +1611,12 @@
                 return UIHelper.getDataValue(elem);
             return this.options.pipe.parse(elem);
         };
+        UIPipe.prototype.pipeTrigger = function (name, value) {
+            $(this.elem).triggerHandler(this.options.id + "." + name, value);
+            var eventPipe = this.options[name];
+            if (eventPipe)
+                eventPipe(value);
+        };
         return UIPipe;
     }(UIAnalyzer));
 
@@ -1634,8 +1655,7 @@
         };
         UIManager.prototype.triggerUpdate = function () {
             this.validate();
-            $(this.elem)
-                .triggerHandler(this.options.id + ".input", this.getData());
+            this.pipeTrigger('input', this.getData());
         };
         UIManager.prototype.getExpression = function () {
             var _this = this;
@@ -1695,7 +1715,7 @@
                 var diffY = Math.abs(position.y - unitPosition.y);
                 return __assign({}, unitPosition, { diff: { x: diffX, y: diffY } });
             })
-                .filter(function (unitPosition) { return !!unitPosition; });
+                .filter(function (unitPosition) { return unitPosition; });
             var maxY = Math.max.apply(Math, closestUnitPositions.map(function (unitPosition) { return unitPosition.y; }));
             var filteredUnitPositions = closestUnitPositions.filter(function (unitPosition) { return unitPosition.y === maxY; }).length
                 ? closestUnitPositions.filter(function (unitPosition) { return unitPosition.y === maxY; })
@@ -2090,12 +2110,12 @@
         this
             .toArray()
             .forEach(function (elem) {
+            var _a;
             var instance = $(elem).data('$formulize');
             if (!instance)
                 return;
             var base = new MethodBase(instance);
             (_a = Object.getPrototypeOf(base)[name]).call.apply(_a, [base].concat(args));
-            var _a;
         });
         return this;
     }
@@ -2103,8 +2123,8 @@
         function MethodBase(formulize) {
             this.formulize = formulize;
         }
-        MethodBase.prototype.pick = function () {
-            this.formulize.pick();
+        MethodBase.prototype.pick = function (position) {
+            this.formulize.pick(position);
         };
         MethodBase.prototype.clear = function () {
             this.formulize.clear();
@@ -2170,7 +2190,7 @@
         });
     }
 
-    var _MODULE_VERSION_$1 = '0.0.12';
+    var _MODULE_VERSION_$1 = '0.0.13';
     function getVersion$1() {
         return _MODULE_VERSION_$1;
     }
