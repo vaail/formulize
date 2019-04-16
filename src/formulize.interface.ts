@@ -14,12 +14,12 @@ export interface FormulizeGlobal extends NodeJS.Global {
 
 export interface FormulizeOptions extends FormulizeEventOptions {
     id?: string;
-    text?: OptionText,
-    pipe?: OptionPipe
+    text?: OptionText;
+    pipe?: OptionPipe;
 }
 
 export interface FormulizeEventOptions {
-    input?<T extends Tree>(value: T): void
+    input?<T extends Tree>(value: T): void;
 }
 
 export interface OptionPipe {

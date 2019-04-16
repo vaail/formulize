@@ -5,7 +5,7 @@
   "main": "dist/formulize.umd.js",
   "typings": "dist/types/formulize.d.ts",
   "scripts": {
-    "lint": "tslint -t codeFrame 'src/**/*.ts'",
+    "lint": "tslint --format codeFrame --project tsconfig.json 'src/**/*.ts'",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "typedoc": "typedoc --out docs --target es6 --theme minimal --mode file src --exclude **/*.spec.ts",
     "test": "nyc mocha --opts test/mocha.opts"

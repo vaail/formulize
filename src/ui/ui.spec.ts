@@ -12,10 +12,8 @@ describe('test class: UI', () => {
 
     beforeEach(() => {
         const style = fs.readFileSync(path.join(__dirname, '../../dist', 'formulize.css')).toString();
-        const jsdom = new JSDOM(`<!DOCTYPE HTML><html>
-                            <head><style>${style}</style></head>
-                            <body></body>
-                        </html>`, { url: 'http://localhost' });
+        const template = `<!DOCTYPE HTML><html><head><style>${style}</style></head><body></body></html>`;
+        const jsdom = new JSDOM(template, { url: 'http://localhost' });
         global.window = jsdom.window;
         global.document = jsdom.window.document;
         global.HTMLElement = jsdom.window.HTMLElement;
@@ -160,7 +158,7 @@ describe('test class: UI', () => {
                     try {
                         expect(value).to.be.deep.equal(data);
                         done();
-                    } catch(e) {
+                    } catch (e) {
                         done(e);
                     }
                 }
@@ -190,7 +188,7 @@ describe('test class: UI', () => {
                 try {
                     expect(value).to.be.deep.equal(data);
                     done();
-                } catch(e) {
+                } catch (e) {
                     done(e);
                 }
             });

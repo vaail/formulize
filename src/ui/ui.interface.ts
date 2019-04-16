@@ -8,7 +8,7 @@ export interface ElementPosition extends Position {
     diff?: {
         x: number;
         y: number;
-    }
+    };
 }
 
 export interface Behavior {

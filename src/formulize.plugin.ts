@@ -24,7 +24,7 @@ export function pluginBinder() {
         .filter(name => name !== 'constructor')
         .map(name => ({
             name,
-            func: function (...args: any[]) {
+            func (...args: any[]) {
                 methodBinder.call(this, name, ...args);
             }
         }))

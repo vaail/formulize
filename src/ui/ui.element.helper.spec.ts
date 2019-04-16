@@ -12,10 +12,8 @@ describe('test class: UIElementHelper', () => {
 
     beforeEach(() => {
         const style = fs.readFileSync(path.join(__dirname, '../../dist', 'formulize.css')).toString();
-        const jsdom = new JSDOM(`<!DOCTYPE HTML><html>
-                            <head><style>${style}</style></head>
-                            <body></body>
-                        </html>`, { url: 'http://localhost' });
+        const template = `<!DOCTYPE HTML><html><head><style>${style}</style></head><body></body></html>`;
+        const jsdom = new JSDOM(template, { url: 'http://localhost' });
         global.window = jsdom.window;
         global.document = jsdom.window.document;
         global.HTMLElement = jsdom.window.HTMLElement;
@@ -141,7 +139,7 @@ describe('test class: UIElementHelper', () => {
     describe('test method: UIElementHelper.setUnitValue()', () => {
         let elem: HTMLElement;
 
-        beforeEach(() =>{
+        beforeEach(() => {
             elem = document.createElement('div');
         });
 
@@ -189,7 +187,7 @@ describe('test class: UIElementHelper', () => {
     describe('test method: UIElementHelper.isElementType()', () => {
         let elem: HTMLElement;
 
-        beforeEach(() =>{
+        beforeEach(() => {
             elem = document.createElement('div');
         });
 
@@ -214,7 +212,7 @@ describe('test class: UIElementHelper', () => {
     describe('test method: UIElementHelper.isDrag()', () => {
         let elem: HTMLElement;
 
-        beforeEach(() =>{
+        beforeEach(() => {
             elem = document.createElement('div');
         });
 
@@ -232,7 +230,7 @@ describe('test class: UIElementHelper', () => {
     describe('test method: UIElementHelper.isCursor()', () => {
         let elem: HTMLElement;
 
-        beforeEach(() =>{
+        beforeEach(() => {
             elem = document.createElement('div');
         });
 
@@ -250,7 +248,7 @@ describe('test class: UIElementHelper', () => {
     describe('test method: UIElementHelper.isUnit()', () => {
         let elem: HTMLElement;
 
-        beforeEach(() =>{
+        beforeEach(() => {
             elem = document.createElement('div');
         });
 
@@ -268,7 +266,7 @@ describe('test class: UIElementHelper', () => {
     describe('test method: UIElementHelper.isOperator()', () => {
         let elem: HTMLElement;
 
-        beforeEach(() =>{
+        beforeEach(() => {
             elem = document.createElement('div');
         });
 

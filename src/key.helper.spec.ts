@@ -4,7 +4,7 @@ import { expect } from 'chai';
 describe('test class: FormulizeKeyHelper', () => {
     describe('test method: isReload', () => {
         it('should return true with 116(F5)', () => {
-           expect(FormulizeKeyHelper.isReload(116, false)).to.be.true;
+            expect(FormulizeKeyHelper.isReload(116, false)).to.be.true;
         });
 
         it('should return true with 82(R) and pressedShift', () => {
